@@ -10,8 +10,20 @@ h1 { /* Header 1 */
   margin-bottom: 50px
 }
 
+
+h2 { /* Header 1 */
+  font-size: 25;
+  color: #37BBED;
+  text-align: left;
+  font-family: Encode Sans;
+  font-weight: bold;
+  margin-top: 50px;
+  margin-bottom: 50px
+}
+
+
 h4 { /* Header 4 */
-  font-size: 10px;
+  font-size: 20;
   color: #50535C;
   text-align: left;
   font-family: Encode Sans

@@ -1,5 +1,5 @@
 ---
-title: "Apps"
+title: "TABLEROS"
 output:
   html_document:
     css: template.css
@@ -19,7 +19,14 @@ library(extrafont) # Tools for using fonts, CRAN v0.17 # Tools for using fonts, 
 ```
 
 
-# [TURISMO INTERNACIONAL](http://172.26.7.12:8080/turismo_internacional/)
+### [TURISMO INTERNACIONAL](https://tableros.yvera.tur.ar/turismo_internacional/)
+
+
+## Reportes
+
+#### * [Encuesta de Ocupación Hotelera (EOH)](https://tableros.yvera.tur.ar/reportes/eoh/EOH-mayo-2021.html)
+
+---
 
 
 <body>
@@ -33,5 +40,5 @@ library(extrafont) # Tools for using fonts, CRAN v0.17 # Tools for using fonts, 
   <br>  
   </p>
   <br>
-  <a href="https://www.argentina.gob.ar/turismoydeportes"><img src="img/escudo.png" title="pie_de_pagina" /></a> 
+  <a href="https://www.argentina.gob.ar/turismoydeportes"><img src="img/escudo.png" title="Ministerio de Turismo y Deportes" /></a> 
     </body>
