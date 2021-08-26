@@ -24,7 +24,7 @@ library(extrafont) # Tools for using fonts, CRAN v0.17 # Tools for using fonts, 
 
 ## Reportes
 
-#### * [Encuesta de Ocupación Hotelera (EOH)](https://tableros.yvera.tur.ar/reportes/eoh/EOH-mayo-2021.html)
+#### * [Encuesta de Ocupación Hotelera (EOH)](https://tableros.yvera.tur.ar/reportes/eoh/ficha_eoh.html)
 
 #### * [Parques Nacionales](https://tableros.yvera.tur.ar/reportes/parques/ficha_parques_nacionales.html)
 
