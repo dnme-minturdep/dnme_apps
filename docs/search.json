@@ -1,0 +1,13 @@
+{
+  "articles": [
+    {
+      "path": "index.html",
+      "title": "TABLEROS y REPORTES",
+      "description": "El contenido acá listado busca facilitar el acceso a datos mediante reportes y tableros interactivos de turismo en Argentina\n",
+      "author": [],
+      "contents": "\n\n\nd-article img {\n  margin-bottom: 0px;\n}\n\n.btn-primary {\n    background-color: #74a08a;\n    color: #FFFFFF;\n    padding: 3px 5px 3px 5px;\n    margin: 0 2px 0 2px;\n    border-radius: 5px; /* Rounded edges */\n    border: 0px;\n}\n\n.btn-primary:hover {\n    background-color: #8a74a0;\n    color: #FFFFFF;\n}\n\n\n\n\n\n\nTodos\nReporte\nTablero\n\n\n\n\n\n\n\nTurismo Internacional\n\nEl reporte presenta la última información de turismo receptivo, emisivo y balanza turística \n                   por todas las vías (aéreo, terrestre y fluvial / marítimo)\n\nReporte\n\n\n\n\n\n\nOcupación Hotelera\n\nPresenta los últimos datos disponibles de la Encuesta de Ocupación Hotelera (EOH)\n\nReporte\n\n\n\n\n\n\nNaturaleza\n\nInformación de visitaciones a Parques Nacionales\n\nReporte\n\n\n\n\n\n\nEVYTH\n\nReporte de los últimos datos de Turismo Interno reportados por la Encuesta de Viajes y Tursismo de los Hogares\n\nReporte\n\n\n\n\n\n\nExplorador\n\nTablero para la consulta de datos desagregagos de las estiaciones históricas de Turismo Internacional\n\nTablero\n\n\n\n\n\n\n\n",
+      "last_modified": "2021-09-07T16:41:27-03:00"
+    }
+  ],
+  "collections": []
+}

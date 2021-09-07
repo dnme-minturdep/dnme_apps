@@ -1,51 +1,54 @@
 ---
-title: "TABLEROS"
-output:
-  html_document:
-    css: template.css
-    self_contained: yes
-    mode: selfcontained
-    includes:
-      before_body: img/header.html
-urlcolor: blue
+title: TABLEROS y REPORTES
+description: |
+ El contenido acá listado busca facilitar el acceso a datos mediante reportes y tableros interactivos de turismo en Argentina
+
+site: distill::distill_website
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = F, message = F, warning = F, 
-                      fig.align = 'left')
 
-library(extrafont) # Tools for using fonts, CRAN v0.17 # Tools for using fonts, CRAN v0.17
+<!-- Remove margin under images -->
+<style>
+d-article img {
+  margin-bottom: 0px;
+}
 
+.btn-primary {
+    background-color: #74a08a;
+    color: #FFFFFF;
+    padding: 3px 5px 3px 5px;
+    margin: 0 2px 0 2px;
+    border-radius: 5px; /* Rounded edges */
+    border: 0px;
+}
+
+.btn-primary:hover {
+    background-color: #8a74a0;
+    color: #FFFFFF;
+}
+</style>
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+#source(file.path("R", "functions.R"))
+
+library(tidyverse)
+# Read in projects csv file 
+projects <- readr::read_csv(here::here("content", "recursos.csv"))
+```
+
+```{r projects, echo=FALSE, layout="l-body-outset"}
+projects %>% 
+  bs4cards::cards(
+    title = recurso,
+    text = description,
+    link = url,
+    image = src,
+    label_colour = "#37BBED",
+    tags = paste("Todos;", tags),
+    footer = tags,
+    border_radius = 5
+  )
 ```
 
 
-### [TURISMO INTERNACIONAL](https://tableros.yvera.tur.ar/turismo_internacional/)
-
-
-## Reportes
-
-#### * [Encuesta de Ocupación Hotelera (EOH)](https://tableros.yvera.tur.ar/reportes/eoh/ficha_eoh.html)
-
-#### * [Parques Nacionales](https://tableros.yvera.tur.ar/reportes/parques/ficha_parques_nacionales.html)
-
-#### * [Encuesta de Viajes y Turismo de los Hogares (EVYTH)](https://tableros.yvera.tur.ar/reportes/evyth/ficha_trimestral_evyth.html)
-
-#### * [Turismo Internacional](https://tableros.yvera.tur.ar/reportes/turismo_internacional/ficha_turismo_internacional.html)
-
-
----
-
-
-<body>
-  <h3>Para más información:</h3>
-    <p style="text-align: left;">
-  Estadísticas de turismo:   <br>
-<a href="https://yvera.gob.ar/estadistica">yvera.gob.ar/estadistica</a>
-  <br><br>
-  Datos abiertos:   <br>
-<a href="http://datos.yvera.gob.ar/">datos.yvera.gob.ar</a>
-  <br>  
-  </p>
-  <br>
-  <a href="https://www.argentina.gob.ar/turismoydeportes"><img src="img/escudo.png" title="Ministerio de Turismo y Deportes" /></a> 
-    </body>
