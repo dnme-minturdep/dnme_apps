@@ -9,7 +9,7 @@ data.frame(
           "https://tableros.yvera.tur.ar/reportes/eoh/ficha_eoh.html",
           "https://tableros.yvera.tur.ar/reportes/parques/ficha_parques_nacionales.html",
           "https://tableros.yvera.tur.ar/reportes/evyth/ficha_trimestral_evyth.html",
-          "https://tableros.yvera.tur.ar/"), 
+          "https://tableros.yvera.tur.ar/turismo_internacional/"), 
   description  = c("El reporte presenta la última información de turismo receptivo, emisivo y balanza turística 
                    por todas las vías (aéreo, terrestre y fluvial / marítimo)",
                    "Presenta los últimos datos disponibles de la Encuesta de Ocupación Hotelera (EOH)",
