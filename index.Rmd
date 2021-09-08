@@ -1,7 +1,7 @@
 ---
 title: TABLEROS y REPORTES
 description: |
- El contenido acá listado busca facilitar el acceso a datos mediante reportes y tableros interactivos de turismo en Argentina
+ El contenido acá listado busca facilitar el acceso a datos mediante reportes y tableros interactivos de turismo en Argentina 
 
 site: distill::distill_website
 ---
