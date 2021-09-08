@@ -10,8 +10,8 @@ navbar:
       href: http://datos.yvera.gob.ar/
     - text: "Informes"
       href: https://www.yvera.tur.ar/estadistica/
-    - text: "Bitácora"
-      href: https://bitacora.yvera.tur.ar
+  #  - text: "Bitácora"
+  #    href: https://bitacora.yvera.tur.ar
     - text: "Armonización"
       href: https://armonizacion.yvera.tur.ar/
       
