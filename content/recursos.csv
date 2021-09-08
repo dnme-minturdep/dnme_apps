@@ -2,6 +2,6 @@ recurso,src,url,description,tags,Todos,Tablero,Reporte
 Turismo Internacional,img/ti.png,https://tableros.yvera.tur.ar/reportes/turismo_internacional/ficha_turismo_internacional.html,"El reporte presenta la última información de turismo receptivo, emisivo y balanza turística 
                    por todas las vías (aéreo, terrestre y fluvial / marítimo)",Reporte,1,0,1
 Ocupación Hotelera,img/eoh.png,https://tableros.yvera.tur.ar/reportes/eoh/ficha_eoh.html,Presenta los últimos datos disponibles de la Encuesta de Ocupación Hotelera (EOH),Reporte,1,0,1
-Naturaleza,img/parques.png,https://tableros.yvera.tur.ar/reportes/parques/ficha_parques_nacionales.html,Información de visitaciones a Parques Nacionales,Reporte,1,0,1
-EVYTH,img/evyth.png,https://tableros.yvera.tur.ar/reportes/evyth/ficha_trimestral_evyth.html,Reporte de los últimos datos de Turismo Interno reportados por la Encuesta de Viajes y Tursismo de los Hogares,Reporte,1,0,1
-Explorador,img/ti_dash.png,https://tableros.yvera.tur.ar/,Tablero para la consulta de datos desagregagos de las estiaciones históricas de Turismo Internacional,Tablero,1,1,0
+Naturaleza,img/parques.png,https://tableros.yvera.tur.ar/reportes/parques/ficha_parques_nacionales.html,Información de visitas a Parques Nacionales,Reporte,1,0,1
+EVYTH,img/evyth.png,https://tableros.yvera.tur.ar/reportes/evyth/ficha_trimestral_evyth.html,Reporte de los últimos datos de Turismo Interno estimados por la Encuesta de Viajes y Turismo de los Hogares,Reporte,1,0,1
+Explorador,img/ti_dash.png,https://tableros.yvera.tur.ar/,Tablero para la consulta de datos desagregados de las estimaciones históricas de Turismo Internacional,Tablero,1,1,0

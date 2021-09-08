@@ -13,9 +13,9 @@ data.frame(
   description  = c("El reporte presenta la última información de turismo receptivo, emisivo y balanza turística 
                    por todas las vías (aéreo, terrestre y fluvial / marítimo)",
                    "Presenta los últimos datos disponibles de la Encuesta de Ocupación Hotelera (EOH)",
-                   "Información de visitaciones a Parques Nacionales",
-                   "Reporte de los últimos datos de Turismo Interno reportados por la Encuesta de Viajes y Tursismo de los Hogares",
-                   "Tablero para la consulta de datos desagregagos de las estiaciones históricas de Turismo Internacional"), 
+                   "Información de visitas a Parques Nacionales",
+                   "Reporte de los últimos datos de Turismo Interno estimados por la Encuesta de Viajes y Turismo de los Hogares",
+                   "Tablero para la consulta de datos desagregados de las estimaciones históricas de Turismo Internacional"), 
   tags = c("Reporte","Reporte","Reporte","Reporte","Tablero"),
   Todos = c(1, 1, 1, 1, 1), 
   Tablero = c(0, 0, 0, 0, 1), 
