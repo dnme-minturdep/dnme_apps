@@ -1,5 +1,6 @@
 name: "dnme_apps"
 title: "TABLEROS y REPORTES"
+favicon: img/favicon.ico
 output_dir: "docs"
 navbar:
   logo:
