@@ -257,17 +257,17 @@ grafico_1 <- ggplot(data_grafico)  +
   geom_hline(yintercept = 0, color = "grey", alpha =0.7, size = 0.5) +
   geom_line(aes(period, emisivo),
             size = 1, color = cols_arg2[6], alpha = .5) +
-  geom_point(aes(period, emisivo, text = paste('fecha:', format(fecha,"%b-%y"),
+  geom_point(aes(period, emisivo, text = paste('fecha:', format(period,"%b-%y"),
                                               '<br>turistas:', format(round(emisivo,0),big.mark="."), 
                                               '<br>turismo:',"Emisivo")),
              size = 1.1, color = cols_arg2[6]) +
   geom_line(aes(period, receptivo),
             size = 1, color = cols_arg, alpha = .5) +
-  geom_point(aes(period, receptivo, text = paste('fecha:', format(fecha,"%b-%y"),
+  geom_point(aes(period, receptivo, text = paste('fecha:', format(period,"%b-%y"),
                                               '<br>turistas:', format(round(receptivo,0),big.mark="."), 
                                               '<br>turismo:',"Receptivo")),
              size = 1.1, color = cols_arg) +
-  geom_col(aes(period, balanza, fill = balanza_color,text = paste('fecha:', format(fecha,"%b-%y"),
+  geom_col(aes(period, balanza, fill = balanza_color,text = paste('fecha:', format(period,"%b-%y"),
                                               '<br>turistas:', format(round(balanza,0),big.mark="."), 
                                               '<br>turismo:',"Balanza"))) +
   scale_fill_manual(values = c("deficit" = cols_arg2[1],
