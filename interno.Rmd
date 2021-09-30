@@ -1,6 +1,6 @@
 ---
 title: "Turismo Interno"
-description: "Resumen de los últimos datos del turismo dentro del país realizado por los residentes en los grandes aglomerados urbanos del país, donde reside el 62%  de  la  población  argentina,  en  base  a  los  resultados  de  la  Encuesta  de  Viajes  y  Turismo  de  los Hogares (EVyTH), con frecuencia trimestral. "
+description: "Resumen de los últimos datos del turismo dentro de Argentina realizado por los residentes en los grandes aglomerados urbanos del país, donde reside el 62%  de  la  población  argentina,  en  base  a  los  resultados  de  la  Encuesta  de  Viajes  y  Turismo  de  los Hogares (EVyTH), con frecuencia trimestral."
 output: distill::distill_article
 ---
 ```{r setup, include=FALSE}
@@ -26,7 +26,7 @@ library(data.table)
 library(plotly)
 Sys.setlocale(locale = "es_AR.UTF-8")
 ```
-#### `r format(Sys.time(), '%B, %Y')`
+
 ```{r}
 ### Cargo funciones de trabajo
 #source("0_funciones_de_trabajo.R", encoding = "UTF-8")
@@ -64,11 +64,11 @@ theme_imet <- function() {
 gs4_deauth() # Importar sheet de google sin interactividad de autorizacion 
 
 ```
-Durante el 1° trimestre de 2021 se estimaron 6,2 millones de turistas internos, lo que significó una caída interanual del 29%. En este periodo los viajes fueron más cortos (-8% en la estadía media) y de menor gasto (-11% en el gasto promedio por turista). Sin embargo, la disminución de turistas sigue desacelerándose comparada con el resultado del 2° trimestre 2020, que fue de -96% i.a. (67 p.p. menos de caída). 
-
-Si lo comparamos con el 1° trimestre de 2019, este dato implica una caída del 37% en el volumen de turistas y una disminución del 4% de la estadía media. 
+### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados al `r paste(trim,"° trimestre de ",anio)`)
 
 <br>
+
+
 <br>
 ```{r}
 # DATOS
@@ -119,7 +119,10 @@ turismo_interno2 <- turismo_interno_sheet %>%
          periodo = paste0("Acum. ",year)) %>% 
   filter(year==anio)  
 ```
+Durante el  `r paste(trim,"° trimestre de ",anio)` se estimaron `r format(round(turismo_interno2[turismo_interno2$year == anio & turismo_interno2$trim == trim,"turistas"]/1e+6,1),decimal.mark=",")` millones de turistas internos, lo que significó una variación interanual de `r format(round(turismo_interno2[turismo_interno2$year == anio & turismo_interno2$trim == trim,"var.turistas"]*100,1),decimal.mark=",")`%.
+En este periodo los viajes tuvieron una estadía promedio de `r format(pull(round(turismo_interno2[turismo_interno2$year == anio & turismo_interno2$trim == trim,"estadia"],1)),decimal.mark=",")` noches (`r format(round(turismo_interno2[turismo_interno2$year == anio & turismo_interno2$trim == trim,"var.estadia"]*100,1),decimal.mark=",")`% con respecto al mismo período del año anterior) y un gasto promedio de \$`r format(pull(round(turismo_interno2[turismo_interno2$year == anio & turismo_interno2$trim == trim,"gasto.promedio.nom"],0)),decimal.mark=",",big.mark=".")` por turista (`r format(round(turismo_interno2[turismo_interno2$year == anio & turismo_interno2$trim == trim,"var.gasto.prom.real"]*100,1),decimal.mark=",")`% en términos reales con respecto al año anterior). 
 
+<br>
 ```{r}
 turismo_interno_tabla <- turismo_interno2[1:(nrow(turismo_interno2)-1),] %>% 
   filter(year == anio) %>% 
@@ -305,9 +308,11 @@ grafico <- data_grafico %>%
             size = 1,  alpha = .5, color =  cols_arg2[6]) +
   geom_point(data = filter(data_grafico, indicador == "turistas"),
              size = 1.1, color = cols_arg2[6],
-             aes(text=paste('turistas: ',format(round(n,2),decimal.mark=","),' M'))) +
+             aes(text=paste('período: ',trim,'° trim. ',year,
+                            '<br>turistas: ',format(round(n,2),decimal.mark=","),' M'))) +
   geom_col(data = filter(data_grafico, (indicador == "variacion_tur" & !is.na(n))),
-           aes(fill = variacion_color, text=paste('variación: ',format(round(n,2),decimal.mark=",",big.mark="."), "%"))) +
+           aes(fill = variacion_color, text=paste('período: ',trim,'° trim. ',year,
+                                                  '<br>variación: ',format(round(n,2),decimal.mark=",",big.mark="."), "%"))) +
   scale_fill_manual(values = c("negativa" = cols_arg2[1], 
                                "positiva" = cols_arg2[2],
                                "anticipo" = "yellow")) +
@@ -428,7 +433,7 @@ perfiles <- turismo_interno_sheet[-nrow(turismo_interno_sheet),] %>%
 ```
 
 ## Perfil del turista interno
-1° trimestre 2021. Población residente en los grandes aglomerados urbanos.
+`r paste(trim,"° trimestre de ",anio)`. Población residente en los grandes aglomerados urbanos.
 <br>
 
 ### Características del viaje
