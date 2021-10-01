@@ -155,7 +155,7 @@ En el acumulado del año las visitas suman un total de `r format(pull(tabla.1.ac
     #columns = vars(total,var.total,n_residentes,var.n_residentes,part.res, n_no_residentes, var.n_no_residentes,part.no.res
     #))%>% 
   cols_label(
-    total = html("Miles<br>de<br>Visitas") ,             
+    total = md("Miles<br>de<br>Visitas") ,             
     n_residentes = md("Miles<br>de<br>Visitas") ,             
     n_no_residentes = md("Miles<br>de<br>Visitas") ,                  
     var.n_no_residentes = md("Var. i.a.<br>  %") ,             
