@@ -1,0 +1,543 @@
+---
+title: "Parques Nacionales"
+description: "Resumen de los últimos datos de visitas a Parques y Reservas Nacionales del país según origen (condición de residencia) de los visitantes. La información se obtiene a partir de datos relevados por la Administración de Parques Nacionales."
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, message = F, warning = F, 
+                      fig.align = 'left')
+options(scipen = 9999)
+library(gt) # Easily Create Presentation-Ready Display Tables, CRAN v0.2.2
+library(tidyverse) # Easily Install and Load the 'Tidyverse', CRAN v1.3.0
+library(lubridate) # Make Dealing with Dates a Little Easier, CRAN v1.7.9
+library(extrafont) # Tools for using fonts, CRAN v0.17 # Tools for using fonts, CRAN v0.17
+library(ggtext) 
+library(glue)
+library(janitor)
+library(readxl)
+library(plotly)
+Sys.setlocale("LC_TIME", "es_AR.UTF-8")
+```
+
+```{r }
+# Definir mes / trimestre / año de referencia para títulos ####
+fecha <- "2021-06-01"
+mes <- "junio"
+anio <- "2021"
+# PALETAS Y FUENTES ---------------------------------------------------------
+# Paleta colores Presidencia
+cols_arg <- "#37BBED" # Celeste Institucional
+#Secundarios
+cols_arg2 <- c("#EE3D8F", # "ROJO"
+               "#50B8B1", # "VERDE"
+               "#F7941E","#FFD100","#D7DF23", "#9283BE")
+#Fuente
+familia_fuente <- "Encode Sans Normal"
+  # fonttable() %>% 
+  # as_tibble() %>% 
+  # filter(str_detect(FamilyName, "Encode Sans Normal"), 
+  #        Bold == TRUE) %>% 
+  # pull(FamilyName) %>% 
+  # unique()
+# Estilo de graficos
+theme_imet <- function() {
+  theme(legend.position = "none",
+        text = element_text(family = familia_fuente))
+}
+#gs4_deauth() # Importar sheet de google sin interactividad de autorizacion 
+# #Configuración tags htmls
+# meta() %>%
+#   meta_description(
+#     glue("Visitas a Parques Nacionales en {mes} {anio}")
+#   ) %>% 
+#   meta_viewport() %>% 
+#   meta_social(
+#     title = glue("Parques Nacionales {mes} {anio}"),
+#     image = "https://upload.wikimedia.org/wikipedia/commons/8/8e/Ministerio_de_Turismo_y_Deportes_arg.png",
+#     og_author = c("Dirección Nacional de Mercados y Estadística", 
+#                   "Subsecretaría de Desarrollo Estratégico", 
+#                   "Ministerio de Turismo y Deportes")
+#   )
+```
+
+
+
+### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste(mes," de ",anio)`)
+
+<br> 
+```{r}
+#Importo datos
+parques_nacionales <- read_excel("/srv/DataDNMYE/parques_nacionales/Pivot_PN_20210916.xlsx",
+                                 sheet = "base PN 2008_2020")
+# parques_nacionales <- read_sheet("https://docs.google.com/spreadsheets/d/1ZM7PfvY16tImMcFKUj0fCn6ASc1yxlye/edit#gid=1610808314")
+#parques_nacionales <- read.xlsx("data/Pivot_PN_20201125.xlsx",sheet="base PN 2008_2020")
+```
+
+```{r}
+#Agrego columna con número de mes
+tabla_parques <- parques_nacionales %>% 
+  left_join(data.frame(Mes = c("Enero","Febrero","Marzo","Abril","Mayo","Junio",
+                               "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"), 
+                       month = c(1:12)))
+# tabla_parques <- tabla_parques %>% mutate(
+#     visitantes = case_when(
+#       Mes %in% c("Abril", "Mayo", "Junio") & anio == 2020 ~ `is.na<-`(visitantes),
+#       TRUE ~ visitantes)
+#     )
+```
+
+```{r}
+data_tabla_1 <- tabla_parques %>% 
+  group_by(anio,month,residencia) %>% 
+  summarise(n = sum(visitantes,na.rm = T)) %>% ungroup() %>% 
+  arrange(anio,month) %>% 
+  group_by(anio,residencia) %>% 
+  mutate(acum = cumsum(n)) %>% ungroup() %>%
+  group_by(residencia) %>% 
+  mutate(var.n = n/lag(n,12)-1,var.acum = acum/lag(acum,12)-1) %>% 
+  mutate(residencia = case_when(residencia == "no residentes" ~ "no_residentes",
+                                TRUE ~ residencia),
+         period = ymd(as.character(glue::glue("{anio}/{month}/01")))) %>% 
+  pivot_wider(.,names_from="residencia",values_from = c("n","acum","var.n","var.acum")) %>% 
+  mutate(total = n_no_residentes + n_residentes,
+         var.total = total/lag(total,12)-1) %>% 
+  group_by(anio) %>% 
+  mutate(total.acum = cumsum(total)) %>% ungroup() %>% 
+  mutate(var.tot.acum = total.acum/lag(total.acum,12)-1) %>% 
+  mutate(
+    var.total = case_when(
+      is.infinite(var.total) ~ `is.na<-`(var.total),
+      TRUE ~ var.total),
+     var.n_no_residentes = case_when(
+      is.infinite(var.n_no_residentes) ~ `is.na<-`(var.n_no_residentes),
+      TRUE ~ var.n_no_residentes),
+     var.n_residentes = case_when(
+      is.infinite(var.n_residentes) ~ `is.na<-`(var.n_residentes),
+      TRUE ~ var.n_residentes)
+    )
+tabla.1.mes <- data_tabla_1 %>%
+  select("anio","month",period,total,n_no_residentes,n_residentes,var.n_no_residentes,var.n_residentes,var.total) %>%
+  mutate(part.res = n_residentes/total,
+         part.no.res = n_no_residentes/total,
+         periodo = paste0(mes," ",anio))  #SOLO ENERO
+tabla.1.acum <-  data_tabla_1 %>%
+  select("anio","month",period,total.acum,acum_residentes,acum_no_residentes,
+         var.acum_no_residentes,var.acum_residentes,var.tot.acum) %>% 
+  rename(total = total.acum, n_no_residentes = acum_no_residentes,  n_residentes = acum_residentes, 
+         var.n_no_residentes = var.acum_no_residentes,var.n_residentes = var.acum_residentes,
+         var.total = var.tot.acum) %>%  
+  mutate(part.res = n_residentes/total,
+         part.no.res = n_no_residentes/total,
+         periodo = paste0("Acum. ", anio)) 
+```
+<br> 
+En el mes de `r mes` se registraron `r format(pull(tabla.1.mes[tabla.1.mes$period == fecha,"total"]),big.mark=".")` visitas a Parques Nacionales, con `r format(pull(tabla.1.mes[tabla.1.mes$period == fecha,"n_residentes"]),big.mark=".")` visitas de residentes y `r format(pull(tabla.1.mes[tabla.1.mes$period == fecha,"n_no_residentes"]),big.mark=".")` de no residentes.
+
+En el acumulado del año las visitas suman un total de `r format(pull(tabla.1.acum[tabla.1.mes$period == fecha,"total"]),big.mark=".")` (`r format(pull(tabla.1.acum[tabla.1.acum$period == fecha,"n_residentes"]),big.mark=".")` residentes y `r format(pull(tabla.1.acum[tabla.1.acum$period == fecha,"n_no_residentes"]),big.mark=".")` no residentes), lo que implica una variación de `r format(round(100*pull(tabla.1.acum[tabla.1.acum$period == fecha,"var.total"]),1),decimal.mark=",")`% con respecto al mismo período del año anterior.
+
+<br>
+```{r}
+#tabla_1 <- 
+  tabla.1.mes %>% bind_rows(tabla.1.acum) %>% 
+  filter(period == fecha) %>%
+  #filter(periodo != "Acum. 2021") %>% #SOLO PARA ENERO
+  mutate_at(.vars = c("n_residentes", 
+                      "n_no_residentes", 
+                      "total"),
+            .funs = ~ .x/1000) %>% 
+  select(periodo,total,n_residentes,n_no_residentes,7:(ncol(tabla.1.mes)-1)) %>% 
+  gt() %>%
+  fmt_number(columns = c(2,3,4), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
+  fmt_percent(columns = c(5,6,7,8,9), decimals = 1, dec_mark = ",") %>%
+  #cols_align(
+   # align = "center",
+    #columns = vars(total,var.total,n_residentes,var.n_residentes,part.res, n_no_residentes, var.n_no_residentes,part.no.res
+    #))%>% 
+  cols_label(
+    total = html("Miles<br>de<br>Visitas") ,             
+    n_residentes = md("Miles<br>de<br>Visitas") ,             
+    n_no_residentes = md("Miles<br>de<br>Visitas") ,                  
+    var.n_no_residentes = md("Var. i.a.<br>  %") ,             
+    var.n_residentes = md("Var i.a.<br> %") ,                  
+    var.total = md("Var. i.a.<br> %")  ,
+    part.res = md("Part.<br>%"),
+    part.no.res = md("Part.<br>%"),
+    periodo = md("Período")
+  ) %>% 
+  tab_style(
+    style = list(
+      cell_text(color = cols_arg2[1]),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var.total),
+      rows =  var.total< 0)
+  ) %>%  
+  tab_style(
+    style = list(
+      cell_text(color = cols_arg2[2]),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var.total),
+      rows =  var.total > 0)
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = cols_arg2[2]),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var.n_no_residentes),
+      rows =  var.total > 0)
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = cols_arg2[1]),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var.n_no_residentes),
+      rows =  var.total < 0)
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = cols_arg2[1]),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var.n_residentes),
+      rows =  var.total < 0)
+  ) %>% 
+  tab_style(
+    style = list(
+      cell_text(color = cols_arg2[2]),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var.n_residentes),
+      rows =  var.total > 0)
+  ) %>%## AGRUPAMIENTO DE COLUMNAS POR VARIABLE DE INTERES
+  tab_spanner(
+    label = md("**TOTAL**"),
+    columns = vars(total,
+                   var.total)) %>% 
+  tab_spanner(
+    label = md("**RESIDENTES**"),
+    columns = vars(n_residentes,
+                   var.n_residentes,
+                   part.res)) %>% 
+  tab_spanner(
+    label = md("**NO RESIDENTES**"),
+    columns = vars(n_no_residentes,
+                   var.n_no_residentes,
+                   part.no.res)
+  )  %>% 
+    tab_header(title="Visitas a Parques Nacionales") %>% 
+  cols_align(
+    align = "center") %>% 
+  fmt_missing(columns = 1:8,
+              missing_text = "///") %>% 
+  tab_source_note(glue("///: Dato que no corresponde mostrar debido a la naturaleza de las cosas. En junio 2020, el número de visitas a Parques Nacionales fue considerado nulo debido a la emergencia sanitaria; por ello no es posible realizar la comparación i.a. de {mes} 2021."))
+#setwd("Salidas/")
+# htmltools::save_html(html = tabla_1, file = "tabla_1_PN.html")
+# webshot::webshot("tabla_1_PN.html", file="out.png", delay=3,vwidth =700 ,vheight = 300)
+```
+
+<br>
+
+
+```{r}
+#Gráfico1
+data_grafico_1 <- tabla.1.mes %>% select(period,total) %>% 
+  mutate(total = round(total/1000,1)) %>% 
+  filter(period >= "2018-01-01" & period <= fecha)
+grafico_1 <- ggplot(data_grafico_1)  +
+  geom_hline(yintercept = 0, color = "black", alpha =0.7, size = 0.5) +
+  geom_line(aes(period, total),
+            size = 1, color = cols_arg2[6], alpha = .5) +
+  geom_point(aes(period, total,
+                 text=paste('fecha: ',"",format(period,"%b-%y")
+    ,'<br>visitas: ',format(round(total,2),big.mark=".",decimal.mark=","),' m')),
+             size = 1.1, color = cols_arg2[6]) +
+  # geom_text(data = filter(data_grafico_1, (period == fecha)),
+  #           aes(x = period, y = total, label = format(total,decimal.mark = ",")),
+  #           color = cols_arg2[6],
+  #           size = 2,  
+  #           fontface = "bold",
+  #           vjust = -0.5,
+  #           family = familia_fuente) +
+  scale_x_date(date_breaks = "1 months", 
+               date_labels = "%b%y", 
+               expand = c(0,15)) +
+  scale_y_continuous(breaks = seq(0, 2000, by = 100), 
+                     labels = scales::number_format(big.mark = ".")) +
+  theme_minimal() +
+  theme_imet() +
+  theme(
+    plot.subtitle = element_markdown(size = ),
+    axis.text.x = element_text(size = 6, angle = 90),
+    axis.text.y = element_text(size = 6),
+    panel.grid.major = element_line(colour="grey90",size = rel(0.5)),         
+    panel.grid.minor = element_blank())+
+  coord_cartesian(clip = 'off')+
+  labs(x="",y="",
+       title = "Visitas en Parques Nacionales",
+       subtitle = tolower(glue("**En miles. enero 2018 - {mes} {anio}**")))
+  
+ggplotly(grafico_1,tooltip = "text")
+```
+
+```{r}
+#Grafico 2
+data_grafico_2 <- tabla.1.mes %>% select(period,"residentes" = var.n_residentes,"no_residentes"=var.n_no_residentes) %>% 
+  filter(period >= "2018-01-01" & period <= fecha) %>% 
+  pivot_longer(cols=c("residentes","no_residentes"))%>% 
+  filter(period >= "2018-01-01" & period <= fecha) 
+  
+grafico_2 <- ggplot(data = data_grafico_2, aes(x = period, y = value)) + 
+  geom_hline(yintercept = 0, color = "black", alpha = 0.6) +
+  geom_line( aes(color = name), 
+            size = 1,  alpha = .5) +
+  geom_point(data = data_grafico_2, aes(color = name,
+                                        text=paste('fecha: ',"",format(period,"%b-%y")
+    ,'<br>variación: ',format(round(100*value,1),big.mark=".",decimal.mark=","),'%',
+    '<br>origen: ',name)),
+             size = 1.1) +
+  # geom_text(data = filter(data_grafico_2, (period == fecha)),
+  #           aes(x = period, y = value, 
+  #               label =paste0(format(round(100*value,0),decimal.mark = ","),"%"), colour = name,
+  #               vjust = ifelse(name == "var.n_residentes", -0.5, 1.2)),
+  #           size = 2,  
+  #           fontface = "bold",
+  #           family = familia_fuente)+
+  scale_color_manual(values = c("no_residentes" = cols_arg2[6], 
+                                "residentes" = cols_arg2[2])) +
+  scale_x_date(date_breaks = "1 months", 
+               date_labels = "%b%y", 
+               expand = c(0,20)) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = familia_fuente), 
+    plot.title    = element_markdown(size = 13),
+    plot.subtitle = element_markdown(size = 10, face = "bold"),
+    plot.caption  = element_markdown(size = 7),
+    strip.text.y  = element_text(size = 6, face = "bold"),
+    axis.text.x   = element_text(size = 6, angle = 90),
+    axis.text.y   = element_text(size = 6),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "none",
+    strip.placement = "outside"
+  ) +
+  coord_cartesian(clip = 'off')+
+  scale_y_continuous(labels = scales::percent_format())+
+  labs(x="",y="",
+       title = "Variación porcentual interanual de las visitas en Parques Nacionales",
+       subtitle = tolower(glue("enero 2018 - {mes} {anio}. <span style='color:{cols_arg2[2]}'>residentes</span> y <span style='color:{cols_arg2[6]}'>no residentes")))
+ggplotly(grafico_2,tooltip="text")
+```
+
+
+<br>
+
+
+```{r}
+### Tabla 2 ----
+data_tabla_2 <- tabla_parques %>% 
+  mutate(visitantes = coalesce(visitantes, 0)) %>% 
+  group_by(anio, parque_nacional, residencia) %>% 
+  mutate(acumulado = cumsum(visitantes)) %>% ungroup() %>% 
+  filter(anio >= 2019 & month == month(fecha)) %>% 
+  pivot_wider(names_from  = c("anio", "residencia"), values_from = c(visitantes, acumulado)) %>% 
+  mutate(across(where(is.numeric), ~ coalesce(.x, 0))) %>%
+  clean_names() %>% 
+  mutate(visitantes_2021_total = visitantes_2021_residentes + visitantes_2021_no_residentes,
+         visitantes_2020_total = visitantes_2020_residentes + visitantes_2020_no_residentes,
+         visitantes_2019_total = visitantes_2019_residentes + visitantes_2019_no_residentes,
+         acumulado_2021_total = acumulado_2021_residentes + acumulado_2021_no_residentes,
+         acumulado_2020_total  = acumulado_2020_residentes + acumulado_2020_no_residentes,
+         acumulado_2019_total  = acumulado_2019_residentes + acumulado_2019_no_residentes,
+         participacion = round(acumulado_2021_total / sum(acumulado_2021_total), 3)) %>% 
+  arrange(-participacion) %>%
+  mutate(var_ia_visitantes_2021_tot = visitantes_2021_total/visitantes_2020_total-1,
+         var_ia_visitantes_res = visitantes_2021_residentes/visitantes_2020_residentes-1,
+         var_ia_visitantes_no_res = visitantes_2021_no_residentes/visitantes_2020_no_residentes-1,
+         var_ia_acumulado_total  = acumulado_2021_total/ acumulado_2020_total-1) %>% 
+  mutate(across(where(is.numeric), ~ coalesce(.x, 0))) %>%  
+  arrange(-acumulado_2021_total) %>% 
+  mutate(orden = rank(-acumulado_2021_total),
+         presentacion = case_when(orden <= 25 ~ parque_nacional,
+                                  TRUE ~ "Resto")) %>% 
+   mutate(
+    var_ia_visitantes_2021_tot = `is.na<-`(var_ia_visitantes_2021_tot),
+     var_ia_visitantes_res = `is.na<-`(var_ia_visitantes_res),
+     var_ia_visitantes_no_res = `is.na<-`(var_ia_visitantes_no_res)
+    )
+```
+
+
+```{r}
+resto_pn <- data_tabla_2 %>% 
+  filter(presentacion == "Resto") %>% 
+  summarise_if(is.numeric, sum) %>% 
+  mutate(var_ia_visitantes_2021_tot = visitantes_2021_total/visitantes_2020_total-1,
+         var_ia_visitantes_res = visitantes_2021_residentes/visitantes_2020_residentes-1,
+         var_ia_visitantes_no_res = visitantes_2021_no_residentes/visitantes_2020_no_residentes-1,
+         var_ia_acumulado_total  = acumulado_2021_total/acumulado_2020_total-1,
+         parque_nacional = "Resto") %>% 
+  mutate(
+    var_ia_visitantes_2021_tot = `is.na<-`(var_ia_visitantes_2021_tot),
+    var_ia_visitantes_res = `is.na<-`(var_ia_visitantes_res),
+    var_ia_visitantes_no_res = `is.na<-`(var_ia_visitantes_no_res)
+    )
+data_tabla_2 <- data_tabla_2 %>% 
+  filter(presentacion != "Resto") %>% 
+  bind_rows(resto_pn) %>% 
+  mutate(participacion = round(acumulado_2021_total / sum(acumulado_2021_total), 3)) %>% 
+  select(parque_nacional,
+         visitantes_2021_total, var_ia_visitantes_2021_tot, 
+         visitantes_2021_residentes, var_ia_visitantes_res,
+         visitantes_2021_no_residentes, var_ia_visitantes_no_res,
+         acumulado_2021_total, var_ia_acumulado_total, 
+         participacion)
+#tabla2 <- 
+  data_tabla_2 %>% 
+  mutate(parque_nacional = str_to_title(parque_nacional)) %>% 
+  #select(-var_ia_acumulado_total,-acumulado_2021_total) %>% 
+  gt(rowname_col = "parque_nacional") %>% #SOLO EN ENERO
+  cols_label(
+    visitantes_2021_total         = md("Visitas"),
+    var_ia_visitantes_2021_tot    = md("Var % i.a."),
+    visitantes_2021_residentes    = md("Visitas") ,
+    var_ia_visitantes_res         = md("Var % i.a."),
+    visitantes_2021_no_residentes = md("Visitas"),
+    var_ia_visitantes_no_res      = md("Var % i.a."), #SOLO EN ENERO
+    acumulado_2021_total          = md("Visitas"), #SOLO EN ENERO
+    var_ia_acumulado_total        = md("Var % i.a."),
+    participacion                 = md("Participación %")
+  ) %>% 
+  fmt_number(columns = c(2,4,6,8), decimals = 0, sep_mark = ".", dec_mark = ",") %>% #CAMBIAR, SOLO ENERO
+  fmt_percent(columns = c(3,5,7,9,10), decimals = 1, dec_mark = ",") %>% 
+  cols_align(
+    align = "center",
+    columns = vars(visitantes_2021_total, var_ia_visitantes_2021_tot, visitantes_2021_residentes,
+                   var_ia_visitantes_res, visitantes_2021_no_residentes, var_ia_visitantes_no_res,
+                   acumulado_2021_total, var_ia_acumulado_total,  #SOLO ENERO
+                   participacion)
+  )  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans")
+    )
+  ) %>%
+  tab_header(
+    title = "RANKING DE LOS PARQUES NACIONALES CON MAYOR CANTIDAD DE VISITAS",
+    #subtitle = md(glue("**Pasajeros, asientos y vuelos. {mes} {anio} y acumulado {anio}**"))
+  ) %>%
+  tab_source_note(
+    source_note = md(
+      "**Fuente**: Fuente: Dirección Nacional de Mercados y Estadística, Subsecretaría de Desarrollo Estratégico, Ministerio de Turismo y Deportes en base a la informacion suministrada por la Dirección de Mercadeo de la Dirección Nacional de Uso Público, APN")
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#EE3D8F"),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var_ia_visitantes_2021_tot),
+      rows = var_ia_visitantes_2021_tot < 0)
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#50B8B1"),
+      cell_text(weight =  "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var_ia_visitantes_2021_tot),
+      rows = var_ia_visitantes_2021_tot > 0)
+  )  %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#EE3D8F"),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var_ia_visitantes_res),
+      rows = var_ia_visitantes_res < 0)
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#50B8B1"),
+      cell_text(weight =  "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var_ia_visitantes_res),
+      rows = var_ia_visitantes_res > 0)
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#EE3D8F"),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var_ia_visitantes_no_res),
+      rows = var_ia_visitantes_no_res < 0)
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#50B8B1"),
+      cell_text(weight =  "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var_ia_visitantes_no_res),
+      rows = var_ia_visitantes_no_res > 0) 
+    ) %>%
+    tab_style(
+     style = list(
+       cell_text(color = "#EE3D8F"),
+       cell_text(weight  = "bold")
+     ),
+     locations = cells_body(
+       columns = vars(var_ia_acumulado_total),
+      rows = var_ia_acumulado_total < 0)
+     ) %>%
+    tab_style(
+  style = list(
+   cell_text(color = "#50B8B1"),
+  cell_text(weight =  "bold")
+  ),
+  locations = cells_body(
+   columns = vars(var_ia_acumulado_total),
+   rows = var_ia_acumulado_total > 0)
+  ) %>% ## AGRUPAMIENTO DE COLUMNAS POR VARIABLE DE INTERES
+  tab_header(title = toupper(glue("{mes} {anio}"))) %>% 
+  tab_spanner(
+    label = md("**TOTAL**"),
+    columns = vars(visitantes_2021_total, 
+                   var_ia_visitantes_2021_tot,
+                   participacion #SOLO ENERO
+                   )) %>%
+  tab_spanner(
+    label = md("**RESIDENTES**"),
+    columns = vars(visitantes_2021_residentes,
+                   var_ia_visitantes_res))  %>%
+    tab_spanner(
+    label = md("**NO RESIDENTES**"),
+    columns = vars(visitantes_2021_no_residentes,
+                   var_ia_visitantes_no_res))  %>%
+  #tab_header(title = "ACUMULADO 2020")
+  tab_spanner(
+   label = md(glue("**ACUMULADO {anio}**")),
+   columns = vars(acumulado_2021_total,
+                  var_ia_acumulado_total,
+                  participacion)) %>%
+  tab_stubhead(label = md("**Parque Nacional**")) %>% 
+  fmt_missing(columns = 1:7,
+              missing_text = "///") %>% 
+  tab_source_note(glue("///: Dato que no corresponde mostrar debido a la naturaleza de las cosas. En junio 2020, el número de visitas a Parques Nacionales fue considerado nulo debido a la emergencia sanitaria; por ello no es posible realizar la comparación i.a. de {mes} 2021.")) #%>% 
+    #tab_source_note("Nota: entre el 22 y 30 de mayo los parques nacionales se cerraron a las visitas (según DI-2021-95-APN-DNO#APNAC) en adhesión a las medidas nacionales (Decreto 334/2021).")
+```
+
+
+

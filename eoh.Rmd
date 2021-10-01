@@ -38,7 +38,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 # Definir mes / trimestre / año de referencia para títulos ----
 fecha <- as.Date("2021-06-01")
-mes <- "Junio"
+mes <- "junio"
 #trimestre <- "2do"
 anio <- "2021"
 
@@ -88,10 +88,17 @@ theme_imet <- function() {
 ```
 
 
-#### `r format(Sys.time(), '%B, %Y')`
+### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste(mes," de ",anio)`)
 
 
-<br><br>
+- En junio de 2021, se hospedaron 288,9 mil viajeros (creciendo 1.100% en comparación con el mismo mes de 2020) con una estadía de 2,3 noches en promedio (-27% i.a). **El total de pernoctes registrados ascendió a 653,9 mil noches (781% i.a)**. 
+
+- El 98% de los viajeros hospedados y las pernoctaciones registradas fueron de residentes.
+
+- **Los establecimientos de 3 estrellas, Boutiques y Aparts concentraron la mayor cantidad de pernoctaciones (224,5 mil)**, con una tasa de ocupación de plazas de 11,4%; seguidos por los hoteles de 4 y 5 estrellas, con una ocupación de 11,7% de las plazas disponibles.
+
+<br>
+<br>
 
 ```{r}
 #Importo datos
@@ -581,14 +588,6 @@ grafico2
 
 #ggsave(grafico2, path = "salidas/", filename = "grafico2.png", width = 12, height = 7)
 ```
-
-+ En junio de 2021, se hospedaron 288,9 mil viajeros (creciendo 1.100% en comparación con el mismo mes de 2020) con una estadía de 2,3 noches en promedio (-27% i.a). **El total de pernoctes registrados ascendió a 653,9 mil noches (781% i.a)**. 
-
-+ El 98% de los viajeros hospedados y las pernoctaciones registradas fueron de residentes.
-
-+ **Los establecimientos de 3 estrellas, Boutiques y Aparts concentraron la mayor cantidad de pernoctaciones (224,5 mil)**, con una tasa de ocupación de plazas de 11,4%; seguidos por los hoteles de 4 y 5 estrellas, con una ocupación de 11,7% de las plazas disponibles.
-
-<br>
 
 ## REGIONES
 
