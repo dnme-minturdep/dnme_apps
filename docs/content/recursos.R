@@ -23,4 +23,6 @@ data.frame(
   Tablero = c(0, 0, 0, 0, 1, 1), 
   Reporte = c(1, 1, 1, 1, 0, 0)) %>% 
   as_tibble() %>% 
+  mutate(orden = c(1, 3, 4, 5, 2, 6)) %>% # OREDNO POR TEMA Y NO POR TIPO DE RECURSO 
+  arrange(orden) %>% 
   write_csv(here::here("content", "recursos.csv"))
