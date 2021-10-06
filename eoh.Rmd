@@ -37,8 +37,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2021-06-01")
-mes <- "junio"
+fecha <- as.Date("2021-07-01")
+mes <- "Julio"
 #trimestre <- "2do"
 anio <- "2021"
 
@@ -87,19 +87,6 @@ theme_imet <- function() {
 #   )
 ```
 
-
-### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste(mes," de ",anio)`)
-
-
-- En junio de 2021, se hospedaron 288,9 mil viajeros (creciendo 1.100% en comparación con el mismo mes de 2020) con una estadía de 2,3 noches en promedio (-27% i.a). **El total de pernoctes registrados ascendió a 653,9 mil noches (781% i.a)**. 
-
-- El 98% de los viajeros hospedados y las pernoctaciones registradas fueron de residentes.
-
-- **Los establecimientos de 3 estrellas, Boutiques y Aparts concentraron la mayor cantidad de pernoctaciones (224,5 mil)**, con una tasa de ocupación de plazas de 11,4%; seguidos por los hoteles de 4 y 5 estrellas, con una ocupación de 11,7% de las plazas disponibles.
-
-<br>
-<br>
-
 ```{r}
 #Importo datos
 pernoctes_residencia <- read_csv("/srv/DataDNMYE/eoh/Pernoctes-residentes-y-no-residentes.csv")
@@ -116,18 +103,9 @@ eoh <- pernoctes_residencia %>%
       viajeros = case_when(
       indice_tiempo %in% c(as.Date("2020-04-01"), as.Date("2020-05-01")) & anio == 2021 ~ `is.na<-`(viajeros),
       TRUE ~ viajeros))
-```
 
-## ORIGEN DE LOS VIAJEROS
 
-<br>
-
-### Evolución de las pernoctaciones
-
-<br>
-```{r}
 ### GRÁFICO 1 - Evolución de pernoctaciones
-
 datos_grafico1 <- eoh %>%
   filter(year(indice_tiempo) >= 2018) %>% 
   mutate(pernoctes = round(pernoctes/1000, 3)) %>% 
@@ -151,29 +129,22 @@ grafico1 <- datos_grafico1 %>%
   theme_minimal() +
   theme_imet() +
   theme(
-    plot.title = element_markdown(size = 14, family = familia_fuente, colour = "#AAAAAA"),
-    plot.subtitle  = element_markdown(family = familia_fuente, size = 12),
+    #plot.title = element_markdown(size = 14, family = familia_fuente, colour = "#AAAAAA"),
+    plot.title  = element_markdown(family = familia_fuente, size = 12),
     plot.caption = element_markdown(size = 8,  family = familia_fuente),
     axis.text.x = element_text(size = 9, angle = 90),
     axis.text.y = element_text(size = 9),
     panel.grid.major = element_line(colour="grey90",size = rel(0.5)),         
     panel.grid.minor = element_blank()) +
-  labs(title = glue("**Evolución de las pernoctaciones según origen**"),
-       subtitle = tolower(glue("**en miles de noches. enero 2018-{mes} {anio}.** <span style='color:{cols_arg2[6]}'>**residentes**</span> **y** <span style='color:{cols_arg2[1]}'>**no residentes**</span>")),
+  labs(
+       title = tolower(glue("en miles de noches. enero 2018-{mes} {anio}. <span style='color:{cols_arg2[6]}'>residentes</span> y <span style='color:{cols_arg2[1]}'>no residentes</span>")),subtitle="",
                        x="",y="", fill = "",
        caption = "Fuente: Encuesta de Ocupación Hotelera (EOH), INDEC y Dirección Nacional de Mercados y Estadística, Subsecretaría de Desarrollo Estratégico, Ministerio de Turismo y Deportes")
-  
-ggplotly(grafico1, tooltip = "text")
+```
 
-#ggsave(grafico1, path = "salidas/", filename = "grafico1.png", width = 19, height = 10, units = "cm")
-```   
-
-<br>
-
-### Pernoctaciones, viajeros y estadía
 
 ```{r}
-#Opcion sin serie
+### TABLA 1
 tabla1 <- eoh %>% select(-observaciones) %>% 
   filter(month(indice_tiempo) <= month(fecha) & year(indice_tiempo) >= year(fecha)-1) %>%
   group_by(indice_tiempo) %>% 
@@ -230,6 +201,80 @@ tablafinal_ficha <- tabla1_A %>% select(indice_tiempo, origen_viajeros, pernocte
                             viajeros, var_ia_viajeros,
                             estadia, var_ia_estadia) %>%  rbind(acumulados)
 ```
+
+```{r}
+### TABLA 2 - pernoctaciones por categoría
+
+#Importo datos
+pernoctaciones_categoria <- read_csv("/srv/DataDNMYE/eoh/pernoctaciones-por-categoria.csv")
+plazas_categoria <- read_csv("/srv/DataDNMYE/eoh/plazas-disponibles-por-categoria.csv")
+
+tabla2 <- pernoctaciones_categoria %>% left_join(plazas_categoria) %>% 
+  mutate(indice_tiempo = ym(indice_tiempo)) %>% 
+  filter(month(indice_tiempo) == month(fecha) & year(indice_tiempo) >= year(fecha)-1) %>%
+  mutate(pernoctes = round(pernoctes/1000, 3),
+         plazas_disponibles = round(plazas_disponibles/1000, 3),
+         origen_viajeros = case_when(origen_viajeros == "Residentes" ~ "res",
+         origen_viajeros == "No residentes" ~ "nores",
+         origen_viajeros == "Total" ~ "total")) %>%
+  group_by(categoria_del_hotel, origen_viajeros) %>%
+  mutate(pernoctes = case_when(pernoctes == 0 ~ `is.na<-`(pernoctes),
+      TRUE ~ pernoctes)) %>% 
+  mutate(var_ia_pernoctes  = round(pernoctes / lag(pernoctes, n = 1) -1, 3)) %>%
+  ungroup() %>%
+  pivot_wider(names_from = "origen_viajeros", values_from = c("pernoctes", "var_ia_pernoctes")) %>% 
+  filter(year(indice_tiempo) == year(fecha)) %>%
+  arrange(desc(categoria_del_hotel)) %>% #AD HOC JULIO 2021
+  mutate(var_ia_pernoctes_total = case_when(!categoria_del_hotel == "Total" ~
+                                       `is.na<-`(var_ia_pernoctes_total),
+                                     TRUE ~ var_ia_pernoctes_total),
+         var_ia_pernoctes_res = case_when(!categoria_del_hotel == "Total" ~
+                                       `is.na<-`(var_ia_pernoctes_res),
+                                     TRUE ~ var_ia_pernoctes_res),
+         var_ia_pernoctes_nores = case_when(!categoria_del_hotel == "Total" ~
+                                       `is.na<-`(var_ia_pernoctes_nores),
+                                     TRUE ~ var_ia_pernoctes_nores)) #%>%
+  # mutate(pernoctes_nores = case_when(categoria_del_hotel %in% 
+  #                                      c("1 y 2 estrellas", "Para Hoteles") ~
+  #                                      `is.na<-`(pernoctes_nores),
+  #                                    TRUE ~ pernoctes_nores))
+
+#Reordeno filas
+tabla2 <- tabla2[c(1,3,4,5,2),]
+
+```
+
+### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste(tolower(mes)," de ",anio)`)
+
+
++ En `r tolower(mes)` de `r anio`, se hospedaron `r format(round(as.numeric(tablafinal_ficha[3,5]),1), decimal.mark = ",", big.mark = ".")` viajeros (creciendo `r format(round(as.numeric(tablafinal_ficha[3,6]*100),1), decimal.mark = ",", big.mark = ".")`% en comparación con el mismo mes de 2020) con una estadía de `r format(round(as.numeric(tablafinal_ficha[3,7]),1), decimal.mark = ",", big.mark = ".")` noches en promedio (`r format(round(as.numeric(tablafinal_ficha[3,8]*100),1), decimal.mark = ",", big.mark = ".")`% i.a). **El total de pernoctes registrados ascendió a `r format(round(as.numeric(tablafinal_ficha[3,3]),1), decimal.mark = ",", big.mark = ".")` mil noches (`r format(round(as.numeric(tablafinal_ficha[3,4]*100),0), decimal.mark = ",", big.mark = ".")`% i.a)**. 
+
++ En lo que llevamos de 2021, las pernoctaciones presentan una caída de 11% i.a., en tanto que los viajeros lo hacen en un 7%; sin embargo, las pernoctaciones y viajeros residentes en el país crecieron por primera vez en el acumulado anual (8% y 19%, respectivamente).
+
++ El `r format(round(as.numeric(tablafinal_ficha[1,5]/tablafinal_ficha[3,5]*100),0), decimal.mark = ",", big.mark = ".")`% de los viajeros hospedados fueron residentes, los cuales registraron el `r format(round(as.numeric(tablafinal_ficha[1,3]/tablafinal_ficha[3,3]*100),0), decimal.mark = ",", big.mark = ".")`% de las pernoctaciones.
+
++ **Los establecimientos de `r tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "categoria_del_hotel"]` concentraron la mayor cantidad de pernoctaciones (`r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"]),digits=1),decimal.mark = ",", big.mark = ".")` mil)**, con una tasa de ocupación de plazas de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`%; seguidos por los establecimientos `r tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "categoria_del_hotel"]`, con `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"]),digits=0),decimal.mark = ",", big.mark = ".")` mil pernoctes y una ocupación de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`% de las plazas disponibles.
+
+<br>
+<br>
+
+
+## ORIGEN DE LOS VIAJEROS
+
+<br>
+
+### Evolución de las pernoctaciones
+
+<br>
+```{r}
+ggplotly(grafico1, tooltip = "text")
+
+#ggsave(grafico1, path = "salidas/", filename = "grafico1.png", width = 19, height = 10, units = "cm")
+```   
+
+<br>
+
+### Pernoctaciones, viajeros y estadía
 
 ```{r}
 tabla1_ficha <- tablafinal_ficha %>%
@@ -338,7 +383,8 @@ tabla1_ficha <- tablafinal_ficha %>%
     )
   ) %>% 
   tab_options(table.align = "left",
-              table.width = 800,
+              table.font.size = 12,
+              #table.width = 800,
               row_group.font.weight = "bold") %>% 
   fmt_missing(
       columns = 3:8,
@@ -360,42 +406,6 @@ tabla1_ficha
 ### Plazas y pernoctaciones
 
 ```{r fig.height=5, fig.width=10}
-### TABLA 2 - pernoctaciones por categoría
-
-#Importo datos
-pernoctaciones_categoria <- read_csv("/srv/DataDNMYE/eoh/pernoctaciones-por-categoria.csv")
-plazas_categoria <- read_csv("/srv/DataDNMYE/eoh/plazas-disponibles-por-categoria.csv")
-
-tabla2 <- pernoctaciones_categoria %>% left_join(plazas_categoria) %>% 
-  mutate(indice_tiempo = ym(indice_tiempo)) %>% 
-  filter(month(indice_tiempo) == month(fecha) & year(indice_tiempo) >= year(fecha)-1) %>%
-  mutate(pernoctes = round(pernoctes/1000, 3),
-         plazas_disponibles = round(plazas_disponibles/1000, 3),
-         origen_viajeros = case_when(origen_viajeros == "Residentes" ~ "res",
-         origen_viajeros == "No residentes" ~ "nores",
-         origen_viajeros == "Total" ~ "total")) %>%
-  group_by(categoria_del_hotel, origen_viajeros) %>% 
-  mutate(var_ia_pernoctes  = round(pernoctes / lag(pernoctes, n = 1) -1, 3)) %>%
-  ungroup() %>%
-  pivot_wider(names_from = "origen_viajeros", values_from = c("pernoctes", "var_ia_pernoctes")) %>% 
-  filter(year(indice_tiempo) == year(fecha)) %>%
-  arrange(desc(categoria_del_hotel)) %>% #AD HOC JUNIO 2021
-  mutate(var_ia_pernoctes_total = case_when(!categoria_del_hotel == "Total" ~
-                                       `is.na<-`(var_ia_pernoctes_total),
-                                     TRUE ~ var_ia_pernoctes_total),
-         var_ia_pernoctes_res = case_when(!categoria_del_hotel == "Total" ~
-                                       `is.na<-`(var_ia_pernoctes_res),
-                                     TRUE ~ var_ia_pernoctes_res),
-         var_ia_pernoctes_nores = case_when(!categoria_del_hotel == "Total" ~
-                                       `is.na<-`(var_ia_pernoctes_nores),
-                                     TRUE ~ var_ia_pernoctes_nores)) %>% 
-  mutate(pernoctes_nores = case_when(categoria_del_hotel %in% 
-                                       c("1 y 2 estrellas", "Para Hoteles") ~
-                                       `is.na<-`(pernoctes_nores),
-                                     TRUE ~ pernoctes_nores))
-
-#Reordeno filas
-tabla2 <- tabla2[c(1,3,4,5,2),]
 
 tabla2_ficha <- tabla2 %>% 
   select(categoria_del_hotel, plazas_disponibles, pernoctes_total, var_ia_pernoctes_total,
@@ -513,7 +523,9 @@ tabla2_ficha <- tabla2 %>%
     )
   ) %>% 
   tab_options(table.align = "left",
-              table.width = 500) %>% 
+              table.font.size = 12
+              #table.width = 500
+              ) %>% 
   fmt_missing(
       columns = 4:8,
       missing_text = "///"
@@ -617,14 +629,14 @@ tabla3 <- destinos %>% select(-observaciones) %>%
          viajeros_total = viajeros_residentes + viajeros_no_residentes,
          estadia_residentes = round(pernoctes_residentes/viajeros_residentes, 1),
          estadia_no_residentes = round(pernoctes_no_residentes/viajeros_no_residentes, 1),
-         estadia_total = round(pernoctes_total/viajeros_total, 1)) %>%  #AD HOC JUNIO 2021
-  mutate(pernoctes_no_residentes = case_when(region_de_destino == "Córdoba"  ~
+         estadia_total = round(pernoctes_total/viajeros_total, 1)) %>%  #AD HOC JULIO 2021
+  mutate(pernoctes_no_residentes = case_when(region_de_destino == "Cuyo"  ~
                                        `is.na<-`(pernoctes_no_residentes),
                                      TRUE ~ pernoctes_no_residentes),
-         viajeros_no_residentes = case_when(region_de_destino == "Córdoba"  ~
+         viajeros_no_residentes = case_when(region_de_destino == "Cuyo"  ~
                                        `is.na<-`(viajeros_no_residentes),
                                      TRUE ~ viajeros_no_residentes),
-         estadia_no_residentes = case_when(region_de_destino == "Córdoba"  ~
+         estadia_no_residentes = case_when(region_de_destino == "Cuyo"  ~
                                        `is.na<-`(estadia_no_residentes),
                                      TRUE ~ estadia_no_residentes))
 
@@ -688,7 +700,9 @@ tabla3_ficha <- tabla3 %>% filter(year(indice_tiempo) == anio) %>%
     columns = vars(estadia_total, estadia_residentes, estadia_no_residentes)
   ) %>% 
   tab_options(table.align = "left",
-              table.width = 500) %>% 
+              table.font.size = 12
+              #table.width = 500
+              ) %>% 
   fmt_missing(
       columns = 3:10,
       missing_text = "///"
@@ -748,14 +762,14 @@ grafico3 <- datos_grafico3 %>% ggplot() +
   theme_imet() +
   scale_y_continuous(limits = c(-1, dato_escala2)) +
   theme(
-    plot.title = element_markdown(size = 14, family = familia_fuente, colour = "#AAAAAA", hjust = -0.18),
+    #plot.title = element_markdown(size = 14, family = familia_fuente, colour = "#AAAAAA", hjust = -0.18),
     plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = -0.2),
     plot.caption = element_markdown(size = 8, family = familia_fuente),
     axis.text.x = element_blank(),
     axis.text.y = element_text(size = 12, colour = "black", face = "bold"),
     panel.grid.major = element_blank(),         
     panel.grid.minor = element_blank()) +
-  labs(title = "**Pernoctaciones por región**",
+  labs(#title = "**Pernoctaciones por región**",
        subtitle = tolower(glue("**{mes} {anio}.** <span style='color:{cols_arg2[6]}'>**residentes**</span> **y** <span style='color:{cols_arg2[2]}'>**no residentes**</span>")),
                        x="",y="", fill = "",
        caption = "Nota: No se presentan los pernoctes de no residentes para la región Córdoba por la naturaleza de las cosas.   \n\nFuente: Encuesta de Ocupación Hotelera (EOH), INDEC y Dirección Nacional de Mercados y Estadística, Subsecretaría de Desarrollo Estratégico, Ministerio de Turismo y Deportes")
@@ -766,11 +780,11 @@ grafico3
 ```
 <br>
 
-+ **La mayor cantidad de pernoctaciones se registraron en la región Patagonia**, con 144,5 mil noches, seguida por CABA (115,6 mil) y Norte (115,5 mil noches).
++ **La mayor cantidad de pernoctaciones se registraron en la región `r as.character(tabla3[tabla3$pernoctes_total == sort(tabla3$pernoctes_total, na.last = T)[length(tabla3$pernoctes_total)-7], "region_de_destino"] %>% filter(!is.na(region_de_destino)))`**, con `r format(round(as.numeric(max(tabla3$pernoctes_total, na.rm = T)), 1), decimal.mark = ",", big.mark = ".")` mil noches, seguida por `r as.character(tabla3[tabla3$pernoctes_total == sort(tabla3$pernoctes_total, na.last = T)[length(tabla3$pernoctes_total)-8], "region_de_destino"] %>% filter(!is.na(region_de_destino)))` (`r format(round(as.numeric(tabla3[tabla3$pernoctes_total == sort(tabla3$pernoctes_total, na.last = T)[length(tabla3$pernoctes_total)-8], "pernoctes_total"] %>% filter(!is.na(pernoctes_total))), 1), decimal.mark = ",", big.mark = ".")` mil) y `r as.character(tabla3[tabla3$pernoctes_total == sort(tabla3$pernoctes_total, na.last = T)[length(tabla3$pernoctes_total)-9], "region_de_destino"] %>% filter(!is.na(region_de_destino)))` (`r format(round(as.numeric(tabla3[tabla3$pernoctes_total == sort(tabla3$pernoctes_total, na.last = T)[length(tabla3$pernoctes_total)-9], "pernoctes_total"] %>% filter(!is.na(pernoctes_total))), 1), decimal.mark = ",", big.mark = ".")` mil noches).
 
-+ **En lo que respecta a la distribución de los viajeros, es la región Norte la que concentró la mayor cantidad (57,3 mil)**, seguida por Patagonia y CABA (con 57 mil y 49,9 viajeros hospedados, respectivamente).
++ **En lo que respecta a la distribución de los viajeros, es la región `r as.character(tabla3[tabla3$viajeros_total == sort(tabla3$viajeros_total, na.last = T)[length(tabla3$viajeros_total)-7], "region_de_destino"] %>% filter(!is.na(region_de_destino)))` la que concentró la mayor cantidad (`r format(round(as.numeric(tabla3[tabla3$viajeros_total == sort(tabla3$viajeros_total, na.last = T)[length(tabla3$viajeros_total)-7], "viajeros_total"] %>% filter(!is.na(viajeros_total))), 1), decimal.mark = ",", big.mark = ".")` mil)**, seguida por `r as.character(tabla3[tabla3$viajeros_total == sort(tabla3$viajeros_total, na.last = T)[length(tabla3$viajeros_total)-8], "region_de_destino"] %>% filter(!is.na(region_de_destino)))` y `r as.character(tabla3[tabla3$viajeros_total == sort(tabla3$viajeros_total, na.last = T)[length(tabla3$viajeros_total)-9], "region_de_destino"] %>% filter(!is.na(region_de_destino)))` (con `r format(round(as.numeric(tabla3[tabla3$viajeros_total == sort(tabla3$viajeros_total, na.last = T)[length(tabla3$viajeros_total)-8], "viajeros_total"] %>% filter(!is.na(viajeros_total))), 1), decimal.mark = ",", big.mark = ".")` mil y `r format(round(as.numeric(tabla3[tabla3$viajeros_total == sort(tabla3$viajeros_total, na.last = T)[length(tabla3$viajeros_total)-9], "viajeros_total"] %>% filter(!is.na(viajeros_total))), 1), decimal.mark = ",", big.mark = ".")` mil viajeros hospedados, respectivamente).
 
-+ Las mayores estadías en junio de 2021 se estimaron en Cuyo y Patagonia con 2,5 noches promedio, en ambos casos.
++ Las mayores estadías en `r tolower(mes)` de `r anio` se estimaron en `r as.character(tabla3[tabla3$estadia_total == sort(tabla3$estadia_total, na.last = T)[length(tabla3$estadia_total)-7], "region_de_destino"] %>% filter(!is.na(region_de_destino)))` con `r format(round(as.numeric(tabla3[tabla3$estadia_total == sort(tabla3$estadia_total, na.last = T)[length(tabla3$estadia_total)-7], "estadia_total"] %>% filter(!is.na(estadia_total))), 1), decimal.mark = ",", big.mark = ".")` noches promedio.
 
 <br>
 
@@ -782,7 +796,9 @@ grafico3
 #Importo datos
 pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/pernoctes-viajeros-y-estadia-media-por-localidad.csv", encoding = "UTF-8")
 
-localidades <- c("Mar del Plata", "La Rioja", "San Luis", "Gualeguaychú", "Posadas", "Rafaela", "Catamarca", "Santiago del Estero", "Rio Gallegos", "San Martín de los Andes", "Ushuaia")
+#Localidades que no corresponde mostrar datos (AD HOC,INDEC)
+localidades_insuficiencia <- c("Formosa", "Posadas", "Puerto Iguazú")
+localidades_sin_datos <- c("Gualeguaychú", "Mar del Plata", "CABA", "Catamarca", "Santiago del Estero", "La Angostura", "San Martín de los Andes", "Rio Gallegos", "Viedma", "Santa Rosa")
 
 #Tabla localidades
 tabla4 <- pernoctaciones_localidad %>% 
@@ -819,39 +835,19 @@ tabla4 <- pernoctaciones_localidad %>%
   filter(year(indice_tiempo) == year(fecha) & month(indice_tiempo) == month(fecha)) %>% 
   select(region_de_destino, localidad_de_destino, pernoctes, var_ia_pernoctes,
          viajeros, var_ia_viajeros,
-         estadia_media_en_noches, var_ia_estadia) %>% 
-  mutate(var_ia_pernoctes = case_when(localidad_de_destino %in% localidades ~
+         estadia_media_en_noches, var_ia_estadia) %>% #AD HOC JULIO 2021
+  mutate(var_ia_pernoctes = case_when(localidad_de_destino %in% localidades_sin_datos ~
                                        `is.na<-`(var_ia_pernoctes),
                                      TRUE ~ var_ia_pernoctes),
-         var_ia_viajeros = case_when(localidad_de_destino %in% localidades ~
+         var_ia_viajeros = case_when(localidad_de_destino %in% localidades_sin_datos ~
                                        `is.na<-`(var_ia_viajeros),
                                      TRUE ~ var_ia_viajeros),
-         var_ia_estadia = case_when(localidad_de_destino %in% localidades ~
+         var_ia_estadia = case_when(localidad_de_destino %in% localidades_sin_datos ~
                                        `is.na<-`(var_ia_estadia),
-                                     TRUE ~ var_ia_estadia))
-  # mutate(var_ia_acum_pernoctes = case_when(
-  # localidad_de_destino %in% c("Formosa", "Las Grutas", "Resistencia", "Puerto Iguazú", "Villa Gesell") ~ NaN,
-  # TRUE ~ var_ia_acum_pernoctes),
-  # var_ia_acum_viajeros = case_when(
-  # localidad_de_destino %in% c("Formosa", "Las Grutas", "Resistencia", "Puerto Iguazú", "Villa Gesell") ~ NaN,
-  # TRUE ~ var_ia_acum_viajeros),
-  # var_ia_acum_estadia = case_when(
-  # localidad_de_destino %in% c("Formosa", "Las Grutas", "Resistencia", "Puerto Iguazú", "Villa Gesell") ~ NaN,
-  # TRUE ~ var_ia_acum_estadia)) %>%
-  # mutate(
-  #   pernoctes = case_when(localidad_de_destino %in% c("Formosa", "Resistencia",
-  #                                          "Puerto Iguazú", "Villa Gesell") ~ NaN,
-  #   TRUE ~ as.numeric(pernoctes)),
-  #   viajeros = case_when(localidad_de_destino %in% c("Formosa", "Resistencia",
-  #                                          "Puerto Iguazú", "Villa Gesell") ~ NaN,
-  #   TRUE ~ as.numeric(viajeros)),
-  #   estadia_media_en_noches = case_when(localidad_de_destino %in% c("Formosa",
-  #                                                                      "Resistencia",
-  #                                                                      "Puerto Iguazú",
-  #                                                                      "Villa Gesell") ~ NaN,
-  #   TRUE ~ estadia_media_en_noches)) %>%
-  #   filter(!localidad_de_destino == "Caleta Olivia")
-
+                                     TRUE ~ var_ia_estadia)) %>% 
+  mutate(across(3:8, ~ case_when(localidad_de_destino %in% localidades_insuficiencia ~
+                                   `is.na<-`(.),
+                                 TRUE ~ .)))
 ```
 
 
@@ -935,7 +931,7 @@ tabla4_A_ficha <- tabla4_A %>% arrange(region_de_destino) %>%
     locations = cells_body(
       columns = vars(var_ia_pernoctes),
       rows = var_ia_pernoctes > 0)
-  ) %>%
+  ) %>% #ACUM
   # tab_style(
   #   style = list(
   #     cell_text(color = "#EE3D8F"),
@@ -971,7 +967,7 @@ tabla4_A_ficha <- tabla4_A %>% arrange(region_de_destino) %>%
     locations = cells_body(
       columns = vars(var_ia_viajeros),
       rows = var_ia_viajeros > 0)
-  ) %>%
+  ) %>% #ACUM
   # tab_style(
   #   style = list(
   #     cell_text(color = "#EE3D8F"),
@@ -1007,7 +1003,7 @@ tabla4_A_ficha <- tabla4_A %>% arrange(region_de_destino) %>%
     locations = cells_body(
       columns = vars(var_ia_estadia),
       rows = var_ia_estadia > 0)
-  ) %>%
+  ) %>% #ACUM
   # tab_style(
   #   style = list(
   #     cell_text(color = "#EE3D8F"),
@@ -1026,19 +1022,19 @@ tabla4_A_ficha <- tabla4_A %>% arrange(region_de_destino) %>%
   #     columns = vars(var_ia_acum_estadia),
   #     rows = var_ia_acum_estadia > 0)
   # ) %>%
-  tab_options(table.font.size = 12, 
+  tab_options(table.align = "left",
+              table.width = 700,
+              table.font.size = 12, 
               row_group.font.weight = "bold") %>% 
   fmt_missing(
       columns = 3:8,
       missing_text = "///"
-    ) %>% 
+    ) %>% #AD HOC JULIO 2021
   fmt_missing(
     columns = 3:8,
-      rows = localidad_de_destino %in% c("Formosa", "Mar Chiquita"),
+      rows = localidad_de_destino %in% localidades_insuficiencia,
       missing_text = "..."
-    ) %>%
-  tab_options(table.align = "left",
-              table.width = 800)
+    )
 
 
 
@@ -1074,14 +1070,14 @@ tabla4_B_ficha <- tabla4_B %>% arrange(region_de_destino) %>%
   fmt_percent(columns = c(4,6,8), sep_mark = ".", dec_mark = ",", decimals = 0) %>% 
   opt_table_font(
     font = "Roboto"
-  ) %>%
+  ) %>% #AD HOC JUNIO 2021
   tab_source_note(
     source_note = md(
       "... : Dato no disponible a la hora de presentar los resultados.")
   ) %>%
   tab_source_note(
     source_note = md(
-      "/// : Dato que no corresponde presentar debido a la naturaleza de las cosas. En junio 2020, la actividad en muchos de los establecimientos hoteleros y parahoteleros fue considerada nula debido a la emergencia sanitaria; por ello la comparación i.a. de junio 2021 no es posible realizarla.")
+      "/// : Dato que no corresponde presentar debido a la naturaleza de las cosas. En julio 2020, la actividad en muchos de los establecimientos hoteleros y parahoteleros fue considerada nula debido a la emergencia sanitaria; por ello la comparación i.a. de julio 2021 no es posible realizarla.")
   ) %>% 
   tab_source_note(
     source_note = md(
@@ -1121,7 +1117,7 @@ tabla4_B_ficha <- tabla4_B %>% arrange(region_de_destino) %>%
     locations = cells_body(
       columns = vars(var_ia_pernoctes),
       rows = var_ia_pernoctes > 0)
-  ) %>%
+  ) %>% #ACUM
   # tab_style(
   #   style = list(
   #     cell_text(color = "#EE3D8F"),
@@ -1157,7 +1153,7 @@ tabla4_B_ficha <- tabla4_B %>% arrange(region_de_destino) %>%
     locations = cells_body(
       columns = vars(var_ia_viajeros),
       rows = var_ia_viajeros > 0)
-  ) %>%
+  ) %>% #ACUM
   # tab_style(
   #   style = list(
   #     cell_text(color = "#EE3D8F"),
@@ -1193,7 +1189,7 @@ tabla4_B_ficha <- tabla4_B %>% arrange(region_de_destino) %>%
     locations = cells_body(
       columns = vars(var_ia_estadia),
       rows = var_ia_estadia > 0)
-  ) %>%
+  ) %>% #ACUM
   # tab_style(
   #   style = list(
   #     cell_text(color = "#EE3D8F"),
@@ -1212,103 +1208,23 @@ tabla4_B_ficha <- tabla4_B %>% arrange(region_de_destino) %>%
   #     columns = vars(var_ia_acum_estadia),
   #     rows = var_ia_acum_estadia > 0)
   # ) %>%
-  tab_options(table.font.size = 12, 
+  tab_options(table.align = "left",
+              table.font.size = 12, 
+               table.width = 700,
               row_group.font.weight = "bold") %>% 
   fmt_missing(
       columns = 3:8,
       missing_text = "///"
-    ) %>%
+    ) %>% #AD HOC JULIO 2021
   fmt_missing(
     columns = 3:8,
-      rows = localidad_de_destino %in% c("Formosa", "Mar Chiquita", "Neuquén"),
+      rows = localidad_de_destino %in% localidades_insuficiencia,
       missing_text = "..."
-    ) %>%
-  tab_options(table.align = "left",
-              table.width = 800)
+    )
 
 
 tabla4_A_ficha
 tabla4_B_ficha
-#gtsave(tabla4_A_ficha, "salidas/tabla4A.png")
-#gtsave(tabla4_B_ficha, "salidas/tabla4B.png")
-#htmltools::save_html(html = tabla4_A_ficha, file = "salidas/tabla4A.html")
-
-#webshot::webshot("salidas/tabla4A.html", file="salidas/tabla4A.png", delay=3, vwidth = 900, vheight = 300)
-
-#htmltools::save_html(html = tabla4_B_ficha, file = "salidas/tabla4B.html")
-
-#webshot::webshot("salidas/tabla4B.html", file="salidas/tabla4B.png", delay=3, vwidth = 900, vheight = 300)
-
 ```
-<br>
-
-## COVID-19 
 
 <br>
-  
-```{r fig.height=5, fig.width=10}
-### TABLA 4 - resumen establecimientos del mes por región
-
-#Importo datos esablecimientos
-establecimientos_covid <- read.csv("/srv/DataDNMYE/eoh/establecimientos-abiertos-covid-por-region.csv", encoding = "UTF-8")
-
-tabla5 <- establecimientos_covid %>%
-  mutate(indice_de_tiempo = ym(indice_de_tiempo)) %>% 
-  filter(ymd(indice_de_tiempo) == ymd(fecha)) %>% 
-  mutate(participacion = round(establecimientos_abiertos/sum(establecimientos_abiertos), 3)) %>% 
-  select(region_de_destino, establecimientos_abiertos, participacion)
-
-#Agrego fila total
-total <- c("Total", sum(tabla5$establecimientos_abiertos), 1)
-
-tabla5 <- rbind(tabla5, total) %>% 
-  mutate(establecimientos_abiertos = as.numeric(establecimientos_abiertos),
-         participacion = as.numeric( participacion))
-
-
-tabla5_ficha <- tabla5 %>% arrange(establecimientos_abiertos) %>% 
-  gt() %>% 
-  cols_label(
-    region_de_destino = md("**Región**"),
-    establecimientos_abiertos = md("**Establecimientos**"),
-    participacion  = md("**Part. %**")
-  ) %>% 
-  fmt_number(columns = 2, decimals = 0) %>% 
-  fmt_percent(columns = 3, decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
-  cols_align(
-    align = "center",
-    columns = vars(establecimientos_abiertos, participacion
-    ))  %>%
-  opt_table_font(
-    font = "Roboto"
-  ) %>%
-  tab_header(
-    title = md("Establecimientos hoteleros afectados a la COVID-19"),
-    subtitle = md(glue("**Cantidades y participación porcentual. {mes} {anio}**"))
-    ) %>%
-  tab_source_note(
-    source_note = md(
-      "**Fuente**: INDEC, Dirección de Estadísticas Básicas de la Balanza de Pagos.")
-  ) %>%
-  tab_style(
-    style = list(
-      cell_text(weight  = "bold")
-    ),
-    locations = cells_body(
-      columns = vars(region_de_destino, establecimientos_abiertos, participacion),
-      rows = region_de_destino == "Total")
-    ) %>% 
-  tab_options(table.width = 600,
-              table.align = "left")
-
-tabla5_ficha
-
-#gtsave(tabla5_ficha, "salidas/tabla5.png")
-
-#htmltools::save_html(html = tabla5_ficha, file = "salidas/tabla5.html")
-
-#webshot::webshot("salidas/tabla5.html", file="salidas/tabla5.png", delay=3, vwidth = 900, vheight = 300)
-```
-<br>
-
-+ Durante junio de 2021, 41 establecimientos permanecieron abiertos afectados a la COVID-19, prestando servicios no turísticos (cuarentenas, alojamiento de tripulaciones, etc), en las 49 localidades relevadas por la EOH: 12 en Litoral, 11 en CABA, 8 en Patagonia, 6 en Cuyo y 4 en Buenos Aires. En las regiones de Córdoba y Norte no se registró ningún establecimiento para dichos fines.
