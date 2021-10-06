@@ -8,7 +8,7 @@ data.frame(
   url = c("https://tableros.yvera.tur.ar/internacional.html",
           "https://tableros.yvera.tur.ar/eoh.html",
           "https://tableros.yvera.tur.ar/parques_nacionales.html",
-          "https://tableros.yvera.tur.ar/evyth.html",
+          "https://tableros.yvera.tur.ar/interno.html",
           "https://tableros.yvera.tur.ar/turismo_internacional/",
           "https://tableros.yvera.tur.ar/puna/"), 
   description  = c("El reporte presenta la última información de turismo receptivo, emisivo y balanza turística 
