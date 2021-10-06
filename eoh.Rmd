@@ -53,7 +53,7 @@ cols_arg2 <- c("#EE3D8F", # "ROJO"
 
 
 #Fuente
-familia_fuente <- "Encode Sans"
+familia_fuente <- "Encode Sans Normal"
   # fonttable() %>% 
   # as_tibble() %>% 
   # filter(str_detect(FamilyName, "Encode Sans Normal"), 
