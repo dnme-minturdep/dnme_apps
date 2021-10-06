@@ -461,3 +461,12 @@ información de la Dirección Nacional de Migraciones y la Encuesta de Turismo I
 
 tabla2
 ```
+
+
+### Recursos - Turismo Internacional
+
+[**Datos Abiertos**](http://datos.yvera.gob.ar/dataset?groups=turismo-internacional)
+
+[**Informes**](https://www.yvera.tur.ar/estadistica/informe/info/turismo-internacional)
+
+

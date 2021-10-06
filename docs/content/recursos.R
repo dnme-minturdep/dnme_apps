@@ -5,10 +5,10 @@ library(tidyverse)
 data.frame(
   recurso = c("Turismo Internacional", "Ocupación Hotelera", "Naturaleza", "EVYTH", "Explorador", "PUNA"), 
   src = c("img/ti.png", "img/eoh.png","img/parques.png","img/evyth.png","img/ti_dash.png" , "img/puna.png"), 
-  url = c("https://tableros.yvera.tur.ar/reportes/internacional.html",
-          "https://tableros.yvera.tur.ar/reportes/eoh.html",
-          "https://tableros.yvera.tur.ar/reportes/parques.html",
-          "https://tableros.yvera.tur.ar/reportes/evyth.html",
+  url = c("https://tableros.yvera.tur.ar/internacional.html",
+          "https://tableros.yvera.tur.ar/eoh.html",
+          "https://tableros.yvera.tur.ar/parques_nacionales.html",
+          "https://tableros.yvera.tur.ar/evyth.html",
           "https://tableros.yvera.tur.ar/turismo_internacional/",
           "https://tableros.yvera.tur.ar/puna/"), 
   description  = c("El reporte presenta la última información de turismo receptivo, emisivo y balanza turística 

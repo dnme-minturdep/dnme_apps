@@ -53,7 +53,7 @@ cols_arg2 <- c("#EE3D8F", # "ROJO"
 
 
 #Fuente
-familia_fuente <- "Encode Sans Normal"
+familia_fuente <- "Encode Sans"
   # fonttable() %>% 
   # as_tibble() %>% 
   # filter(str_detect(FamilyName, "Encode Sans Normal"), 
@@ -1228,3 +1228,12 @@ tabla4_B_ficha
 ```
 
 <br>
+
+
+
+
+### Recursos - Sector Hotelero
+
+[**Datos Abiertos**](http://datos.yvera.gob.ar/dataset?groups=sector-hotelero)
+
+[**Informes**](https://www.yvera.tur.ar/estadistica/informe/info/encuesta-de-ocupacion-hotelera-eoh)

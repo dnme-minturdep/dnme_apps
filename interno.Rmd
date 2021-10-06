@@ -73,7 +73,8 @@ gs4_deauth() # Importar sheet de google sin interactividad de autorizacion
 ```{r}
 # DATOS
 
-turismo_interno_sheet <- read_sheet("https://docs.google.com/spreadsheets/d/1mkxkdZ4l-srnklPn7_Hl0v12deqlWdZkOOQBJseq-9g/edit#gid=0")
+turismo_interno_sheet <- read_sheet("https://docs.google.com/spreadsheets/d/1mkxkdZ4l-srnklPn7_Hl0v12deqlWdZkOOQBJseq-9g/edit#gid=0") %>% 
+  mutate(across(.cols = everything(), .fns = ~ as.numeric(.)))
 ```
 
 ```{r}
@@ -560,3 +561,12 @@ caracteristicas_visitante <- visitante_interno %>%
 
 caracteristicas_visitante
 ```
+
+### Recursos - Turismo Interno
+
+[**Datos Abiertos**](http://datos.yvera.gob.ar/dataset?groups=turismo-interno)
+
+[**Informes**](https://www.yvera.tur.ar/estadistica/informe/info/encuesta-de-viajes-y-turismo-de-los-hogares-evyth)
+
+
+

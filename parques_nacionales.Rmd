@@ -539,5 +539,9 @@ data_tabla_2 <- data_tabla_2 %>%
     #tab_source_note("Nota: entre el 22 y 30 de mayo los parques nacionales se cerraron a las visitas (según DI-2021-95-APN-DNO#APNAC) en adhesión a las medidas nacionales (Decreto 334/2021).")
 ```
 
+### Recursos - Parques Nacionales
 
+[**Datos Abiertos**](http://datos.yvera.gob.ar/dataset/parques-nacionales)
+
+[**Informes**](https://www.yvera.tur.ar/estadistica/informe/info/parques-nacionales)
 
