@@ -39,10 +39,10 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 #source("0_funciones_de_trabajo.R", encoding = "UTF-8")
 
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- floor_date(Sys.Date() - months(2),"month") 
-mes <- str_to_title(as.character(lubridate::month(Sys.Date()- months(2),label = T,abbr = F)))
+fecha <- "2021-07-01"
+mes <- "Julio"
 trimestre <- "4to"
-anio <- as.character(lubridate::year(Sys.Date()- months(2)))
+anio <- 2021
 
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia

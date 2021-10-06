@@ -296,10 +296,7 @@ tabla1_ficha <- tablafinal_ficha %>%
     columns = vars(pernoctes, var_ia_pernoctes,
                    viajeros, var_ia_viajeros,
                    estadia, var_ia_estadia))  %>% 
-  opt_table_font(
-    font = "Roboto"
-  ) %>%
-  tab_header(title = md(glue("**Según origen de los viajeros. {mes} {anio}**"))) %>% 
+ tab_header(title = md(glue("**Según origen de los viajeros. {mes} {anio}**"))) %>% 
   tab_source_note(
     source_note = md(
       "**Fuente**: Encuesta de Ocupación Hotelera (EOH) INDEC y Dirección Nacional de Mercados y Estadística, Subsecretaría de Desarrollo Estratégico, Ministerio de Turismo y Deportes")
@@ -429,9 +426,9 @@ tabla2_ficha <- tabla2 %>%
     pernoctes_total, var_ia_pernoctes_total,
     pernoctes_res, var_ia_pernoctes_res,
     pernoctes_nores, var_ia_pernoctes_nores))  %>% 
-  opt_table_font(
-    font = "Roboto"
-  ) %>%
+  # opt_table_font(
+  #   font = "Roboto"
+  # ) %>%
   tab_header(title = md(glue("**Según categoría. {mes} {anio}**"))) %>% 
   tab_source_note(
     source_note = md(
@@ -670,9 +667,9 @@ tabla3_ficha <- tabla3 %>% filter(year(indice_tiempo) == anio) %>%
     estadia_no_residentes
     ))  %>%
   fmt_number(columns = 2:10,decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
-  opt_table_font(
-    font = "Roboto"
-  ) %>%
+  # opt_table_font(
+  #   font = "Roboto"
+  # ) %>%
   tab_header(title = md(glue("**Según región. {mes} {anio}**"))) %>%
   tab_source_note(
     source_note = md(
@@ -893,9 +890,9 @@ tabla4_A_ficha <- tabla4_A %>% arrange(region_de_destino) %>%
   fmt_number(columns = c(3,5), sep_mark = ".", dec_mark = ",", decimals = 0) %>%
   fmt_number(columns = 7, sep_mark = ".", dec_mark = ",", decimals = 1) %>%
   fmt_percent(columns = c(4,6,8), sep_mark = ".", dec_mark = ",", decimals = 0) %>% 
-  opt_table_font(
-    font = "Roboto"
-  ) %>%
+  # opt_table_font(
+  #   font = "Roboto"
+  # ) %>%
   tab_header(title = md(glue("**Según localidad. {mes} {anio}**"))) %>% 
   tab_style(
     style = list(
@@ -1068,9 +1065,9 @@ tabla4_B_ficha <- tabla4_B %>% arrange(region_de_destino) %>%
   fmt_number(columns = c(3,5), sep_mark = ".", dec_mark = ",", decimals = 0) %>%
   fmt_number(columns = 7, sep_mark = ".", dec_mark = ",", decimals = 1) %>%
   fmt_percent(columns = c(4,6,8), sep_mark = ".", dec_mark = ",", decimals = 0) %>% 
-  opt_table_font(
-    font = "Roboto"
-  ) %>% #AD HOC JUNIO 2021
+  # opt_table_font(
+  #   font = "Roboto"
+  # ) %>% #AD HOC JUNIO 2021
   tab_source_note(
     source_note = md(
       "... : Dato no disponible a la hora de presentar los resultados.")
