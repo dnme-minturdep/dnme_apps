@@ -3,6 +3,7 @@ title: "Turismo Interno"
 description: "Resumen de los últimos datos del turismo dentro de Argentina realizado por los residentes en los grandes aglomerados urbanos del país, donde reside el 62%  de  la  población  argentina,  en  base  a  los  resultados  de  la  Encuesta  de  Viajes  y  Turismo  de  los Hogares (EVyTH), con frecuencia trimestral."
 output: distill::distill_article
 ---
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = F, message = F, warning = F, 
                       fig.align = 'left',fig.width = 10,fig.height = 6)
