@@ -45,10 +45,6 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ```{r}
 options(scipen=999)
 
-googlesheets4::gs4_deauth()
-
-drive_download("https://drive.google.com/file/d/1PEQEv7Vb9gxjfZ2_C-OP1i9vd_gYgxIy/view?usp=sharing", 
-               path="/srv/DataDNMYE/mulc/MULC.xlsx", overwrite = TRUE)
 
 ss_cobros_mensual <- read.xlsx("/srv/DataDNMYE/mulc/MULC.xlsx",
                               sheet = "Servicios Cobros USD - mensual",
@@ -155,6 +151,8 @@ rm(ss_cobros_anual, ss_cobros_mensual, ss_cobros_trim,
 
 
 ############# TRIMESTRAL VS CUENTA VIAJES ######################################
+googlesheets4::gs4_deauth()
+
 
 BP <- read_sheet("https://docs.google.com/spreadsheets/d/172nmjXSzLU2Em8IwnjkYeSz54pQ5Dq_12mWrS62s9vc/edit#gid=0")
 BP <- mutate(BP, fecha = paste0(year," ", quart, " Trim"))
