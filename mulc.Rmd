@@ -175,51 +175,69 @@ tabla1 <- ss_mensual %>% filter(year(fecha) >= 2017,
                                                    TRUE ~ "déficit"))
 ```
 
-+ En el mes de `r mes`, los egresos de divisas por turismo, por el mercado oficial de cambios, alcanzaron un total de US\$`r round(tail(tabla1$pagos, n=1),1)` millones, con una variación respecto al mismo mes del año 2020 del `r round((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-12]-1)*100,1)`%, y del `r round((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-24]-1)*100,1)`% con respecto al mismo mes del año 2019. Por su parte, los ingresos fueron de US\$`r round(tail(tabla1$cobros, n=1),1)` millones, con una variación interanual del `r round((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-12]-1)*100,1)`% y del `r round((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-24]-1)*100,1)`% con respecto a 2019.
++ En el mes de `r mes`, los egresos de divisas por turismo, por el mercado oficial de cambios, alcanzaron un total de US\$`r format(round(tail(tabla1$pagos, n=1),1),decimal.mark=",",big.mark=".")` millones, con una variación respecto al mismo mes del año 2020 del `r format(round((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-12]-1)*100,1),decimal.mark=",",big.mark=".")`%, y del `r format(round((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-24]-1)*100,1),decimal.mark=",",big.mark=".")`% con respecto al mismo mes del año 2019. Por su parte, los ingresos fueron de US\$`r format(round(tail(tabla1$cobros, n=1),1),decimal.mark=",",big.mark=".")` millones, con una variación interanual del `r format(round((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-12]-1)*100,1),decimal.mark=",",big.mark=".")`% y del `r format(round((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-24]-1)*100,1),decimal.mark=",",big.mark=".")`% con respecto a 2019.
 
-+ Continuando con la tendencia de los últimos años, la balanza de divisas en el mercado oficial, por turismo, es deficitaria. En el mes de agosto del corriente año, se registró una balanza deficitaria en US\$`r (-1)*round(tail(tabla1$balanza, n=1),1)` millones, mientras que en el mismo mes de 2020 había sido de US\$`r round(tabla1$balanza[length(tabla1$balanza)-12])` millones.
++ Continuando con la tendencia de los últimos años, la balanza de divisas en el mercado oficial, por turismo, es deficitaria. En el mes de agosto del corriente año, se registró una balanza deficitaria en US\$`r format((-1)*round(tail(tabla1$balanza, n=1),1),decimal.mark=",",big.mark=".")` millones, mientras que en el mismo mes de 2020 había sido de US\$`r format(round(tabla1$balanza[length(tabla1$balanza)-12]),decimal.mark=",",big.mark=".")` millones.
 
+<br>
+
+### Evolución de las transacciones de Turismo en el MULC
+#### En millones de dólares. <span style='color:#37BBED'>Ingresos</span>, <span style='color:#9283BE'>egresos </span> y balanza (<span style='color:#EE3D8F'>déficit</span>, <span style='color:#50B8B1'>superávit</span>).
 ```{r}
-g1 <- tabla1 %>% ggplot()+
+g1 <- tabla1 %>% 
+  pivot_longer(cols = c("cobros","pagos"),names_to = "transaccion",values_to = "valor") %>% #paso a formato long para poder tener bien las leyendas
+  ggplot()+
   geom_hline(yintercept = 0, color = "grey", alpha =0.7, size = 0.5) +
-  geom_line(aes(fecha, cobros),
-            size = 1, color = cols_arg) +
-  geom_point(aes(fecha, cobros,text = paste0('fecha: ', format(fecha,"%b-%y"),
-                                             '<br> ingresos: USD ',format(round(cobros,1),big.mark=".",decimal.mark=",")," M")),
-             size = 2, color = cols_arg) +
-  geom_line(aes(fecha, pagos),
-            size = 1, color = cols_arg2[6]) +
-  geom_point(aes(fecha, pagos,text = paste0('fecha: ', format(fecha,"%b-%y"),
-                                             '<br> egresos: USD ',format(round(pagos,1),big.mark=".",decimal.mark=",")," M")),
-             size = 2, color = cols_arg2[6]) +
-  geom_col(aes(fecha, balanza, fill = color_bza,text = paste0('fecha: ', format(fecha,"%b-%y"),
+  geom_line(aes(fecha, valor, colour = transaccion),
+            size = 1) +
+  geom_point(aes(fecha, valor,colour = transaccion,
+                 text = paste0('fecha: ', format(fecha,"%b-%y"),
+                                             '<br> transacción: ',transaccion,
+                                             '<br> valor: USD ',format(round(valor,1),big.mark=".",decimal.mark=",")," M")),
+             size = 1.5) +
+  scale_color_manual(values = c("cobros" = cols_arg,
+                                "pagos" = cols_arg2[6]))+
+ geom_col(aes(fecha, balanza, fill = color_bza,text = paste0('fecha: ', format(fecha,"%b-%y"),
                                              '<br> balanza: USD ',format(round(balanza,1),big.mark=".",decimal.mark=",")," M"))) +
   scale_fill_manual(values = c("déficit" = cols_arg2[1],
-                               "superávit" = cols_arg2[2])) +
+                               "superávit" = cols_arg2[2]))+
   scale_x_date(#limits = c(min(as.Date(tabla1$fecha, origin = "1970-01-01"))-months(1),max(as.Date(tabla1$fecha, origin = "1970-01-01"))+months(1)),
-               date_breaks = "1 months", 
+               date_breaks = "2 months", 
                date_labels = "%b%y", 
                expand = c(0,10))+
-  labs(title="Ingresos y Egresos de divisas por Turismo, vía MULC",x="",y="",
+  guides(fill = F)+
+  labs(title="",x="",y="",
        caption="DNMyE en base a BCRA")+
   theme_minimal() +
   theme(
     text = element_text(family = familia_fuente), 
-    plot.title    = element_markdown(size = 10),
-    plot.subtitle = element_markdown(size = 8),
-    plot.caption  = element_markdown(size = 6),
-    strip.text.y  = element_text(size = 8, face = "bold"),
-    axis.text.x   = element_text(size = 6,angle=90),
-    axis.text.y   = element_text(size = 8),
+    plot.title    = element_markdown(size = 14),
+    plot.subtitle = element_markdown(size = 12),
+    plot.caption  = element_markdown(size = 10),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
     panel.grid.minor.x = element_blank(),
     legend.position = "none",
+    legend.title = element_blank(),
     strip.placement = "outside")
 
-ggplotly(g1,tooltip="text")
+g1 <- ggplotly(g1,tooltip="text")
 
+g1
+# for (i in 1:length(g1$x$data)){
+#     if (!is.null(g1$x$data[[i]]$name)){
+#         g1$x$data[[i]]$name =  gsub("\\(","",str_split(g1$x$data[[i]]$name,",")[[1]][1])
+#     }
+# }
+# g1$x$data[[6]]$showlegend <- F
+# 
+# g1 %>% layout(legend = list(
+#       orientation = "h",x=0.75
+#     )
+#   )
 ```
 
-## Contribución del turismo en el mercado oficial de divisas   
 <br>
 ```{r}
 tabla2 <- ss_mensual %>% filter(year(fecha) >= 2017, 
@@ -236,8 +254,12 @@ tabla2 <- ss_mensual %>% filter(year(fecha) >= 2017,
                          filter(transac != "balanza")
 ```
 
-+ En el mes de agosto de 2021 los egresos por turismo representaron un `r round(tail(tabla2$p_turismo [tabla2$transac == "pagos"],n=1),1)`% de la salida total de divisas por servicios vía el mercado oficial de cambios. Por su lado, los ingresos por turismo representaron un `r round(tail(tabla2$p_turismo [tabla2$transac == "cobros"],n=1),1)`% del total de ingresos por servicios.
++ En el mes de agosto de 2021 los egresos por turismo representaron un `r format(round(tail(tabla2$p_turismo [tabla2$transac == "pagos"],n=1),1),decimal.mark=",",big.mark=".")`% de la salida total de divisas por servicios vía el mercado oficial de cambios. Por su lado, los ingresos por turismo representaron un `r format(round(tail(tabla2$p_turismo [tabla2$transac == "cobros"],n=1),1),decimal.mark=",",big.mark=".")`% del total de ingresos por servicios.
 
+<br>
+
+### Contribución del turismo en el mercado oficial de divisas 
+#### Proporción de <span style='color:#37BBED'>Ingresos</span> y <span style='color:#9283BE'>egresos </span> vía MULC por Turismo sobre el total en %.
 ```{r}
 g2 <- tabla2 %>% 
   ggplot(aes(x = fecha, y= p_turismo, fill=transac,text = paste0('fecha: ', format(fecha,"%b-%y"),
@@ -247,30 +269,37 @@ g2 <- tabla2 %>%
   scale_fill_manual(values = c(cols_arg,cols_arg2[6]), labels= c("Ingresos", "Egresos")) +
   scale_x_date(
     #limits = c(min(tabla2$fecha)-months(1),max(tabla2$fecha)+months(1)),
-               date_breaks = "1 months", 
+               date_breaks = "2 months", 
                date_labels = "%b%y", 
                expand = c(0,10))+
-  labs(title="Proporción de Ingresos y Egresos vía MULC por Turismo sobre el total ",
+  labs(title="",
        subtitle = "En %",x="",y="",
        caption="DNMyE en base a BCRA")+
   theme_minimal()+
   theme(
     text = element_text(family = familia_fuente), 
-    plot.title    = element_markdown(size = 10),
-    plot.subtitle = element_markdown(size = 8),
-    plot.caption  = element_markdown(size = 6),
-    strip.text.y  = element_text(size = 8, face = "bold"),
-    axis.text.x   = element_text(size = 6,angle=90),
-    axis.text.y   = element_text(size = 8),
+    plot.title    = element_markdown(size = 14),
+    plot.subtitle = element_markdown(size = 12),
+    plot.caption  = element_markdown(size = 10),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
     panel.grid.minor.x = element_blank(),
     legend.title = element_blank(),
-    strip.placement = "outside")
+    strip.placement = "outside",
+    legend.position="none")
 
-ggplotly(g2,tooltip = "text")  
+ ggplotly(g2,tooltip = "text")# %>% layout(legend = list(
+#       orientation = "h",x=0.75
+#     )) 
 ```
 
 + En comparación con el resto de los sectores de servicios informados por el BCRA, en el mes de `r paste(mes," de ",anio)` el turismo fue el 9º sector en cuanto a ingresos de divisas pero el 2º en cuanto a egresos.
 
+<br>
+
+### Ingresos de divisas vía MULC. Apertura por sectores de servicios
+#### En millones de dólares
 ```{r}
 tabla5 <- ss_mensual %>% filter(!is.na(cobros)) %>% 
                          select(!c(balanza,pagos)) %>% 
@@ -325,24 +354,30 @@ g5 <- tabla5 %>%
                                "si" = cols_arg2[1]))+
   scale_color_manual(values = c("no" = cols_arg, 
                                "si" = cols_arg2[1]))+
-  labs(title="Ingresos de divisas vía MULC. Apertura por sectores de servicios",
-       subtitle = "En millones de dólares",x="",y="",
+  labs(title="",
+       subtitle = "",x="",y="",
        caption="DNMyE en base a BCRA")+
   theme_minimal()+
   theme(
     text = element_text(family = familia_fuente), 
-    plot.title    = element_markdown(size = 12),
-    plot.subtitle = element_markdown(size = 10),
-    plot.caption  = element_markdown(size = 6),
-    strip.text.y  = element_text(size = 8, face = "bold"),
-    axis.text.x   = element_text(size = 6,angle=90),
-    axis.text.y   = element_text(size = 8),
+    plot.title    = element_markdown(size = 14),
+    plot.subtitle = element_markdown(size = 12),
+    plot.caption  = element_markdown(size = 10),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
     panel.grid.minor.x = element_blank(),
     legend.position = "none",
     strip.placement = "outside")
 
 g5
+```
 
+<br>
+
+### Egresos de divisas vía MULC. Apertura por sectores de servicios
+#### En millones de dólares
+```{r}
 tabla6 <- ss_mensual %>% filter(!is.na(pagos)) %>% 
                          select(!c(balanza,cobros)) %>% 
                          filter(fecha==max(fecha),
@@ -395,18 +430,18 @@ g6 <- tabla6 %>%
   scale_color_manual(values = c("no" = cols_arg2[6], 
                                "si" = cols_arg2[1]))+
   xlim(0,max(tabla6$pagos)*1.1)+
-  labs(title="Egresos de divisas vía MULC. Apertura por sectores de servicios",
-       subtitle = "En millones de dólares",x="",y="",
+  labs(title="",
+       subtitle = "",x="",y="",
        caption="DNMyE en base a BCRA")+
   theme_minimal()+
   theme(
     text = element_text(family = familia_fuente), 
-    plot.title    = element_markdown(size = 12),
-    plot.subtitle = element_markdown(size = 10),
-    plot.caption  = element_markdown(size = 6),
-    strip.text.y  = element_text(size = 8, face = "bold"),
-    axis.text.x   = element_text(size = 6,angle=90),
-    axis.text.y   = element_text(size = 8),
+    plot.title    = element_markdown(size = 14),
+    plot.subtitle = element_markdown(size = 12),
+    plot.caption  = element_markdown(size = 10),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
     panel.grid.minor.x = element_blank(),
     legend.position = "none",
     strip.placement = "outside")
