@@ -150,7 +150,7 @@ En el acumulado del año las visitas suman un total de `r format(pull(tabla.1.ac
   select(periodo,total,n_residentes,n_no_residentes,7:(ncol(tabla.1.mes)-1)) %>% 
   gt() %>%
   fmt_number(columns = c(2,3,4), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
-  fmt_percent(columns = c(5,6,7,8,9), decimals = 1, dec_mark = ",") %>%
+  fmt_percent(columns = c(5,6,7,8,9), decimals = 1, sep_mark = ".", dec_mark = ",") %>%
   #cols_align(
    # align = "center",
     #columns = vars(total,var.total,n_residentes,var.n_residentes,part.res, n_no_residentes, var.n_no_residentes,part.no.res
@@ -370,11 +370,8 @@ data_tabla_2 <- tabla_parques %>%
   mutate(orden = rank(-acumulado_2021_total),
          presentacion = case_when(orden <= 25 ~ parque_nacional,
                                   TRUE ~ "Resto")) %>% 
-   mutate(
-    var_ia_visitantes_2021_tot = `is.na<-`(var_ia_visitantes_2021_tot),
-     var_ia_visitantes_res = `is.na<-`(var_ia_visitantes_res),
-     var_ia_visitantes_no_res = `is.na<-`(var_ia_visitantes_no_res)
-    )
+   mutate(across(where(is.numeric), ~ case_when(is.infinite(.) ~ NA_real_,
+                                           TRUE ~ .)))
 ```
 
 
@@ -419,7 +416,7 @@ data_tabla_2 <- data_tabla_2 %>%
     participacion                 = md("Participación %")
   ) %>% 
   fmt_number(columns = c(2,4,6,8), decimals = 0, sep_mark = ".", dec_mark = ",") %>% #CAMBIAR, SOLO ENERO
-  fmt_percent(columns = c(3,5,7,9,10), decimals = 1, dec_mark = ",") %>% 
+  fmt_percent(columns = c(3,5,7,9,10), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
   cols_align(
     align = "center",
     columns = vars(visitantes_2021_total, var_ia_visitantes_2021_tot, visitantes_2021_residentes,
