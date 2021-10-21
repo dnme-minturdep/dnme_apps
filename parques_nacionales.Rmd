@@ -3,7 +3,6 @@ title: "Parques Nacionales"
 description: "Resumen de los últimos datos de visitas a Parques y Reservas Nacionales del país según origen (condición de residencia) de los visitantes. La información se obtiene a partir de datos relevados por la Administración de Parques Nacionales."
 output: distill::distill_article
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = F, message = F, warning = F, 
                       fig.align = 'left')
