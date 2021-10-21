@@ -22,8 +22,8 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2021-06-01"
-mes <- "junio"
+fecha <- "2021-08-01"
+mes <- "agosto"
 anio <- "2021"
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
@@ -68,7 +68,7 @@ theme_imet <- function() {
 <br> 
 ```{r}
 #Importo datos
-parques_nacionales <- read_excel("/srv/DataDNMYE/parques_nacionales/Pivot_PN_20210916.xlsx",
+parques_nacionales <- read_excel("/srv/DataDNMYE/parques_nacionales/pivot_pn.xlsx",
                                  sheet = "base PN 2008_2020")
 # parques_nacionales <- read_sheet("https://docs.google.com/spreadsheets/d/1ZM7PfvY16tImMcFKUj0fCn6ASc1yxlye/edit#gid=1610808314")
 #parques_nacionales <- read.xlsx("data/Pivot_PN_20201125.xlsx",sheet="base PN 2008_2020")
@@ -76,7 +76,8 @@ parques_nacionales <- read_excel("/srv/DataDNMYE/parques_nacionales/Pivot_PN_202
 
 ```{r}
 #Agrego columna con número de mes
-tabla_parques <- parques_nacionales %>% 
+tabla_parques <- parques_nacionales %>%
+  mutate(Mes = str_to_title(Mes)) %>% 
   left_join(data.frame(Mes = c("Enero","Febrero","Marzo","Abril","Mayo","Junio",
                                "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"), 
                        month = c(1:12)))
@@ -149,7 +150,7 @@ En el acumulado del año las visitas suman un total de `r format(pull(tabla.1.ac
   select(periodo,total,n_residentes,n_no_residentes,7:(ncol(tabla.1.mes)-1)) %>% 
   gt() %>%
   fmt_number(columns = c(2,3,4), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
-  fmt_percent(columns = c(5,6,7,8,9), decimals = 1, dec_mark = ",") %>%
+  fmt_percent(columns = c(5,6,7,8,9), decimals = 1, sep_mark = ".", dec_mark = ",") %>%
   #cols_align(
    # align = "center",
     #columns = vars(total,var.total,n_residentes,var.n_residentes,part.res, n_no_residentes, var.n_no_residentes,part.no.res
@@ -239,7 +240,7 @@ En el acumulado del año las visitas suman un total de `r format(pull(tabla.1.ac
     align = "center") %>% 
   fmt_missing(columns = 1:8,
               missing_text = "///") %>% 
-  tab_source_note(glue("///: Dato que no corresponde mostrar debido a la naturaleza de las cosas. En junio 2020, el número de visitas a Parques Nacionales fue considerado nulo debido a la emergencia sanitaria; por ello no es posible realizar la comparación i.a. de {mes} 2021."))
+  tab_source_note(glue("///: Dato que no corresponde mostrar debido a la naturaleza de las cosas."))
 #setwd("Salidas/")
 # htmltools::save_html(html = tabla_1, file = "tabla_1_PN.html")
 # webshot::webshot("tabla_1_PN.html", file="out.png", delay=3,vwidth =700 ,vheight = 300)
@@ -337,7 +338,7 @@ grafico_2 <- ggplot(data = data_grafico_2, aes(x = period, y = value)) +
        subtitle = tolower(glue("enero 2018 - {mes} {anio}. <span style='color:{cols_arg2[2]}'>residentes</span> y <span style='color:{cols_arg2[6]}'>no residentes")))
 ggplotly(grafico_2,tooltip="text")
 ```
-
+**Nota**: por causa de la pandemia, la actividad turística en el período de abril a junio 2020 fue considerada nula. Debido a esto no es posible establecer comparaciones con el mismo período de 2021.
 
 <br>
 
@@ -369,11 +370,8 @@ data_tabla_2 <- tabla_parques %>%
   mutate(orden = rank(-acumulado_2021_total),
          presentacion = case_when(orden <= 25 ~ parque_nacional,
                                   TRUE ~ "Resto")) %>% 
-   mutate(
-    var_ia_visitantes_2021_tot = `is.na<-`(var_ia_visitantes_2021_tot),
-     var_ia_visitantes_res = `is.na<-`(var_ia_visitantes_res),
-     var_ia_visitantes_no_res = `is.na<-`(var_ia_visitantes_no_res)
-    )
+   mutate(across(where(is.numeric), ~ case_when(is.infinite(.) ~ NA_real_,
+                                           TRUE ~ .)))
 ```
 
 
@@ -418,7 +416,7 @@ data_tabla_2 <- data_tabla_2 %>%
     participacion                 = md("Participación %")
   ) %>% 
   fmt_number(columns = c(2,4,6,8), decimals = 0, sep_mark = ".", dec_mark = ",") %>% #CAMBIAR, SOLO ENERO
-  fmt_percent(columns = c(3,5,7,9,10), decimals = 1, dec_mark = ",") %>% 
+  fmt_percent(columns = c(3,5,7,9,10), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
   cols_align(
     align = "center",
     columns = vars(visitantes_2021_total, var_ia_visitantes_2021_tot, visitantes_2021_residentes,
@@ -535,9 +533,10 @@ data_tabla_2 <- data_tabla_2 %>%
   tab_stubhead(label = md("**Parque Nacional**")) %>% 
   fmt_missing(columns = 1:7,
               missing_text = "///") %>% 
-  tab_source_note(glue("///: Dato que no corresponde mostrar debido a la naturaleza de las cosas. En junio 2020, el número de visitas a Parques Nacionales fue considerado nulo debido a la emergencia sanitaria; por ello no es posible realizar la comparación i.a. de {mes} 2021.")) #%>% 
+  tab_source_note(glue("///: Dato que no corresponde mostrar debido a la naturaleza de las cosas.")) #%>% 
     #tab_source_note("Nota: entre el 22 y 30 de mayo los parques nacionales se cerraron a las visitas (según DI-2021-95-APN-DNO#APNAC) en adhesión a las medidas nacionales (Decreto 334/2021).")
 ```
+
 
 ### Recursos - Parques Nacionales
 
