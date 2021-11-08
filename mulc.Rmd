@@ -18,8 +18,10 @@ library(janitor)
 library(googlesheets4)
 library(plotly)
 
-mes <- "agosto"
-anio <- "2021"
+Sys.setlocale(locale = "es_AR.UTF-8")
+
+mes <- as.character(month(floor_date(Sys.Date(),"month")- months(2),label = T,abbr = F))
+anio <- year(floor_date(Sys.Date(),"year"))
 
 
 # PALETAS Y FUENTES ---------------------------------------------------------
@@ -32,14 +34,15 @@ cols_arg2 <- c("#EE3D8F", # "ROJO"
                "#F7941E","#FFD100","#D7DF23", "#9283BE")
 
 #Fuente
-familia_fuente <- fonttable() %>% 
-  as_tibble() %>% 
-  filter(str_detect(FamilyName, "Encode Sans"),  
-         Bold == TRUE) %>% 
-  pull(FamilyName) %>% 
-  first()
+#familia_fuente <- fonttable() %>% 
+#  as_tibble() %>% 
+#  filter(str_detect(FamilyName, "Encode Sans"),  
+#         Bold == TRUE) %>% 
+#  pull(FamilyName) %>% 
+#  first()
 
-Sys.setlocale(locale = "es_AR.UTF-8")
+familia_fuente <- "Encode Sans"
+
 ```
 
 ```{r}
@@ -177,7 +180,7 @@ tabla1 <- ss_mensual %>% filter(year(fecha) >= 2017,
 
 + En el mes de `r mes`, los egresos de divisas por turismo, por el mercado oficial de cambios, alcanzaron un total de US\$`r format(round(tail(tabla1$pagos, n=1),1),decimal.mark=",",big.mark=".")` millones, con una variación respecto al mismo mes del año 2020 del `r format(round((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-12]-1)*100,1),decimal.mark=",",big.mark=".")`%, y del `r format(round((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-24]-1)*100,1),decimal.mark=",",big.mark=".")`% con respecto al mismo mes del año 2019. Por su parte, los ingresos fueron de US\$`r format(round(tail(tabla1$cobros, n=1),1),decimal.mark=",",big.mark=".")` millones, con una variación interanual del `r format(round((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-12]-1)*100,1),decimal.mark=",",big.mark=".")`% y del `r format(round((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-24]-1)*100,1),decimal.mark=",",big.mark=".")`% con respecto a 2019.
 
-+ Continuando con la tendencia de los últimos años, la balanza de divisas en el mercado oficial, por turismo, es deficitaria. En el mes de agosto del corriente año, se registró una balanza deficitaria en US\$`r format((-1)*round(tail(tabla1$balanza, n=1),1),decimal.mark=",",big.mark=".")` millones, mientras que en el mismo mes de 2020 había sido de US\$`r format(round(tabla1$balanza[length(tabla1$balanza)-12]),decimal.mark=",",big.mark=".")` millones.
++ Continuando con la tendencia de los últimos años, la balanza de divisas en el mercado oficial, por turismo, es deficitaria. En el mes de `r mes` del corriente año, se registró una balanza deficitaria en US\$`r format((-1)*round(tail(tabla1$balanza, n=1),1),decimal.mark=",",big.mark=".")` millones, mientras que en el mismo mes de 2020 había sido de US\$`r format(round(tabla1$balanza[length(tabla1$balanza)-12]),decimal.mark=",",big.mark=".")` millones.
 
 <br>
 
@@ -257,7 +260,7 @@ tabla2 <- ss_mensual %>% filter(year(fecha) >= 2017,
                          filter(transac != "balanza")
 ```
 
-+ En el mes de agosto de 2021 los egresos por turismo representaron un `r format(round(tail(tabla2$p_turismo [tabla2$transac == "pagos"],n=1),1),decimal.mark=",",big.mark=".")`% de la salida total de divisas por servicios vía el mercado oficial de cambios. Por su lado, los ingresos por turismo representaron un `r format(round(tail(tabla2$p_turismo [tabla2$transac == "cobros"],n=1),1),decimal.mark=",",big.mark=".")`% del total de ingresos por servicios.
++ En el mes de `r mes` de `r anio` los egresos por turismo representaron un `r format(round(tail(tabla2$p_turismo [tabla2$transac == "pagos"],n=1),1),decimal.mark=",",big.mark=".")`% de la salida total de divisas por servicios vía el mercado oficial de cambios. Por su lado, los ingresos por turismo representaron un `r format(round(tail(tabla2$p_turismo [tabla2$transac == "cobros"],n=1),1),decimal.mark=",",big.mark=".")`% del total de ingresos por servicios.
 
 <br>
 
@@ -299,12 +302,6 @@ g2 <- tabla2 %>%
      )) 
 ```
 
-+ En comparación con el resto de los sectores de servicios informados por el BCRA, en el mes de `r paste(mes," de ",anio)` el turismo fue el 9º sector en cuanto a ingresos de divisas pero el 2º en cuanto a egresos.
-
-<br>
-
-### Ingresos de divisas vía MULC. Apertura por sectores de servicios
-#### En millones de dólares
 ```{r}
 tabla5 <- ss_mensual %>% filter(!is.na(cobros)) %>% 
                          select(!c(balanza,pagos)) %>% 
@@ -348,41 +345,7 @@ tabla5$rubro <- tabla5$rubro %>%  as.factor() %>% recode_factor(
 tabla5 <- mutate(tabla5, orden=1:length(tabla5$rubro),
                          es_turismo = ifelse(rubro == "Turismo", "si", "no"))
 
-g5 <- tabla5 %>% 
-  ggplot(aes(x = cobros, y = reorder(rubro, -orden))) +
-  geom_col(aes(fill=es_turismo))+
-  geom_hline(yintercept = 0, size = 0.1) +
-  geom_text(aes(label=format(round(cobros,1),big.mar=".",decimal.mark = ",")),
-            hjust=-.1)+
-    xlim(0,max(tabla5$cobros)*1.1)+
-  scale_fill_manual(values = c("no" = cols_arg, 
-                               "si" = cols_arg2[1]))+
-  scale_color_manual(values = c("no" = cols_arg, 
-                               "si" = cols_arg2[1]))+
-  labs(title="",
-       subtitle = "",x="",y="",
-       caption="DNMyE en base a BCRA")+
-  theme_minimal()+
-  theme(
-    text = element_text(family = familia_fuente), 
-    plot.title    = element_markdown(size = 14),
-    plot.subtitle = element_markdown(size = 12),
-    plot.caption  = element_markdown(size = 10),
-    strip.text.y  = element_text(size = 10, face = "bold"),
-    axis.text.x   = element_text(size = 10,angle=90),
-    axis.text.y   = element_text(size = 10),
-    panel.grid.minor.x = element_blank(),
-    legend.position = "none",
-    strip.placement = "outside")
 
-g5
-```
-
-<br>
-
-### Egresos de divisas vía MULC. Apertura por sectores de servicios
-#### En millones de dólares
-```{r}
 tabla6 <- ss_mensual %>% filter(!is.na(pagos)) %>% 
                          select(!c(balanza,cobros)) %>% 
                          filter(fecha==max(fecha),
@@ -424,6 +387,51 @@ tabla6$rubro <- tabla6$rubro %>%  as.factor() %>% recode_factor(
 tabla6 <- mutate(tabla6, orden=1:length(tabla6$rubro),
                          es_turismo = ifelse(rubro == "Turismo", "si", "no"))
 
+
+```
+
++ En comparación con el resto de los sectores de servicios informados por el BCRA, en el mes de `r paste(mes," de ",anio)` el turismo fue el `r tabla5$orden[tabla5$rubro == "Turismo"]`º sector en cuanto a ingresos de divisas pero el `r tabla6$orden[tabla6$rubro == "Turismo"]`º en cuanto a egresos.
+
+<br>
+
+### Ingresos de divisas vía MULC. Apertura por sectores de servicios
+#### En millones de dólares
+```{r}
+g5 <- tabla5 %>% 
+  ggplot(aes(x = cobros, y = reorder(rubro, -orden))) +
+  geom_col(aes(fill=es_turismo))+
+  geom_hline(yintercept = 0, size = 0.1) +
+  geom_text(aes(label=format(round(cobros,1),big.mar=".",decimal.mark = ",")),
+            hjust=-.1)+
+    xlim(0,max(tabla5$cobros)*1.1)+
+  scale_fill_manual(values = c("no" = cols_arg, 
+                               "si" = cols_arg2[1]))+
+  scale_color_manual(values = c("no" = cols_arg, 
+                               "si" = cols_arg2[1]))+
+  labs(title="",
+       subtitle = "",x="",y="",
+       caption="DNMyE en base a BCRA")+
+  theme_minimal()+
+  theme(
+    text = element_text(family = familia_fuente), 
+    plot.title    = element_markdown(size = 14),
+    plot.subtitle = element_markdown(size = 12),
+    plot.caption  = element_markdown(size = 10),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "none",
+    strip.placement = "outside")
+
+g5
+```
+
+<br>
+
+### Egresos de divisas vía MULC. Apertura por sectores de servicios
+#### En millones de dólares
+```{r}
 g6 <- tabla6 %>% 
   ggplot(aes(x = pagos, y = reorder(rubro, -orden))) +
   geom_col(aes(fill=es_turismo))+
@@ -455,3 +463,242 @@ g6
   
 ```
 
+### Apertura del rubro "Viajes y otros pagos con tarjeta"
+
+```{r}
+tabla3 <- ss_mensual %>% filter(year(fecha) >= 2017, 
+                                rubro %in% c("entidades_y_otros_por_cancelacion_de_tarjetas",
+                                "operadores_turisticos_y_otras_transferencias", 
+                                "no_residentes_billetes"),
+                                !is.na(cobros)) %>% 
+                         select(fecha, rubro, cobros)
+
+tabla4 <- ss_mensual %>% filter(year(fecha) >= 2017, 
+                                rubro %in% c("entidades_y_otros_por_cancelacion_de_tarjetas",
+                                "operadores_turisticos_y_otras_transferencias", 
+                                "no_residentes_billetes"),
+                                !is.na(cobros)) %>% 
+                         select(fecha, rubro, pagos)
+```
+
++ En el mes de `r mes` de `r anio`, los ingresos de divisas por cancelación de compras con tarjetas fueron de US\$`r format(round(tabla3 %>% filter(rubro == "entidades_y_otros_por_cancelacion_de_tarjetas") %>% last() %>% nth(-1),1), ,decimal.mark=",",big.mark=".")` millones, presentando una variación del `r format(round((tabla3 %>% filter(rubro == "entidades_y_otros_por_cancelacion_de_tarjetas") %>% last() %>% nth(-1)/tabla3 %>% filter(rubro == "entidades_y_otros_por_cancelacion_de_tarjetas") %>% last() %>% nth(-13)-1)*100,1),decimal.mark=",",big.mark=".")`% respecto al mismo mes del año 2020. Por su lado, los ingresos por cobros de operadores turísticos locales fueron de US\$`r format(round(tabla3 %>% filter(rubro == "operadores_turisticos_y_otras_transferencias") %>% last() %>% nth(-1),1),decimal.mark=",",big.mark=".")` millones, presentando una variación del `r format(round((tabla3 %>% filter(rubro == "operadores_turisticos_y_otras_transferencias") %>% last() %>% nth(-1)/tabla3 %>% filter(rubro == "operadores_turisticos_y_otras_transferencias") %>% last() %>% nth(-13)-1)*100,1),decimal.mark=",",big.mark=".")`% interanual.
+
++ Por su parte, los egresos de divisas por cancelación de compras con tarjetas fueron de US\$`r format(round(tabla4 %>% filter(rubro == "entidades_y_otros_por_cancelacion_de_tarjetas") %>% last() %>% nth(-1),1),decimal.mark=",",big.mark=".")` millones, presentando una variación del `r format(round((tabla4 %>% filter(rubro == "entidades_y_otros_por_cancelacion_de_tarjetas") %>% last() %>% nth(-1)/tabla4 %>% filter(rubro == "entidades_y_otros_por_cancelacion_de_tarjetas") %>% last() %>% nth(-13)-1)*100,1),decimal.mark=",",big.mark=".")`% respecto al mismo mes del año 2020. Los egresos por pagos al exterior realizados por operadores turísticos locales fueron de US\$`r format(round(tail(tabla4$pagos[tabla4$rubro == "operadores_turisticos_y_otras_transferencias"],n=1),1),decimal.mark=",",big.mark=".")` millones, presentando una variación del `r format(round((tabla4 %>% filter(rubro == "operadores_turisticos_y_otras_transferencias") %>% last() %>% nth(-1)/tabla4 %>% filter(rubro == "operadores_turisticos_y_otras_transferencias") %>% last() %>% nth(-13)-1)*100,1),decimal.mark=",",big.mark=".")`% interanual.
+
+```{r}
+g3 <- tabla3 %>% 
+  ggplot(aes(x = fecha, y = cobros, fill = rubro)) +
+  geom_area()+
+  scale_fill_manual(values = cols_arg2[2:4], label=c("Tarjetas", "Billetes - No Residentes", "Operadores turísticos")) +
+  scale_x_date(limits = c(min(tabla3$fecha),max(tabla3$fecha)),
+               date_breaks = "1 months", 
+               date_labels = "%b%y", 
+               expand = c(0,10))+
+  labs(#title="Ingresos de divisas por viajes y otros pagos con tarjeta. Apertura por rubros",
+       #subtitle = "En millones de dólares",x="",y="",
+       caption="DNMyE en base a BCRA")+
+  theme_minimal()+
+  theme(
+    text = element_text(family = familia_fuente), 
+    plot.title    = element_markdown(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    plot.caption  = element_markdown(size = 6),
+    strip.text.y  = element_text(size = 8, face = "bold"),
+    axis.text.x   = element_text(size = 6,angle=90),
+    axis.text.y   = element_text(size = 8),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "bottom",
+    legend.title = element_blank(), 
+    strip.placement = "outside")
+
+g3
+
+
+
+g4 <- tabla4 %>% 
+  ggplot(aes(x = fecha, y = pagos, fill = rubro)) +
+  geom_area()+
+  scale_fill_manual(values = cols_arg2[2:4],label=c("Tarjetas", "Billetes - No Residentes", "Operadores turísticos")) +
+  scale_x_date(limits = c(min(tabla4$fecha),max(tabla4$fecha)),
+               date_breaks = "1 months", 
+               date_labels = "%b%y", 
+               expand = c(0,10))+
+  labs(#title="Egresos de divisas por viajes y otros pagos con tarjeta. Apertura por rubros",
+       #subtitle = "En millones de dólares",x="",y="",
+       caption="DNMyE en base a BCRA")+
+  theme_minimal()+
+  theme(
+    text = element_text(family = familia_fuente), 
+    plot.title    = element_markdown(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    plot.caption  = element_markdown(size = 6),
+    strip.text.y  = element_text(size = 8, face = "bold"),
+    axis.text.x   = element_text(size = 6,angle=90),
+    axis.text.y   = element_text(size = 8),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "bottom",
+     legend.title = element_blank(),
+    strip.placement = "outside")
+
+g4
+```
+
+### Balanza de Pagos vs MULC
+
+#### Evolución trimestral de los ingresos por turismo - BP vs MULC 
+
+```{r}
+tabla7_mulc <- ss_trim %>% filter(variable=="cobros", 
+                                  rubro %in% c("viajes_y_otros_pagos_con_tarjeta", 
+                                               "servicios_de_transporte_de_pasajeros"),
+                                  anio>=2011,
+                                  !is.na(value)) %>% 
+                          pivot_wider(names_from = rubro, values_from = value)
+tabla7_mulc <- cbind(tabla7_mulc, MULC=apply(tabla7_mulc[5:6], 1, sum)) %>% 
+                          select(fecha,MULC)
+              
+
+tabla7_BP <- BP %>% filter(year>=2011) %>% select(fecha, receptivo_vyp) 
+                  
+tabla7 <- right_join(tabla7_mulc, tabla7_BP, by = "fecha") %>% 
+          rename("BP"="receptivo_vyp") %>% 
+          pivot_longer(c(4:5), names_to = "turismo_cobros")
+
+rm(tabla7_BP, tabla7_mulc)
+
+g7 <- tabla7 %>% ggplot(aes(fecha, value, color=turismo_cobros, group=turismo_cobros))+
+  geom_line(size=1)+
+  geom_point(size=2)+
+  scale_color_manual(values = c(cols_arg2[3], cols_arg)) +
+  labs(#title="Ingresos por turismo: BP vs MULC",
+       #subtitle = "En millones de dólares",x="",y="",
+       caption="DNMyE en base a BCRA y Dirección Nacional de Cuentas Internacionales")+
+  theme_minimal()+
+  theme(
+    text = element_text(family = familia_fuente), 
+    plot.title    = element_markdown(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    plot.caption  = element_markdown(size = 6),
+    strip.text.y  = element_text(size = 8, face = "bold"),
+    axis.text.x   = element_text(size = 6,angle=90),
+    axis.text.y   = element_text(size = 8),
+    panel.grid.minor.x = element_blank(),
+    legend.title = element_blank(),
+    legend.position = "bottom",
+    strip.placement = "outside")
+
+tabla8 <- tabla7 %>% pivot_wider(names_from = turismo_cobros, values_from = value) %>% 
+                     summarise(fecha=fecha,
+                               prop_mulc_bp= MULC/BP*100)
+
+g8 <- tabla8 %>% ggplot(aes(fecha, prop_mulc_bp))+
+  geom_hline(yintercept = 100, color="lightgrey")+
+  geom_col(fill="darkgrey")+
+  scale_y_continuous(n.breaks = 10)+
+  labs(#title="Proporción de ingresos por turismo en el MULC sobre el total de la BP",
+       #subtitle = "En %",x="",y="",
+       caption="DNMyE en base a BCRA y Dirección Nacional de Cuentas Internacionales")+
+  theme_minimal()+
+  theme(
+    text = element_text(family = familia_fuente), 
+    plot.title    = element_markdown(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    plot.caption  = element_markdown(size = 6),
+    strip.text.y  = element_text(size = 8, face = "bold"),
+    axis.text.x   = element_text(size = 6,angle=90),
+    axis.text.y   = element_text(size = 8),
+    panel.grid.minor.x = element_blank(),
+    legend.title = element_blank(),
+    strip.placement = "outside")
+```
+
+
++ En el segundo trimestre de 2021, se registraron US\$`r format(tabla7$value[tabla7$turismo_cobros=="BP"] %>% last() %>% round(1),decimal.mark=",",big.mark=".")` millones de ingresos totales asociados al turismo, según la Balanza de Pagos ("BP"). Por su lado, un `r format(last(tabla8$prop_mulc_bp) %>% round(1), ,decimal.mark=",",big.mark=".")`% de esos ingresos se canalizaron por el mercado oficial de cambios, es decir, US\$`r format(tabla7$value[tabla7$turismo_cobros=="MULC"] %>% last() %>% round(1),decimal.mark=",",big.mark=".")` millones.
+
+*NOTA: Es importante notar que, los ingresos por turismo a través del mercado oficial de cambios (MULC) siempre deberían ser menores, o al menos iguales, al total de ingresos por turismo que percibe la Argentina según la Balanza de Pagos. Sin embargo, en los trimestres 2, 3 y 4 del año 2020 la proporción MULC/BP es mayor al 100%. Esto es debido a las diferencias en cuanto a la metodología de registración de ambas fuentes de información y los desfasajes en la vuelta de los turistas no residentes a sus lugares de origen, producto de las restricciones al tránsito internacional por la pandemia por el virus COVID-19.*
+
+```{r}
+g7
+g8
+```
+
+#### Evolución trimestral de los egresos por turismo - BP vs MULC 
+
+```{r}
+tabla9_mulc <- ss_trim %>% filter(variable=="pagos", 
+                                  rubro %in% c("viajes_y_otros_pagos_con_tarjeta", 
+                                               "servicios_de_transporte_de_pasajeros"),
+                                  anio>=2011,
+                                  !is.na(value)) %>% 
+                          pivot_wider(names_from = rubro, values_from = value)
+tabla9_mulc <- cbind(tabla9_mulc, MULC=apply(tabla9_mulc[5:6], 1, sum)) %>% 
+                          select(fecha,MULC)
+              
+
+tabla9_BP <- BP %>% filter(year>=2011) %>% select(fecha, emisivo_vyp) 
+                  
+tabla9 <- right_join(tabla9_mulc, tabla9_BP, by = "fecha") %>% 
+          rename("BP"="emisivo_vyp") %>% 
+          pivot_longer(c(4:5), names_to = "turismo_pagos")
+
+rm(tabla9_BP, tabla9_mulc)
+
+g9 <- tabla9 %>% ggplot(aes(fecha, value, color=turismo_pagos, group=turismo_pagos))+
+  geom_line(size=1)+
+  geom_point(size=2)+
+  scale_color_manual(values = c(cols_arg2[5:6])) +
+  labs(#title="Egresos por turismo: BP vs MULC",
+       #subtitle = "En millones de dólares",x="",y="",
+       caption="DNMyE en base a BCRA y Dirección Nacional de Cuentas Internacionales")+
+  theme_minimal()+
+  theme(
+    text = element_text(family = familia_fuente), 
+    plot.title    = element_markdown(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    plot.caption  = element_markdown(size = 6),
+    strip.text.y  = element_text(size = 8, face = "bold"),
+    axis.text.x   = element_text(size = 6,angle=90),
+    axis.text.y   = element_text(size = 8),
+    panel.grid.minor.x = element_blank(),
+    legend.title = element_blank(),
+    legend.position = "bottom",
+    strip.placement = "outside")
+
+tabla10 <- tabla9 %>% pivot_wider(names_from = turismo_pagos, values_from = value) %>% 
+                     summarise(fecha=fecha,
+                               prop_mulc_bp= MULC/BP*100)
+
+g10 <- tabla10 %>% ggplot(aes(fecha, prop_mulc_bp))+
+  geom_hline(yintercept = 100, color="lightgrey")+
+  geom_col(fill="darkgrey")+
+  scale_y_continuous(n.breaks = 10)+
+  labs(#title="Proporción de egresos por turismo en el MULC sobre el total de la BP",
+       #subtitle = "En %",x="",y="",
+       caption="DNMyE en base a BCRA y Dirección Nacional de Cuentas Internacionales")+
+  theme_minimal()+
+  theme(
+    text = element_text(family = familia_fuente), 
+    plot.title    = element_markdown(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    plot.caption  = element_markdown(size = 6),
+    strip.text.y  = element_text(size = 8, face = "bold"),
+    axis.text.x   = element_text(size = 6, angle=90),
+    axis.text.y   = element_text(size = 8),
+    panel.grid.minor.x = element_blank(),
+    legend.title = element_blank(),
+    strip.placement = "outside")
+```
+
+En el segundo trimestre de 2021, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1) %>% format(decimal.mark=",",big.mark=".")` millones de egresos totales asociados al turismo, según la BP. Por su lado, el MULC registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1) %>% format(decimal.mark=",",big.mark=".")` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1) %>% format(decimal.mark=",",big.mark=".")`% de los egresos registrados por la BP.
+
+*NOTA: nuevamente, los egresos por turismo a través del mercado oficial de cambios (MULC) siempre deberían ser menores, o al menos iguales, al total de egresos por turismo de la Argentina según la Balanza de Pagos. Sin embargo, en repetidas ocasiones esto no es así, especialmente en los trimestres 2, 3 y 4 del año 2020 y el 1er trimestre del 2021. En el caso de los egresos, sucede que el componente turístico del MULC incluye pagos con tarjeta realizados por residentes en Argentina a residentes en el exterior y que pueden no ser gastos turísticos. Ejemplos de esto podrían ser los pagos de servicios de streaming como Netflix o Spotify, entre otros. Por lo tanto, en los casos en que el ratio MULC/BP es mayor al 100% se evidencia que los gastos con tarjeta por motivos no turísticos aumentaron la componente "viajes y otros gastos con tarjeta" del MULC por encima de los gastos del turismo emisivo registrado por la BP. En los trimestres comprendidos en la pandemia por COVID-19, esta situación se refleja aún más debido a la reducción de cercana al 100% i.a. del turismo emisivo.*
+
+```{r}
+g9
+g10
+```
+
+
+#### Para más información sobre qué es el turismo dentro del MULC:
+
+[**Bitácora**](https://bitacora.yvera.tur.ar/posts/2021-10-20-mulc/)
