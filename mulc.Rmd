@@ -495,7 +495,8 @@ g3 <- tabla3 %>%
                date_labels = "%b%y", 
                expand = c(0,10))+
   labs(#title="Ingresos de divisas por viajes y otros pagos con tarjeta. Apertura por rubros",
-       #subtitle = "En millones de dólares",x="",y="",
+       #subtitle = "En millones de dólares",
+       x="",y="",
        caption="DNMyE en base a BCRA")+
   theme_minimal()+
   theme(
@@ -524,7 +525,8 @@ g4 <- tabla4 %>%
                date_labels = "%b%y", 
                expand = c(0,10))+
   labs(#title="Egresos de divisas por viajes y otros pagos con tarjeta. Apertura por rubros",
-       #subtitle = "En millones de dólares",x="",y="",
+       #subtitle = "En millones de dólares",
+       x="",y="",
        caption="DNMyE en base a BCRA")+
   theme_minimal()+
   theme(
@@ -571,7 +573,8 @@ g7 <- tabla7 %>% ggplot(aes(fecha, value, color=turismo_cobros, group=turismo_co
   geom_point(size=2)+
   scale_color_manual(values = c(cols_arg2[3], cols_arg)) +
   labs(#title="Ingresos por turismo: BP vs MULC",
-       #subtitle = "En millones de dólares",x="",y="",
+       #subtitle = "En millones de dólares",
+       x="",y="",
        caption="DNMyE en base a BCRA y Dirección Nacional de Cuentas Internacionales")+
   theme_minimal()+
   theme(
@@ -596,7 +599,8 @@ g8 <- tabla8 %>% ggplot(aes(fecha, prop_mulc_bp))+
   geom_col(fill="darkgrey")+
   scale_y_continuous(n.breaks = 10)+
   labs(#title="Proporción de ingresos por turismo en el MULC sobre el total de la BP",
-       #subtitle = "En %",x="",y="",
+       #subtitle = "En %",
+       x="",y="",
        caption="DNMyE en base a BCRA y Dirección Nacional de Cuentas Internacionales")+
   theme_minimal()+
   theme(
@@ -648,7 +652,8 @@ g9 <- tabla9 %>% ggplot(aes(fecha, value, color=turismo_pagos, group=turismo_pag
   geom_point(size=2)+
   scale_color_manual(values = c(cols_arg2[5:6])) +
   labs(#title="Egresos por turismo: BP vs MULC",
-       #subtitle = "En millones de dólares",x="",y="",
+       #subtitle = "En millones de dólares",
+       x="",y="",
        caption="DNMyE en base a BCRA y Dirección Nacional de Cuentas Internacionales")+
   theme_minimal()+
   theme(
@@ -673,7 +678,8 @@ g10 <- tabla10 %>% ggplot(aes(fecha, prop_mulc_bp))+
   geom_col(fill="darkgrey")+
   scale_y_continuous(n.breaks = 10)+
   labs(#title="Proporción de egresos por turismo en el MULC sobre el total de la BP",
-       #subtitle = "En %",x="",y="",
+       #subtitle = "En %",
+       x="",y="",
        caption="DNMyE en base a BCRA y Dirección Nacional de Cuentas Internacionales")+
   theme_minimal()+
   theme(
