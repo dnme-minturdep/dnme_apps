@@ -20,7 +20,7 @@ library(plotly)
 
 Sys.setlocale(locale = "es_AR.UTF-8")
 
-mes <- as.character(month(floor_date(Sys.Date(),"month")- months(2),label = T,abbr = F))
+mes <- as.character(month(floor_date(Sys.Date(),"month")- months(2), label = T, abbr = F))
 anio <- year(floor_date(Sys.Date(),"year"))
 
 
