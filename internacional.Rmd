@@ -39,8 +39,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 #source("0_funciones_de_trabajo.R", encoding = "UTF-8")
 
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2021-08-01"
-mes <- "Agosto"
+fecha <- "2021-09-01"
+mes <- "Septiembre"
 anio <- 2021
 
 # PALETAS Y FUENTES ---------------------------------------------------------
@@ -53,12 +53,15 @@ cols_arg2 <- c("#EE3D8F", # "ROJO"
                "#F7941E","#FFD100","#D7DF23", "#9283BE")
 
 #Fuente
-familia_fuente <- fonttable() %>% 
-  as_tibble() %>% 
-  filter(str_detect(FamilyName, "Encode Sans"), 
-         Bold == TRUE) %>% 
-  pull(FamilyName) %>% 
-  first()
+#familia_fuente <- fonttable() %>% 
+#  as_tibble() %>% 
+#  filter(str_detect(FamilyName, "Encode Sans"), 
+#         Bold == TRUE) %>% 
+#  pull(FamilyName) %>% 
+#  first()
+
+
+familia_fuente <- "Encode Sans Normal"
 
 # Estilo de graficos
 theme_imet <- function() {
