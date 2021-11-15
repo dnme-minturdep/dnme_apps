@@ -206,7 +206,7 @@ g1 <- tabla1 %>%
                                              '<br> balanza: USD ',format(round(balanza,1),big.mark=".",decimal.mark=",")," M"))) +
   scale_fill_manual(values = c("déficit" = cols_arg2[1],
                                "superávit" = cols_arg2[2]))+
-  scale_x_date(#limits = c(min(as.Date(tabla1$fecha, origin = "1970-01-01"))-months(1),max(as.Date(tabla1$fecha, origin = "1970-01-01"))+months(1)),
+  scale_x_date(limits = c(min(as.Date(tabla1$fecha, origin = "1970-01-01"))-months(1),max(as.Date(tabla1$fecha, origin = "1970-01-01"))+months(1)),
                date_breaks = "2 months", 
                date_labels = "%b%y", 
                expand = c(0,10))+
@@ -272,11 +272,11 @@ g2 <- tabla2 %>%
                              transac == "pagos" ~"egresos"))%>% 
   ggplot(aes(x = fecha, y= p_turismo, fill=transac,text = paste0('fecha: ', format(fecha,"%b-%y"),
                                                                  '<br>transacción: ',transac,
-                                             '<br>importe: USD ',format(round(p_turismo,1),big.mark=".",decimal.mark=",")," M")))+
+                                             '<br>participación:  ',format(round(p_turismo,1),big.mark=".",decimal.mark=","),"%")))+
   geom_bar(stat="identity", position = "dodge")+
   scale_fill_manual(values = c(cols_arg,cols_arg2[6]), labels= c("Ingresos", "Egresos")) +
   scale_x_date(
-    #limits = c(min(tabla2$fecha)-months(1),max(tabla2$fecha)+months(1)),
+    limits = c(min(tabla2$fecha)-months(1),max(tabla2$fecha)+months(1)),
                date_breaks = "2 months", 
                date_labels = "%b%y", 
                expand = c(0,10))+
@@ -564,7 +564,10 @@ tabla7_BP <- BP %>% filter(year>=2011) %>% select(fecha, receptivo_vyp)
                   
 tabla7 <- right_join(tabla7_mulc, tabla7_BP, by = "fecha") %>% 
           rename("BP"="receptivo_vyp") %>% 
-          pivot_longer(c(4:5), names_to = "turismo_cobros")
+          pivot_longer(c(4:5), names_to = "turismo_cobros") %>% 
+          group_by(turismo_cobros) %>% 
+          mutate(fecha=factor(fecha,levels=fecha)) %>% 
+          ungroup()
 
 rm(tabla7_BP, tabla7_mulc)
 
@@ -592,7 +595,8 @@ g7 <- tabla7 %>% ggplot(aes(fecha, value, color=turismo_cobros, group=turismo_co
 
 tabla8 <- tabla7 %>% pivot_wider(names_from = turismo_cobros, values_from = value) %>% 
                      summarise(fecha=fecha,
-                               prop_mulc_bp= MULC/BP*100)
+                               prop_mulc_bp= MULC/BP*100) %>% 
+          mutate(fecha=factor(fecha,levels=fecha))
 
 g8 <- tabla8 %>% ggplot(aes(fecha, prop_mulc_bp))+
   geom_hline(yintercept = 100, color="lightgrey")+
@@ -643,7 +647,10 @@ tabla9_BP <- BP %>% filter(year>=2011) %>% select(fecha, emisivo_vyp)
                   
 tabla9 <- right_join(tabla9_mulc, tabla9_BP, by = "fecha") %>% 
           rename("BP"="emisivo_vyp") %>% 
-          pivot_longer(c(4:5), names_to = "turismo_pagos")
+          pivot_longer(c(4:5), names_to = "turismo_pagos") %>% 
+          group_by(turismo_pagos) %>% 
+          mutate(fecha=factor(fecha,levels=fecha)) %>% 
+          ungroup()
 
 rm(tabla9_BP, tabla9_mulc)
 
@@ -671,7 +678,8 @@ g9 <- tabla9 %>% ggplot(aes(fecha, value, color=turismo_pagos, group=turismo_pag
 
 tabla10 <- tabla9 %>% pivot_wider(names_from = turismo_pagos, values_from = value) %>% 
                      summarise(fecha=fecha,
-                               prop_mulc_bp= MULC/BP*100)
+                               prop_mulc_bp= MULC/BP*100) %>% 
+           mutate(fecha=factor(fecha,levels=fecha))
 
 g10 <- tabla10 %>% ggplot(aes(fecha, prop_mulc_bp))+
   geom_hline(yintercept = 100, color="lightgrey")+
@@ -695,9 +703,9 @@ g10 <- tabla10 %>% ggplot(aes(fecha, prop_mulc_bp))+
     strip.placement = "outside")
 ```
 
-En el segundo trimestre de 2021, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1) %>% format(decimal.mark=",",big.mark=".")` millones de egresos totales asociados al turismo, según la BP. Por su lado, el MULC registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1) %>% format(decimal.mark=",",big.mark=".")` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1) %>% format(decimal.mark=",",big.mark=".")`% de los egresos registrados por la BP.
++ En el segundo trimestre de 2021, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1) %>% format(decimal.mark=",",big.mark=".")` millones de egresos totales asociados al turismo, según la BP. Por su lado, el MULC registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1) %>% format(decimal.mark=",",big.mark=".")` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1) %>% format(decimal.mark=",",big.mark=".")`% de los egresos registrados por la BP.
 
-*NOTA: nuevamente, los egresos por turismo a través del mercado oficial de cambios (MULC) siempre deberían ser menores, o al menos iguales, al total de egresos por turismo de la Argentina según la Balanza de Pagos. Sin embargo, en repetidas ocasiones esto no es así, especialmente en los trimestres 2, 3 y 4 del año 2020 y el 1er trimestre del 2021. En el caso de los egresos, sucede que el componente turístico del MULC incluye pagos con tarjeta realizados por residentes en Argentina a residentes en el exterior y que pueden no ser gastos turísticos. Ejemplos de esto podrían ser los pagos de servicios de streaming como Netflix o Spotify, entre otros. Por lo tanto, en los casos en que el ratio MULC/BP es mayor al 100% se evidencia que los gastos con tarjeta por motivos no turísticos aumentaron la componente "viajes y otros gastos con tarjeta" del MULC por encima de los gastos del turismo emisivo registrado por la BP. En los trimestres comprendidos en la pandemia por COVID-19, esta situación se refleja aún más debido a la reducción de cercana al 100% i.a. del turismo emisivo.*
+*NOTA: nuevamente, los egresos por turismo a través del mercado oficial de cambios (MULC) siempre deberían ser menores, o al menos iguales, al total de egresos por turismo de la Argentina según la Balanza de Pagos. Sin embargo, en repetidas ocasiones esto no es así, especialmente en los trimestres 2, 3 y 4 del año 2020 y los trimestres 1 y 2 del año 2021. En el caso de los egresos, sucede que el componente turístico del MULC incluye pagos con tarjeta realizados por residentes en Argentina a residentes en el exterior y que pueden no ser gastos turísticos. Ejemplos de esto podrían ser los pagos de servicios de streaming como Netflix o Spotify, entre otros. Por lo tanto, en los casos en que el ratio MULC/BP es mayor al 100% se evidencia que los gastos con tarjeta por motivos no turísticos aumentaron la componente "viajes y otros gastos con tarjeta" del MULC por encima de los gastos del turismo emisivo registrado por la BP. En los trimestres comprendidos en la pandemia por COVID-19, esta situación se refleja aún más debido a la reducción de cercana al 100% i.a. del turismo emisivo.*
 
 ```{r}
 g9
