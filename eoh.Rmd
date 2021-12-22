@@ -581,7 +581,7 @@ grafico2 <- datos_grafico2 %>%
   scale_y_continuous(limits = c(0,dato_escala)) +
   theme(
     plot.title = element_markdown(size = 14, family = familia_fuente, colour = "#AAAAAA", hjust = 2.8),
-    plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = 1.5),
+    plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = 1.8),
     plot.caption = element_markdown(size = 8, family = familia_fuente),
     axis.text.x = element_blank(),
     axis.text.y = element_text(size = 12, colour = "black", face = "bold"),
@@ -754,7 +754,7 @@ grafico3 <- datos_grafico3 %>% ggplot() +
   scale_y_continuous(limits = c(-1, dato_escala2)) +
   theme(
     #plot.title = element_markdown(size = 14, family = familia_fuente, colour = "#AAAAAA", hjust = -0.18),
-    plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = -0.2),
+    plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = -0.1),
     plot.caption = element_markdown(size = 8, family = familia_fuente),
     axis.text.x = element_blank(),
     axis.text.y = element_text(size = 12, colour = "black", face = "bold"),
