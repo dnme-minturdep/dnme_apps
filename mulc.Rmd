@@ -154,10 +154,9 @@ rm(ss_cobros_anual, ss_cobros_mensual, ss_cobros_trim,
 
 
 ############# TRIMESTRAL VS CUENTA VIAJES ######################################
-googlesheets4::gs4_deauth()
 
-
-BP <- read_sheet("https://docs.google.com/spreadsheets/d/172nmjXSzLU2Em8IwnjkYeSz54pQ5Dq_12mWrS62s9vc/edit#gid=0")
+BP <- read.xlsx("/srv/DataDNMYE/mulc/Turismo internacional GASTO.xlsx")
+                              
 BP <- mutate(BP, fecha = paste0(year," ", quart, " Trim"))
 BP[3:10] <- BP[3:10]/1000000 # paso a millones de dólares
 ```
