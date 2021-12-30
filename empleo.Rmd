@@ -32,15 +32,19 @@ familia_fuente <-"Encode Sans Normal"
 Sys.setlocale(locale = "es_AR.UTF-8")
 ```
 
-### (Publicado en octubre 2021 con datos actualizados a junio 2021)
+### (Publicado en diciembre 2021 con datos actualizados a agosto 2021)
 
 ```{r}
 #INSUMOS: VER CÓMO AUTOMATIZAR LA DESCARGA DESDE DATOS ABIERTOS 
-empleo <- read.csv("/srv/DataDNMYE/empleo/puestos_total_empresas_mensual_por_clae6_21102021.csv")
+empleo <- read.csv("/srv/DataDNMYE/empleo/puestos_total_empresas_mensual_por_clae6_06122021.csv")
 # salario.prom <- read.csv("Entradas/w_mean_total_empresas_mensual_por_clae6_21102021.csv")
 # salario.median <- read.csv("Entradas/w_median_total_empresas_mensual_por_clae6_21102021.csv")
-empleadores <- read.csv("/srv/DataDNMYE/empleo/empleadoras_total_empresas_por_clae6_21102021.csv")
-puestos.genero <- read.csv("/srv/DataDNMYE/empleo/share_mujer_total_empresas_mensual_por_clae6_21102021.csv")
+empleadores <- read.csv("/srv/DataDNMYE/empleo/empleadoras_total_empresas_por_clae6_06122021.csv")
+
+#ATENCIÓN: EN ESTA OPORTUNIDAD LOS DATOS DE EMPRESAS LLEGAN HASTA JULIO 2021, NO AGOSTO
+fecha_empresas <- "2021-07-01"
+
+puestos.genero <- read.csv("/srv/DataDNMYE/empleo/share_mujer_total_empresas_mensual_por_clae6_06122021.csv")
 ################################################################################
 #IPC PARA SALARIOS REALES
 #ipc <- read.delim("Entradas/IPC_argentina_script.txt",sep = ",")
@@ -127,13 +131,15 @@ Se seleccionaron `r length(ramas_turismo_6d)` ramas de actividad a 6 dígitos de
 - <span style="color: #D7DF23;">**Transporte:**</span> `r length(unique(puestos[puestos$cat.rct == "Transporte","clae6"]))` ramas.
 - <span style="color: #FFD100;">**Otros Servicios Turísticos:**</span> `r length(unique(puestos[puestos$cat.rct == "Otros Servicios Turísticos","clae6"]))` ramas.
 
-*Aclaración:* Debido a la preservación del secreto estadístico, las ramas con 2 o menos empleadores no contienen información. Actualmente, entonces, no se incluye información sobre: 
-
-+ `r ult.datos.empleo %>% filter(is.na(puestos) & rct == "RCT") %>% pull(clae6_desc)`
 
 <br>
 
 ```{r}
+# PARA CUANDO HAYA CLAE CON NA POR SECRETO ESTADÍSTICO
+# *Aclaración:* Debido a la preservación del secreto estadístico, las ramas con 2 o menos empleadores no contienen información. Actualmente, entonces, no se incluye información sobre: 
+# 
+# + `r ult.datos.empleo %>% filter(is.na(puestos) & rct == "RCT") %>% pull(clae6_desc)`
+
 ramas.treemap <- ult.datos.empleo %>% 
   filter(rct == "RCT") %>% 
   ggplot(.,aes(area=puestos,
@@ -272,7 +278,7 @@ grafico_empleo_cat_rct <- ggplot(data_grafico_empleo_cat_rct,aes(x=reorder(cat.r
     strip.placement = "outside") +
   coord_flip(clip = "off")+
   labs(x="",y="",title= "Empleo en Ramas Características del Turismo",
-       subtitle = paste0("Miles de puestos de trabajo.","junio 2021 <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a MDP")
+       subtitle = paste0("Miles de puestos de trabajo.","agosto 2021 <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a MDP")
 grafico_empleo_cat_rct
 ```
 
@@ -626,6 +632,7 @@ En la siguiente sección se presentan las series relativas a ramas turísticas e
 
 ```{r}
 indice.empresas <- puestos %>% 
+  filter(fecha <= fecha_empresas ) %>% 
   group_by(fecha,rct) %>%
   summarise(empresas = sum(empresas,na.rm = T)) %>%
   group_by(rct) %>% 
@@ -635,7 +642,7 @@ indice.empresas <- puestos %>%
 ```
 
 
-En el mes de **`r format(as.Date(max(puestos$fecha)),"%B %Y")`** se registraron `r indice.empresas%>% filter(fecha == max(fecha) & rct == "RCT") %>% pull(empresas) %>% format(.,big.mark=".")` empresas en ramas turísticas, presentando una variación de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "RCT","var.i.a."],1),decimal.mark=",") `% con respecto a  `r format(as.Date(max(indice.empresas$fecha))-years(1),"%B %Y")`. El resto de los sectores presentó una variación de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "NO RCT","var.i.a."],1),decimal.mark=",") `%.
+En el mes de **`r format(as.Date(fecha_empresas),"%B %Y")`** se registraron `r indice.empresas%>% filter(fecha == max(fecha) & rct == "RCT") %>% pull(empresas) %>% format(.,big.mark=".")` empresas en ramas turísticas, presentando una variación de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "RCT","var.i.a."],1),decimal.mark=",") `% con respecto a  `r format(as.Date(max(indice.empresas$fecha))-years(1),"%B %Y")`. El resto de los sectores presentó una variación de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "NO RCT","var.i.a."],1),decimal.mark=",") `%.
 En la comparación con `r format(as.Date(max(indice.empresas$fecha))-years(2),"%B %Y")`, la variación en ramas turísticas fue de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "RCT","var.a.2.anios"],1),decimal.mark=",") `%, mientras que en el resto de las ramas fue de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "NO RCT","var.a.2.anios"],1),decimal.mark=",") `%
 
 ```{r}
@@ -696,6 +703,7 @@ g5 %>% layout(legend = list(
 
 ```{r}
 indice.empresas.cat.rct <- puestos %>%  
+  filter(fecha <= fecha_empresas) %>% 
   group_by(fecha,cat.rct) %>%
   summarise(empresas = sum(empresas,na.rm = T)) %>%
   group_by(cat.rct) %>% 
@@ -736,7 +744,7 @@ grafico_empresas_cat_rct <- ggplot(data_grafico_empresas_cat_rct,aes(x=reorder(c
     strip.placement = "outside") +
   coord_flip(clip = "off")+
   labs(x="",y="",title= "Empleadores en Ramas Características del Turismo",
-       subtitle = paste0("Miles de empresas.","junio 2021 <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a MDP")
+       subtitle = paste0("Miles de empresas.","julio 2021 <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a MDP")
 grafico_empresas_cat_rct
 ```
 
@@ -797,6 +805,7 @@ A continuación se presenta la evolución de los empleadores en todas las ramas 
 
 ```{r}
 indice_empresas_todas <- puestos %>% 
+  filter(fecha <= fecha_empresas) %>% 
    group_by(clae6,cat.rct) %>% 
   mutate(indice = 100*round(empresas/first(empresas),2), 
          var.i.a. = empresas/lag(empresas,12)-1,
