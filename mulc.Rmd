@@ -17,6 +17,14 @@ library(janitor)
 library(googlesheets4)
 library(plotly)
 
+# Opciones globales
+options(scipen = 999, # sin notación científica
+        OutDec= ",")# coma para los decimales
+
+knitr::knit_hooks$set(inline = function(x) {   
+  if(!is.numeric(x)){x}
+  else{prettyNum(x, big.mark=".")}}) # Para que los separadores de miles sean punto.
+
 Sys.setlocale(locale = "es_AR.UTF-8")
 
 mes <- as.character(month(floor_date(Sys.Date(),"month")- months(2), label = T, abbr = F))
@@ -45,9 +53,6 @@ familia_fuente <- "Encode Sans"
 ```
 
 ```{r}
-options(scipen=999)
-
-
 ss_cobros_mensual <- read.xlsx("/srv/DataDNMYE/mulc/MULC.xlsx",
                               sheet = "Servicios Cobros USD - mensual",
                               startRow = 7,
@@ -176,9 +181,33 @@ tabla1 <- ss_mensual %>% filter(year(fecha) >= 2017,
                                                    TRUE ~ "déficit"))
 ```
 
-+ En el mes de `r mes`, los egresos de divisas por turismo, por el mercado oficial de cambios, alcanzaron un total de US\$`r format(round(tail(tabla1$pagos, n=1),1),decimal.mark=",",big.mark=".")` millones, con una variación respecto al mismo mes del año 2020 del `r format(round((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-12]-1)*100,1),decimal.mark=",",big.mark=".")`%, y del `r format(round((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-24]-1)*100,1),decimal.mark=",",big.mark=".")`% con respecto al mismo mes del año 2019. Por su parte, los ingresos fueron de US\$`r format(round(tail(tabla1$cobros, n=1),1),decimal.mark=",",big.mark=".")` millones, con una variación interanual del `r format(round((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-12]-1)*100,1),decimal.mark=",",big.mark=".")`% y del `r format(round((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-24]-1)*100,1),decimal.mark=",",big.mark=".")`% con respecto a 2019.
++ En el mes de `r mes`, los egresos de divisas por turismo, por el mercado oficial de cambios, alcanzaron un total de US\$`r tail(tabla1$pagos, n=1) %>% round(1)` millones, con una variación respecto al mismo mes del año `r as.character(anio_datos-1)` del `r ((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-12]-1)*100) %>% round(1)`%, y del `r ((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-24]-1)*100) %>% round(1)`% con respecto al mismo mes del año `r as.character(anio_datos-2)`. Por su parte, los ingresos fueron de US\$`r tail(tabla1$cobros, n=1) %>% round(1)` millones, con una variación interanual del `r ((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-12]-1)*100) %>% round(1)`% y del `r ((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-24]-1)*100) %>% round(1)`% con respecto a `r as.character(anio_datos-2)`.
 
-+ Continuando con la tendencia de los últimos años, la balanza de divisas en el mercado oficial, por turismo, es deficitaria. En el mes de `r mes` del corriente año, se registró una balanza deficitaria en US\$`r format((-1)*round(tail(tabla1$balanza, n=1),1),decimal.mark=",",big.mark=".")` millones, mientras que en el mismo mes de 2020 había sido de US\$`r format(round(tabla1$balanza[length(tabla1$balanza)-12]),decimal.mark=",",big.mark=".")` millones.
++ Continuando con la tendencia de los últimos años, la balanza de divisas en el mercado oficial, por turismo, es deficitaria. En el mes de `r mes` de `r as.character(anio_datos)`, se registró una balanza deficitaria en US\$`r ((-1)*tail(tabla1$balanza, n=1)) %>% round(1)` millones, mientras que en el mismo mes de `r as.character(anio_datos-1)` había sido también deficitaria en US\$`r ((-1)*(tabla1$balanza[length(tabla1$balanza)-12])) %>% round(1)` millones.
+
+```{r}
+ing_acum <- filter(tabla1, year(fecha) == anio_datos) %>% select(cobros) %>% sum()
+
+ing_acum_ia <- filter(tabla1, year(fecha) == anio_datos-1 & month(fecha) <= month(last(tabla1$fecha))) %>% select(cobros) %>% sum()
+
+ing_acum_ia_2 <- filter(tabla1, year(fecha) == anio_datos-2 & month(fecha) <= month(last(tabla1$fecha))) %>% select(cobros) %>% sum()
+
+var_ing_acum_ia <- (ing_acum/ing_acum_ia-1)*100
+var_ing_acum_ia_2 <- (ing_acum/ing_acum_ia_2-1)*100
+
+eg_acum <- filter(tabla1, year(fecha) == anio_datos) %>% select(pagos) %>% sum()
+
+eg_acum_ia <- filter(tabla1, year(fecha) == anio_datos-1 & month(fecha) <= month(last(tabla1$fecha))) %>% select(pagos) %>% sum()
+
+eg_acum_ia_2 <- filter(tabla1, year(fecha) == anio_datos-2 & month(fecha) <= month(last(tabla1$fecha))) %>% select(pagos) %>% sum()
+
+var_eg_acum_ia <- (eg_acum/eg_acum_ia-1)*100
+var_eg_acum_ia_2 <- (eg_acum/eg_acum_ia_2-1)*100
+
+bza_acum <- ing_acum-eg_acum
+
+```
++ En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-2)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-2)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones. 
 
 <br>
 
@@ -256,7 +285,14 @@ tabla2 <- ss_mensual %>% filter(year(fecha) >= 2017,
                          filter(transac != "balanza")
 ```
 
-+ En el mes de `r mes` de `r anio_datos` los egresos por turismo representaron un `r format(round(tail(tabla2$p_turismo [tabla2$transac == "pagos"],n=1),1),decimal.mark=",",big.mark=".")`% de la salida total de divisas por servicios vía el mercado oficial de cambios. Por su lado, los ingresos por turismo representaron un `r format(round(tail(tabla2$p_turismo [tabla2$transac == "cobros"],n=1),1),decimal.mark=",",big.mark=".")`% del total de ingresos por servicios.
++ En el mes de `r mes` de `r as.character(anio_datos)` los egresos por turismo representaron un `r tail(tabla2$p_turismo [tabla2$transac == "pagos"],n=1) %>% round(1)`% de la salida total de divisas por servicios vía el mercado oficial de cambios. Por su lado, los ingresos por turismo representaron un `r tail(tabla2$p_turismo [tabla2$transac == "cobros"],n=1) %>% round(1)`% del total de ingresos por servicios.
+
+```{r}
+ing_acum_total <- filter(tabla2, year(fecha) == anio_datos, transac == "cobros") %>% select(total) %>% sum()
+
+eg_acum_total <- filter(tabla2, year(fecha) == anio_datos, transac == "pagos") %>% select(total) %>% sum()
+```
++ Por su lado, en el acumulado del año, los egresos por turismo representaron un `r ((eg_acum/eg_acum_total)*100) %>% round(1)`% y los ingresos por turismo un `r ((ing_acum/ing_acum_total)*100) %>% round(1)`%.
 
 <br>
 
@@ -384,14 +420,72 @@ tabla6 <- mutate(tabla6, orden=1:length(tabla6$rubro),
                          es_turismo = ifelse(rubro == "Turismo", "si", "no"))
 
 
+# ACUMULADO-----------------------------------------------------------------------------
+# Ingresos
+tabla5_acum <- ss_mensual %>% filter(!is.na(cobros)) %>% 
+                         select(!c(balanza,pagos)) %>% 
+                         filter(year(fecha) == anio_datos,
+                                !rubro %in% c("total", 
+                                           "entidades_y_otros_por_cancelacion_de_tarjetas",
+                                           "operadores_turisticos_y_otras_transferencias",
+                                           "no_residentes_billetes")) %>% 
+                         group_by(rubro) %>% 
+                         summarise(cobros = sum(cobros))
+
+turismo <- tabla5_acum %>% summarise(turismo = sum(cobros[rubro %in% c("servicios_de_transporte_de_pasajeros",                                          "viajes_y_otros_pagos_con_tarjeta")]))
+
+tabla5_acum <- tabla5_acum %>% add_row(cobros = turismo$turismo,
+                             rubro = "turismo") %>% 
+                     filter(!rubro %in% c("servicios_de_transporte_de_pasajeros",
+                                      "viajes_y_otros_pagos_con_tarjeta")) %>% 
+                     arrange(desc(cobros))
+
+otros_agrup <- tabla5_acum %>% summarise(otros_agrup = sum(cobros[10:15]))                       
+
+tabla5_acum <- tabla5_acum %>% add_row(cobros = otros_agrup$otros_agrup,
+                             rubro = "otros_agrup")
+
+tabla5_acum <-tabla5_acum[c(1:9,16),]
+
+tabla5_acum <- mutate(tabla5_acum, orden = 1:length(tabla5_acum$rubro))
+
+# Egresos
+tabla6_acum <- ss_mensual %>% filter(!is.na(pagos)) %>% 
+                         select(!c(balanza,cobros)) %>% 
+                         filter(year(fecha) == anio_datos,
+                                !rubro %in% c("total", 
+                                           "entidades_y_otros_por_cancelacion_de_tarjetas",
+                                           "operadores_turisticos_y_otras_transferencias",
+                                           "no_residentes_billetes")) %>% 
+                         group_by(rubro) %>% 
+                         summarise(pagos = sum(pagos))
+
+turismo <- tabla6_acum %>% summarise(turismo = sum(pagos[rubro %in% c("servicios_de_transporte_de_pasajeros",                                          "viajes_y_otros_pagos_con_tarjeta")]))
+
+tabla6_acum <- tabla6_acum %>% add_row(pagos = turismo$turismo,
+                             rubro = "turismo") %>% 
+                     filter(!rubro %in% c("servicios_de_transporte_de_pasajeros",
+                                      "viajes_y_otros_pagos_con_tarjeta")) %>% 
+                     arrange(desc(pagos))
+
+otros_agrup <- tabla6_acum %>% summarise(otros_agrup = sum(pagos[10:15]))                       
+
+tabla6_acum <- tabla6_acum %>% add_row(pagos = otros_agrup$otros_agrup,
+                             rubro = "otros_agrup")
+
+tabla6_acum <-tabla6_acum[c(1:9,16),]
+
+tabla6_acum <- mutate(tabla6_acum, orden = 1:length(tabla6_acum$rubro))
+
+
 ```
 
-+ En comparación con el resto de los sectores de servicios informados por el BCRA, en el mes de `r paste(mes," de ",anio_datos)` el turismo fue el `r tabla5$orden[tabla5$rubro == "Turismo"]`º sector en cuanto a ingresos de divisas pero el `r tabla6$orden[tabla6$rubro == "Turismo"]`º en cuanto a egresos.
++ En comparación con el resto de los sectores de servicios informados por el BCRA, en el mes de `r mes` de `r as.character(anio_datos)` el turismo fue el `r tabla5$orden[tabla5$rubro == "Turismo"]`º sector en cuanto a ingresos de divisas pero el `r tabla6$orden[tabla6$rubro == "Turismo"]`º en cuanto a egresos.
 
 <br>
 
 ### Ingresos de divisas vía MULC. Apertura por sectores de servicios
-#### En millones de dólares
+#### `r paste(mes,"de",anio_datos)`. en millones de dólares
 ```{r}
 g5 <- tabla5 %>% 
   ggplot(aes(x = cobros, y = reorder(rubro, -orden), 
@@ -430,7 +524,7 @@ ggplotly(g5,tooltip = "text") %>% layout(legend = list(
 <br>
 
 ### Egresos de divisas vía MULC. Apertura por sectores de servicios
-#### En millones de dólares
+#### `r paste(mes,"de",anio_datos)`. en millones de dólares
 ```{r}
 g6 <- tabla6 %>% 
   ggplot(aes(x = pagos, y = reorder(rubro, -orden),
@@ -467,6 +561,8 @@ ggplotly(g6,tooltip = "text") %>% layout(legend = list(
   
 ```
 
++ Mientras tanto, en el acumulado enero - `r mes` de `r as.character(anio_datos)`, el turismo ocupó el `r tabla5_acum$orden[tabla5_acum$rubro == "turismo"]`º lugar en cuanto a ingresos, pero el `r tabla6_acum$orden[tabla6_acum$rubro == "turismo"]`º en cuanto a egresos.
+
 ### Apertura del rubro "Viajes y otros pagos con tarjeta"
 
 ```{r}
@@ -495,9 +591,9 @@ tabla4$rubro <- tabla4$rubro %>%  as.factor() %>% recode_factor(
   no_residentes_billetes = "Billetes - No Residentes")
 ```
 
-+ En el mes de `r mes` de `r anio_datos`, los ingresos de divisas por cancelación de compras con tarjetas fueron de US\$`r format(round(tabla3 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-1),1), ,decimal.mark=",",big.mark=".")` millones, presentando una variación del `r format(round((tabla3 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-1)/tabla3 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-13)-1)*100,1),decimal.mark=",",big.mark=".")`% respecto al mismo mes del año 2020. Por su lado, los ingresos por cobros de operadores turísticos locales fueron de US\$`r format(round(tabla3 %>% filter(rubro == "Operadores turísticos") %>% last() %>% nth(-1),1),decimal.mark=",",big.mark=".")` millones, presentando una variación del `r format(round((tabla3 %>% filter(rubro == "Operadores turísticos") %>% last() %>% nth(-1)/tabla3 %>% filter(rubro == "Operadores turísticos") %>% last() %>% nth(-13)-1)*100,1),decimal.mark=",",big.mark=".")`% interanual.
++ En el mes de `r mes` de `r as.character(anio_datos)`, los ingresos de divisas por cancelación de compras con tarjetas fueron de US\$`r round(tabla3 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-1),1)` millones, presentando una variación del `r round((tabla3 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-1)/tabla3 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-13)-1)*100,1)`% respecto al mismo mes del año `r as.character(anio_datos-1)`. Por su lado, los ingresos por cobros de operadores turísticos locales fueron de US\$`r round(tabla3 %>% filter(rubro == "Operadores turísticos") %>% last() %>% nth(-1),1)` millones, presentando una variación del `r round((tabla3 %>% filter(rubro == "Operadores turísticos") %>% last() %>% nth(-1)/tabla3 %>% filter(rubro == "Operadores turísticos") %>% last() %>% nth(-13)-1)*100,1)`% interanual.
 
-+ Por su parte, los egresos de divisas por cancelación de compras con tarjetas fueron de US\$`r format(round(tabla4 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-1),1),decimal.mark=",",big.mark=".")` millones, presentando una variación del `r format(round((tabla4 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-1)/tabla4 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-13)-1)*100,1),decimal.mark=",",big.mark=".")`% respecto al mismo mes del año 2020. Los egresos por pagos al exterior realizados por operadores turísticos locales fueron de US\$`r format(round(tail(tabla4$pagos[tabla4$rubro == "Operadores turísticos"],n=1),1),decimal.mark=",",big.mark=".")` millones, presentando una variación del `r format(round((tabla4 %>% filter(rubro == "Operadores turísticos") %>% last() %>% nth(-1)/tabla4 %>% filter(rubro == "Operadores turísticos") %>% last() %>% nth(-13)-1)*100,1),decimal.mark=",",big.mark=".")`% interanual.
++ Por su parte, los egresos de divisas por cancelación de compras con tarjetas fueron de US\$`r round(tabla4 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-1),1)` millones, presentando una variación del `r round((tabla4 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-1)/tabla4 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-13)-1)*100,1)`% respecto al mismo mes del año `r as.character(anio_datos-1)`. Los egresos por pagos al exterior realizados por operadores turísticos locales fueron de US\$`r round(tail(tabla4$pagos[tabla4$rubro == "Operadores turísticos"],n=1),1)` millones, presentando una variación del `r round((tabla4 %>% filter(rubro == "Operadores turísticos") %>% last() %>% nth(-1)/tabla4 %>% filter(rubro == "Operadores turísticos") %>% last() %>% nth(-13)-1)*100,1)`% interanual.
 
 ```{r}
 g3 <- tabla3 %>% 
@@ -570,9 +666,6 @@ ggplotly(g4,tooltip = "text") %>%
 ```
 
 ### Balanza de Pagos vs MULC
-
-#### Evolución trimestral de los ingresos por turismo - BP vs MULC 
-
 ```{r}
 tabla7_mulc <- ss_trim %>% filter(variable=="cobros", 
                                   rubro %in% c("viajes_y_otros_pagos_con_tarjeta", 
@@ -650,21 +743,25 @@ g8 <- tabla8 %>% ggplot(aes(fecha, prop_mulc_bp,
 ```
 
 
-+ En el segundo trimestre de 2021, se registraron US\$`r format(tabla7$value[tabla7$turismo_cobros=="BP"] %>% last() %>% round(1),decimal.mark=",",big.mark=".")` millones de ingresos totales asociados al turismo, según la Balanza de Pagos ("BP"). Por su lado, un `r format(last(tabla8$prop_mulc_bp) %>% round(1), ,decimal.mark=",",big.mark=".")`% de esos ingresos se canalizaron por el mercado oficial de cambios, es decir, US\$`r format(tabla7$value[tabla7$turismo_cobros=="MULC"] %>% last() %>% round(1),decimal.mark=",",big.mark=".")` millones.
++ En el segundo trimestre de 2021, se registraron US\$`r (tabla7$value[tabla7$turismo_cobros=="BP"]) %>% last() %>% round(1)` millones de ingresos totales asociados al turismo, según la Balanza de Pagos ("BP"). Por su lado, un `r last(tabla8$prop_mulc_bp) %>% round(1)`% de esos ingresos se canalizaron por el mercado oficial de cambios, es decir, US\$`r tabla7$value[tabla7$turismo_cobros=="MULC"] %>% last() %>% round(1)` millones.
 
 *NOTA: Es importante notar que, los ingresos por turismo a través del mercado oficial de cambios (MULC) siempre deberían ser menores, o al menos iguales, al total de ingresos por turismo que percibe la Argentina según la Balanza de Pagos. Sin embargo, en los trimestres 2, 3 y 4 del año 2020 la proporción MULC/BP es mayor al 100%. Esto es debido a las diferencias en cuanto a la metodología de registración de ambas fuentes de información y los desfasajes en la vuelta de los turistas no residentes a sus lugares de origen, producto de las restricciones al tránsito internacional por la pandemia por el virus COVID-19.*
 
+### Evolución trimestral de los ingresos por turismo - BP vs MULC 
+#### en millones de dólares
 ```{r}
 ggplotly(g7,tooltip = "text") %>% 
   layout(legend = list(orientation = "v",x=0.8),
          hovermode = "x") 
+```
 
+### Ingresos por turismo: proporción MULC sobre BP
+#### en %
+```{r}
 ggplotly(g8,tooltip = "text") %>% 
   layout(legend = list(orientation = "v",x=0.8))
 
 ```
-
-#### Evolución trimestral de los egresos por turismo - BP vs MULC 
 
 ```{r}
 tabla9_mulc <- ss_trim %>% filter(variable=="pagos", 
@@ -742,15 +839,21 @@ g10 <- tabla10 %>% ggplot(aes(fecha, prop_mulc_bp,
     strip.placement = "outside")
 ```
 
-+ En el segundo trimestre de 2021, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1) %>% format(decimal.mark=",",big.mark=".")` millones de egresos totales asociados al turismo, según la BP. Por su lado, el MULC registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1) %>% format(decimal.mark=",",big.mark=".")` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1) %>% format(decimal.mark=",",big.mark=".")`% de los egresos registrados por la BP.
++ En cuanto a los egresos, en el segundo trimestre de 2021, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1)` millones de egresos totales asociados al turismo, según la BP. Por su lado, el MULC registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1)` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1)`% de los egresos registrados por la BP.
 
 *NOTA: nuevamente, los egresos por turismo a través del mercado oficial de cambios (MULC) siempre deberían ser menores, o al menos iguales, al total de egresos por turismo de la Argentina según la Balanza de Pagos. Sin embargo, en repetidas ocasiones esto no es así, especialmente en los trimestres 2, 3 y 4 del año 2020 y los trimestres 1 y 2 del año 2021. En el caso de los egresos, sucede que el componente turístico del MULC incluye pagos con tarjeta realizados por residentes en Argentina a residentes en el exterior y que pueden no ser gastos turísticos. Ejemplos de esto podrían ser los pagos de servicios de streaming como Netflix o Spotify, entre otros. Por lo tanto, en los casos en que el ratio MULC/BP es mayor al 100% se evidencia que los gastos con tarjeta por motivos no turísticos aumentaron la componente "viajes y otros gastos con tarjeta" del MULC por encima de los gastos del turismo emisivo registrado por la BP. En los trimestres comprendidos en la pandemia por COVID-19, esta situación se refleja aún más debido a la reducción de cercana al 100% i.a. del turismo emisivo.*
 
+### Evolución trimestral de los egresos por turismo - BP vs MULC 
+#### en millones de dólares
 ```{r}
 ggplotly(g9,tooltip = "text") %>% 
   layout(legend = list(orientation = "v",x=0.8),
          hovermode = "x") 
+```
 
+### Egresos por turismo: proporción MULC sobre BP
+#### en %
+```{r}
 ggplotly(g10,tooltip = "text") %>% 
   layout(legend = list(orientation = "v",x=0.8))
 
