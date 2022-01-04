@@ -699,10 +699,11 @@ tabla4$rubro <- tabla4$rubro %>%  as.factor() %>% recode_factor(
 
 ```{r}
 g3 <- tabla3 %>% 
-  ggplot(aes(x = fecha, y = cobros, fill = rubro,
-             text = paste0('fecha: ', format(fecha,"%b-%y"),
-                           '<br>rubro: ',rubro,
-                           '<br>monto: US$', format(round(cobros,1),big.mark=".",decimal.mark=",")," M"))) +
+  ggplot(aes(x = fecha, y = cobros, fill = rubro
+#             ,             text = paste0('fecha: ', format(fecha,"%b-%y"),
+#                           '<br>rubro: ',rubro,
+#                           '<br>monto: US$', #format(round(cobros,1),big.mark=".",decimal.mark=",")," M")
+      )) +
   geom_area()+
   scale_fill_manual(values = cols_arg2[2:4]) +
   scale_x_date(limits = c(min(tabla3$fecha),max(tabla3$fecha)),
@@ -727,16 +728,19 @@ g3 <- tabla3 %>%
     legend.title = element_blank(), 
     strip.placement = "outside")
 
-ggplotly(g3,tooltip = "text") %>% 
-  layout(legend = list(orientation = "v",x=0.8),
-         hovermode = "x") 
+#ggplotly(g3,tooltip = "text") %>% 
+#  layout(legend = list(orientation = "v",x=0.8),
+#         hovermode = "x") 
 
 
 g4 <- tabla4 %>% 
-  ggplot(aes(x = fecha, y = pagos, fill = rubro,
-             text = paste0('fecha: ', format(fecha,"%b-%y"),
-                           '<br>rubro: ',rubro,
-                           '<br>monto: US$', format(round(pagos,1),big.mark=".",decimal.mark=",")," M")))+
+  ggplot(aes(x = fecha, y = pagos, fill = rubro
+  #             ,
+  #             text = paste0('fecha: ', format(fecha,"%b-%y"),
+  #                           '<br>rubro: ',rubro,
+  #                           '<br>monto: US$', 
+  #format(round(pagos,1),big.mark=".",decimal.mark=",")," M")
+             ))+
   geom_area()+
   scale_fill_manual(values = cols_arg2[2:4],label=c("Tarjetas", "Billetes - No Residentes", "Operadores turísticos")) +
   scale_x_date(limits = c(min(tabla4$fecha),max(tabla4$fecha)),
