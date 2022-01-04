@@ -1,0 +1,888 @@
+---
+title: "Empleo en Turismo"
+description: "Puestos de trabajo registrados, empleo por género y empresas en ramas turísticas a partir de datos abiertos publicados por el Ministerio de Desarrollo Productivo en base al SIPA"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, message = F, warning = F, 
+                      fig.align = 'left')
+library(tidyverse)
+library(lubridate)
+library(gt)
+library(glue)
+library(ggtext)
+library(extrafont)
+library(plotly)
+library(DT)
+library(ggforce)
+library(ggthemes)
+library(treemapify)
+# PALETAS Y FUENTES ---------------------------------------------------------
+# Paleta colores Presidencia
+cols_arg <- "#37BBED" # Celeste Institucional
+
+#Secundarios
+cols_arg2 <- c("#EE3D8F", # "ROJO"
+               "#50B8B1", # "VERDE"
+               "#F7941E","#FFD100","#D7DF23", "#9283BE")
+
+#Fuente
+familia_fuente <-"Encode Sans Normal"
+Sys.setlocale(locale = "es_AR.UTF-8")
+```
+
+### (Publicado en diciembre 2021 con datos actualizados a agosto 2021)
+
+```{r}
+#INSUMOS: VER CÓMO AUTOMATIZAR LA DESCARGA DESDE DATOS ABIERTOS 
+empleo <- read.csv("/srv/DataDNMYE/empleo/puestos_total_empresas_mensual_por_clae6_06122021.csv")
+# salario.prom <- read.csv("Entradas/w_mean_total_empresas_mensual_por_clae6_21102021.csv")
+# salario.median <- read.csv("Entradas/w_median_total_empresas_mensual_por_clae6_21102021.csv")
+empleadores <- read.csv("/srv/DataDNMYE/empleo/empleadoras_total_empresas_por_clae6_06122021.csv")
+
+#ATENCIÓN: EN ESTA OPORTUNIDAD LOS DATOS DE EMPRESAS LLEGAN HASTA JULIO 2021, NO AGOSTO
+fecha_empresas <- "2021-07-01"
+
+puestos.genero <- read.csv("/srv/DataDNMYE/empleo/share_mujer_total_empresas_mensual_por_clae6_06122021.csv")
+################################################################################
+#IPC PARA SALARIOS REALES
+#ipc <- read.delim("Entradas/IPC_argentina_script.txt",sep = ",")
+################################################################################
+# Selección de ramas turísticas
+#ATENCIÓN: 
+#la rama 473000 "Venta al por menor de combustible para vehículos automotores y motocicletas" representa
+# ~73% de la facturación de transporte. Como en la CST se toma solo el margen de comercialización, deberíamos
+# replicar ese ratio o sacarla.
+# la rama 681098 "Servicios inmobiliarios realizados por cuenta propia, con bienes urbanos propios o arrendados n.c.p."
+# y 681099 "Servicios inmobiliarios realizados por cuenta propia, con bienes rurales propios o arrendados n.c.p."
+#lo turísitco solo es el alquiler de segundas viviendas para uso turístico en la cst del total de esa rama tomábamos el 3% aprox nada más
+# replicar ese ratio o sacarla
+# Asimismo, se exluyen algunas ramas que eran parte de la clasifiación de RCT según CLANAE 2004 pero no corresponde:
+# 780000: Obtención y dotación de personal,
+# 562091: Servicios de cantinas con atención exclusiva  a los empleados o estudiantes dentro de empresas o establecimientos educativos.
+# 
+# POR EL MOMENTO LAS SACAMOS
+ramas_turismo_6d <- openxlsx::read.xlsx("/srv/DataDNMYE/empleo/ramas turismo 6 D.xlsx") %>% 
+  filter(!COD_ACTIVIDAD_F883 %in% c(473000,681098,681099,780000,562091)) %>% 
+  pull(COD_ACTIVIDAD_F883)
+
+clae_diccionario <- read.csv("/srv/DataDNMYE/empleo/clae_diccionario.csv") %>% select(clae6,clae6_desc)
+
+```
+
+```{r}
+puestos <- empleo %>% 
+  left_join(clae_diccionario) %>% 
+  left_join(puestos.genero, by=c("clae6","fecha")) %>% 
+  left_join(empleadores,by=c("clae6","fecha")) %>% 
+  mutate(rct = ifelse(clae6 %in% ramas_turismo_6d, "RCT","NO RCT"),
+         cat.rct = case_when(substr(clae6,1,3) %in% c(473,491,492,501,502,511,524,771) & rct == "RCT"~ "Transporte",
+                             substr(clae6,1,3) %in% c(551,552) & rct == "RCT"~ "Alojamiento",
+                             substr(clae6,1,3) %in% c(561,562) & rct == "RCT" ~ "Gastronomía",
+                             substr(clae6,1,3) == 791 & rct == "RCT"~ "Agencias de Viaje",
+                             substr(clae6,1,3) %in% c(591,592,681,780,854,900,910,920,931,939) & rct == "RCT"~ "Otros Servicios Turísticos",
+                             TRUE ~ "NO RCT"),
+         puestos = ifelse(puestos == -99,NA,puestos), #PONGO NA A LOS -99
+         empresas = ifelse(empresas == -99, NA,empresas),
+         puestos_mujeres = round(puestos * share_mujer,0),
+         puestos_varones = round(puestos * (1-share_mujer),0)) 
+
+
+```
+
+```{r}
+indice.empleo <- puestos %>% 
+  group_by(fecha,rct) %>%
+  summarise(puestos = sum(puestos,na.rm = T)) %>%
+  group_by(rct) %>% 
+  mutate(indice = puestos/first(puestos),
+         var.i.a. = puestos/lag(puestos,12)-1,
+         var.a.2.anios = puestos/lag(puestos,24)-1)
+ult.datos.empleo <- puestos %>% 
+  filter(fecha == max(fecha))
+
+# indice.empleo.total <- puestos %>% 
+#   group_by(fecha) %>%
+#   summarise(puestos = sum(puestos,na.rm = T)) %>%
+#   mutate(indice = puestos/first(puestos),
+#          var.i.a. = puestos/lag(puestos,12)-1,
+#          var.a.2.anios = puestos/lag(puestos,24)-1,
+#          rct = "TOTAL")
+#indice.empleo.bind <- bind_rows(indice.empleo,indice.empleo.total)
+ult.datos.empleo <- puestos %>% 
+  filter(fecha == max(fecha))
+
+ramas <- puestos %>%
+  filter(fecha == max(fecha) & rct == "RCT") 
+```
+
+
+<br>
+A continuación se presenta información sobre empleo registrado en Ramas Características del Turismo, con datos abiertos publicados por el [Ministerio de Desarrollo Productivo (MDP)](https://datos.produccion.gob.ar/), al mes de `r format(as.Date(max(puestos$fecha)),"%B %Y")`.
+
+La metodología de las series elaboradas por el MDP se encuentra [aquí](https://datos.produccion.gob.ar/dataset/15211f62-04dc-42ed-acdd-ff2bbcaf4779/resource/0ee975c9-8241-4d29-9013-7e190644faad/download/metodologia-da.pdf).
+
+Se seleccionaron `r length(ramas_turismo_6d)` ramas de actividad a 6 dígitos de CLAE (ver Anexo), agrupándolas en 5 categorías:
+
+- <span style="color: #EE3D8F;">**Agencias de Viaje:**</span> `r length(unique(puestos[puestos$cat.rct == "Agencias de Viaje","clae6"]))` ramas.
+- <span style="color: #50B8B1;">**Alojamiento:**</span> `r length(unique(puestos[puestos$cat.rct == "Alojamiento","clae6"]))` ramas.
+- <span style="color: #F7941E;">**Gastronomía:**</span> `r length(unique(puestos[puestos$cat.rct == "Gastronomía","clae6"]))` ramas.
+- <span style="color: #D7DF23;">**Transporte:**</span> `r length(unique(puestos[puestos$cat.rct == "Transporte","clae6"]))` ramas.
+- <span style="color: #FFD100;">**Otros Servicios Turísticos:**</span> `r length(unique(puestos[puestos$cat.rct == "Otros Servicios Turísticos","clae6"]))` ramas.
+
+
+<br>
+
+```{r}
+# PARA CUANDO HAYA CLAE CON NA POR SECRETO ESTADÍSTICO
+# *Aclaración:* Debido a la preservación del secreto estadístico, las ramas con 2 o menos empleadores no contienen información. Actualmente, entonces, no se incluye información sobre: 
+# 
+# + `r ult.datos.empleo %>% filter(is.na(puestos) & rct == "RCT") %>% pull(clae6_desc)`
+
+ramas.treemap <- ult.datos.empleo %>% 
+  filter(rct == "RCT") %>% 
+  ggplot(.,aes(area=puestos,
+               fill = cat.rct,
+               subgroup2 = clae6_desc,
+               subgroup = cat.rct))+
+   geom_treemap()+
+  scale_fill_manual(values = cols_arg2)+
+ geom_treemap_text(aes(label=clae6_desc) ,colour = "black", place = "topleft",
+                    grow = T, reflow = T, size = 9,
+                    family=familia_fuente,
+                    layout = "squarified") +
+  theme_minimal() +
+  theme(
+    text = element_text(family = familia_fuente), 
+    legend.position = "none",
+    plot.title    = element_text(size = 12, face = "bold"),
+    plot.subtitle = element_text(size = 8, face = "bold"),
+    plot.caption  = element_text(size = 4),
+    strip.text.y  = element_text(size = 3, face = "bold"),
+    axis.text.x   = element_text(size = 3),
+    axis.text.y   = element_text(size = 3),
+    legend.text   = element_text(size = 5),
+    legend.title  = element_blank()
+  ) +
+  labs(title="Actividades turísticas seleccionadas",
+       subtitle=paste0("Los tamaños dependen del nivel de empleo de ",format(as.Date(max(puestos$fecha)),"%B %Y")))
+ramas.treemap
+```
+
+
+
+## PUESTOS DE TRABAJO
+
+### RCT vs NO RCT
+
+
+En el mes de **`r format(as.Date(max(puestos$fecha)),"%B %Y")`** se registraron `r indice.empleo %>% filter(fecha == max(fecha) & rct == "RCT") %>% pull(puestos) %>% format(.,big.mark=".")` puestos de trabajo formales en ramas turísticas, presentando una variación de `r format(round(100*indice.empleo[indice.empleo$fecha == max(indice.empleo$fecha) & indice.empleo$rct == "RCT","var.i.a."],1),decimal.mark=",") `% con respecto a  `r format(as.Date(max(puestos$fecha))-years(1),"%B %Y")`. El resto de los sectores presentó una variación de `r format(round(100*indice.empleo[indice.empleo$fecha == max(indice.empleo$fecha) & indice.empleo$rct == "NO RCT","var.i.a."],1),decimal.mark=",") `%.
+En la comparación con `r format(as.Date(max(puestos$fecha))-years(2),"%B %Y")`, la variación en ramas turísticas fue de `r format(round(100*indice.empleo[indice.empleo$fecha == max(indice.empleo$fecha) & indice.empleo$rct == "RCT","var.a.2.anios"],1),decimal.mark=",") `%, mientras que en el resto de las ramas fue de `r format(round(100*indice.empleo[indice.empleo$fecha == max(indice.empleo$fecha) & indice.empleo$rct == "NO RCT","var.a.2.anios"],1),decimal.mark=",") `%
+
+
+```{r}
+grafico_empleo_series <- ggplot(indice.empleo,aes(x=as.Date(fecha),y=indice,color=rct,group=rct,
+                                                  text=paste0('fecha: ', format(as.Date(fecha),"%b-%y"),
+                                             '<br> categoría: ' ,rct,
+                                             '<br> puestos: ',format(round(puestos,1),big.mark=".",decimal.mark=","),
+                                             '<br> indice: ',format(round(100*indice,0)))))+
+  geom_line()+
+  #geom_point()+
+  scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
+  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
+               date_breaks = "6 months",
+               date_labels = "%b%y",
+               expand=c(0,0))+
+  # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
+  #                                       aes(label = rct),
+  #                  nudge_x = 1,
+  #                  na.rm = TRUE,
+  #                  xlim = c(as.Date(max(indice.empleo$fecha)), as.Date(max(indice.empleo$fecha)) + months(6)),
+  #                  size=3,
+  #                  segment.colour = "black")+
+  scale_color_manual(values=cols_arg2)+
+  theme_minimal()+
+  labs(title="Evolución de los puestos de trabajo registrados. Índice ene-2007 = 100",x="",y="",
+       caption="DNMyE en base a MDP")+
+  theme(
+    text = element_text(family = "Encode Sans Normal"), 
+    plot.title    = element_markdown(size = 12),
+    plot.subtitle = element_markdown(size = 10),
+    plot.caption  = element_markdown(size = 8),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "right",
+    strip.placement = "outside",
+    legend.title = element_blank()
+  )+
+  coord_cartesian(clip = "off")
+g1 <- ggplotly(grafico_empleo_series,tooltip="text")
+# for (i in 1:length(g1$x$data)){
+#     if (!is.null(g1$x$data[[i]]$name)){
+#         g1$x$data[[i]]$name =  gsub("\\(","",str_split(g1$x$data[[i]]$name,",")[[1]][1])
+#     }
+# }
+# g1$x$data[[6]]$name <- "balanza"
+#g1$x$data[[7]]$name <- "balanza (superávit)"
+g1 %>% layout(legend = list(
+      orientation = "v",x=1
+    )
+  ,hoverlabel=list(bgcolor="white"))
+```
+
+<br>
+
+```{r}
+indice.cat.rct <- puestos %>%  
+  group_by(fecha,cat.rct) %>%
+  summarise(puestos = sum(puestos,na.rm = T)) %>%
+  group_by(cat.rct) %>% 
+  mutate(indice = puestos/first(puestos),
+         var.i.a. = puestos/lag(puestos,12)-1,
+         var.a.2.anios = puestos/lag(puestos,24)-1)
+```
+### CATEGORÍAS
+
+A continuación se observa la información de puestos de trabajo en ramas turísticas agrupados en categorías:
+
+```{r}
+data_grafico_empleo_cat_rct <- indice.cat.rct %>% 
+  filter(cat.rct != "NO RCT" & fecha == max(fecha)) 
+
+grafico_empleo_cat_rct <- ggplot(data_grafico_empleo_cat_rct,aes(x=reorder(cat.rct,puestos),y=puestos))+
+  geom_col(fill=cols_arg2[2])+
+   geom_text(aes(label=format(round(puestos*1e-3,1),big.mark=".",decimal.mark = ",")),
+            hjust=-.1)+
+  geom_label(aes(label=paste0(format(round(100*var.i.a.,1),decimal.mark = ","),"%"),y=max(puestos)*1.25),
+             color="#f7a1c9")+
+  geom_label(aes(label=paste0(format(round(100*var.a.2.anios,1),decimal.mark = ","),"%"),y=max(puestos)*1.45),
+             color = "#F7941E")+
+  geom_hline(yintercept = 0, size = 0.1) +
+  #scale_fill_manual(values = cols_arg2[2])+
+  scale_y_continuous(labels = scales::number_format(big.mark = ".", decimal.mark = ",")) +
+  theme_minimal() + 
+  theme(
+    text = element_text(family = familia_fuente), 
+    plot.title    = element_markdown(size = 12),
+    plot.subtitle = element_markdown(size = 8, face = "bold"),
+    plot.caption  = element_markdown(size = 6),
+    strip.text.y  = element_text(size = 6, face = "bold"),
+    axis.text.x   = element_text(size = 6),
+    axis.text.y   = element_text(size = 8),
+    panel.grid.minor.x = element_blank(),
+    #panel.grid.major = element_blank(),
+    legend.position = "none",
+    strip.placement = "outside") +
+  coord_flip(clip = "off")+
+  labs(x="",y="",title= "Empleo en Ramas Características del Turismo",
+       subtitle = paste0("Miles de puestos de trabajo.","agosto 2021 <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a MDP")
+grafico_empleo_cat_rct
+```
+
+```{r}
+grafico_empleo_cat_series <- ggplot(indice.cat.rct,aes(x=as.Date(fecha),y=indice,color=cat.rct,group=cat.rct,
+                                                  text=paste0('fecha: ', format(as.Date(fecha),"%b-%y"),
+                                             '<br> categoría: ' ,cat.rct,
+                                             '<br> puestos: ',format(round(puestos,1),big.mark=".",decimal.mark=","),
+                                             '<br> indice: ',format(round(100*indice,0)))))+
+  geom_line()+
+  #geom_point()+
+  scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
+  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
+               date_breaks = "6 months",
+               date_labels = "%b%y",
+               expand=c(0,0))+
+  # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
+  #                                       aes(label = rct),
+  #                  nudge_x = 1,
+  #                  na.rm = TRUE,
+  #                  xlim = c(as.Date(max(indice.empleo$fecha)), as.Date(max(indice.empleo$fecha)) + months(6)),
+  #                  size=3,
+  #                  segment.colour = "black")+
+  scale_color_manual(values=cols_arg2)+
+  theme_minimal()+
+  labs(title="Evolución de los puestos de trabajo registrados. Índice ene-2007 = 100",x="",y="",
+       caption="DNMyE en base a MDP")+
+  theme(
+    text = element_text(family = "Encode Sans Normal"), 
+    plot.title    = element_markdown(size = 12),
+    plot.subtitle = element_markdown(size = 10),
+    plot.caption  = element_markdown(size = 8),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "right",
+    strip.placement = "outside",
+    legend.title = element_blank()
+  )+
+  coord_cartesian(clip = "off")
+g2 <- ggplotly(grafico_empleo_cat_series,tooltip="text")
+# for (i in 1:length(g1$x$data)){
+#     if (!is.null(g1$x$data[[i]]$name)){
+#         g1$x$data[[i]]$name =  gsub("\\(","",str_split(g1$x$data[[i]]$name,",")[[1]][1])
+#     }
+# }
+# g1$x$data[[6]]$name <- "balanza"
+#g1$x$data[[7]]$name <- "balanza (superávit)"
+g2 %>% layout(legend = list(
+      orientation = "h",y=-.5)
+  ,hoverlabel=list(bgcolor="white"))
+```
+### TODAS LAS RAMAS 
+
+A continuación se presenta la evolución de los puestos de trabajo en todas las ramas turísticas, agrupadas por categorías. Cada línea gris es una rama a 6 dígitos y el **grosor** de cada una depende del peso que tiene el empleo promedio de todo el período en esa rama sobre el total. Puede consultarse en el Anexo a qué actividad coresponde el código de CLAE.
+
+```{r}
+indice_empleo_todas <- puestos %>% 
+   group_by(clae6,cat.rct) %>% 
+  mutate(indice = 100*round(puestos/first(puestos),2), 
+         var.i.a. = puestos/lag(puestos,12)-1,
+         var.a.2.anios = puestos/lag(puestos,24)-1)
+```
+
+```{r}
+data_grafico_empleo_todas <- indice.cat.rct %>% 
+  select(fecha,cat.rct,indice.cat = indice,empleo.cat = puestos) %>%
+  right_join(indice_empleo_todas) %>% 
+  group_by(clae6_desc,clae6) %>% 
+  mutate(empleo.prom = mean(puestos,na.rm=T)) %>% 
+  ungroup() %>% 
+  mutate(fecha = as.Date(fecha),
+         indice.cat = 100*indice.cat) %>% 
+  filter(rct == "RCT")
+
+grafico_empleo_series_2 <- ggplot(data_grafico_empleo_todas)+
+  geom_line(aes(x=fecha,y=indice,group=clae6,size=empleo.prom,
+                text = paste('fecha:', format(fecha,"%b-%y"),
+                                              '<br>CLAE:', clae6, 
+                                              '<br>puestos:', format(puestos,big.mark="."),
+                                              '<br>indice:', indice)),
+            alpha=.1)+ 
+  geom_point(aes(x=fecha,y=indice.cat,color=cat.rct,
+                text = paste('fecha:', format(fecha,"%b-%y"),
+                                              '<br>categoría:', cat.rct,
+                                              '<br>puestos:', format(empleo.cat,big.mark="."),
+                                              '<br>indice:', round(indice.cat,0))
+                ),size=.1)+
+  geom_line(aes(x=fecha,y=indice.cat,color=cat.rct#,
+                # text = paste('fecha:', format(fecha,"%b-%y"),
+                #                               '<br>categoría:', cat.rct, 
+                #                               '<br>puestos:', format(empleo.cat,big.mark="."),
+                #                               '<br>indice:', indice.cat)
+                ))+
+  # geom_point(aes(x=fecha,y=indice.cat,color=cat.rct,
+  #                text = paste('fecha:', format(fecha,"%b-%y"),
+  #                                             '<br>categoria:', cat.rct, 
+  #                                             glue('<br>puestos:'), format(empleo.cat,big.mark="."),
+  #                                             '<br>indice:', indice)),size=.8)+
+  scale_y_continuous(labels=scales::number_format(decimal.mark = ","),limits = c(90,200))+
+  scale_x_date(#limits = c(as.Date("2019-01-01"),as.Date(mes.empleo)),
+               date_breaks = "6 months",
+               date_labels = "%b%y",
+               expand=c(0,10))+
+  scale_color_manual(values=cols_arg2)+
+   scale_size_continuous(range = c(.1,2))+
+  theme_minimal()+
+  labs(title="Evolución del empleo en ramas turísticas",subtitle = "Indice ene 2007=100. El grosor de la línea depende del peso de cada rama en el empleo",
+    x="",y="",
+       caption="DNMyE en base a MDP")+
+  theme(
+    text = element_text(family = "Encode Sans Normal"), 
+    plot.title    = element_markdown(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    plot.caption  = element_markdown(size = 6),
+    strip.text.y  = element_text(size = 8, face = "bold"),
+    axis.text.x   = element_text(size = 6,angle=90),
+    axis.text.y   = element_text(size = 8),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "none",
+    strip.placement = "outside",
+    strip.text = element_text(face ="bold")
+  )+
+  coord_cartesian(clip = "off")+
+  facet_wrap(~cat.rct)
+# ggsave(plot=grafico_empleo_series_2,"empleo_categorias_facet.png",
+#         width = 9,height = 5)
+
+ggplotly(grafico_empleo_series_2,tooltip = "text") %>% 
+  layout(title = list(text = 'Empleo registrado en todas las ramas. Índice ene-07 = 100.'),
+         hoverlabel=list(bgcolor="white",alpha=0))
+```
+
+## PUESTOS POR GÉNERO
+
+<br>
+
+Este apartado amplía la información anterior, al incorporar la participación femenina en los puestos de trabajo registrados de ramas turísticas.
+
+### RCT VS NO RCT
+
+
+Se observa, en primer lugar, que las ramas turísticas tomadas en su conjunto tienen un porcentaje mayor de mujeres en el total de puestos de trabajo.
+
+
+```{r}
+genero.rct.vs.no.rct <- puestos %>% 
+  group_by(rct,fecha) %>% 
+  summarise(puestos = sum(puestos,na.rm = T),
+            puestos_varones = sum(puestos_varones,na.rm = T),
+            puestos_mujeres = sum(puestos_mujeres,na.rm=T)) %>% 
+  ungroup() %>% 
+  mutate(share_mujeres = puestos_mujeres/puestos)
+genero.total <- puestos %>% 
+  group_by(fecha) %>% 
+  summarise(puestos = sum(puestos,na.rm = T),
+            puestos_varones = sum(puestos_varones,na.rm = T),
+            puestos_mujeres = sum(puestos_mujeres,na.rm=T)) %>% 
+  ungroup() %>% 
+  mutate(share_mujeres = puestos_mujeres/puestos)
+```
+
+
+```{r}
+grafico_genero_series <- ggplot(genero.rct.vs.no.rct,aes(x=as.Date(fecha),y=share_mujeres,color=rct,group=rct,
+                                                  text=paste0('fecha: ', format(as.Date(fecha),"%b-%y"),
+                                             '<br> categoría: ' ,rct,
+                                             '<br> puestos totales: ',format(round(puestos,1),big.mark=".",decimal.mark=","),
+                                             '<br> % de mujeres: ',format(round(100*share_mujeres,1)),"%")))+
+  geom_line()+
+  #geom_point()+
+  scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
+  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
+               date_breaks = "6 months",
+               date_labels = "%b%y",
+               expand=c(0,0))+
+  # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
+  #                                       aes(label = rct),
+  #                  nudge_x = 1,
+  #                  na.rm = TRUE,
+  #                  xlim = c(as.Date(max(indice.empleo$fecha)), as.Date(max(indice.empleo$fecha)) + months(6)),
+  #                  size=3,
+  #                  segment.colour = "black")+
+  scale_color_manual(values=cols_arg2)+
+  theme_minimal()+
+  labs(title="Evolución del porcentaje de mujeres sobre el total de puestos de trabajo",x="",y="",
+       caption="DNMyE en base a MDP")+
+  theme(
+    text = element_text(family = "Encode Sans Normal"), 
+    plot.title    = element_markdown(size = 12),
+    plot.subtitle = element_markdown(size = 10),
+    plot.caption  = element_markdown(size = 8),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "right",
+    strip.placement = "outside",
+    legend.title = element_blank()
+  )+
+  coord_cartesian(clip = "off")
+g3 <- ggplotly(grafico_genero_series,tooltip="text")
+# for (i in 1:length(g1$x$data)){
+#     if (!is.null(g1$x$data[[i]]$name)){
+#         g1$x$data[[i]]$name =  gsub("\\(","",str_split(g1$x$data[[i]]$name,",")[[1]][1])
+#     }
+# }
+# g1$x$data[[6]]$name <- "balanza"
+#g1$x$data[[7]]$name <- "balanza (superávit)"
+g3 %>% layout(legend = list(
+      orientation = "v",x=1
+    )
+  ,hoverlabel=list(bgcolor="white"))
+```
+
+### CATEGORÍAS
+
+Observando al interior de las ramas turísticas, se observa una gran heterogeneidad en la participación femenina en los puestos de trabajo registrados. Mientras que las categorías Alojamiento y Agencias de Viaje presentan una participación mayor al 50%, Gastronomía y Otros Servicios Turísticos están en torno al 40%, por encima de las ramas no turísticas. Por último, la categoría Transporte presenta una muy baja participación femenina.
+
+```{r}
+genero.categorias <- puestos %>% 
+  group_by(cat.rct,fecha) %>% 
+  summarise(puestos = sum(puestos,na.rm = T),
+            puestos_varones = sum(puestos_varones,na.rm = T),
+            puestos_mujeres = sum(puestos_mujeres,na.rm=T)) %>% 
+  ungroup() %>% 
+  mutate(share_mujeres = puestos_mujeres/puestos)
+```
+
+
+```{r}
+grafico_genero_categorias <- ggplot(genero.categorias,aes(x=as.Date(fecha),y=share_mujeres,color=cat.rct,group=cat.rct,
+                                                  text=paste0('fecha: ', format(as.Date(fecha),"%b-%y"),
+                                             '<br> categoría: ' ,cat.rct,
+                                             '<br> puestos totales: ',format(round(puestos,1),big.mark=".",decimal.mark=","),
+                                             '<br> % de mujeres: ',format(round(100*share_mujeres,1)),"%")))+
+  geom_line()+
+  #geom_point()+
+  scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
+  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
+               date_breaks = "6 months",
+               date_labels = "%b%y",
+               expand=c(0,0))+
+  # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
+  #                                       aes(label = rct),
+  #                  nudge_x = 1,
+  #                  na.rm = TRUE,
+  #                  xlim = c(as.Date(max(indice.empleo$fecha)), as.Date(max(indice.empleo$fecha)) + months(6)),
+  #                  size=3,
+  #                  segment.colour = "black")+
+  scale_color_manual(values=cols_arg2)+
+  theme_minimal()+
+  labs(title="Evolución del porcentaje de mujeres sobre el total de puestos de trabajo",x="",y="",
+       caption="DNMyE en base a MDP")+
+  theme(
+    text = element_text(family = "Encode Sans Normal"), 
+    plot.title    = element_markdown(size = 12),
+    plot.subtitle = element_markdown(size = 10),
+    plot.caption  = element_markdown(size = 8),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "right",
+    strip.placement = "outside",
+    legend.title = element_blank()
+  )+
+  coord_cartesian(clip = "off")
+g4 <- ggplotly(grafico_genero_categorias,tooltip="text")
+# for (i in 1:length(g1$x$data)){
+#     if (!is.null(g1$x$data[[i]]$name)){
+#         g1$x$data[[i]]$name =  gsub("\\(","",str_split(g1$x$data[[i]]$name,",")[[1]][1])
+#     }
+# }
+# g1$x$data[[6]]$name <- "balanza"
+#g1$x$data[[7]]$name <- "balanza (superávit)"
+g4 %>% layout(legend = list(
+      orientation = "v",x=1
+    )
+  ,hoverlabel=list(bgcolor="white"))
+```
+
+### TODAS LAS RAMAS
+
+A continuación se presenta la evolución de la tasa de feminización de los puestos trabajo en todas las ramas turísticas, agrupadas por categorías. Cada línea gris es una rama a 6 dígitos y el **grosor** de cada una depende del peso que tiene el empleo promedio de todo el período en esa rama sobre el total. Puede consultarse en el Anexo a qué actividad coresponde el código de CLAE.
+
+```{r}
+data_grafico_genero_todas <- genero.categorias %>% 
+  select(fecha,cat.rct,share.cat = share_mujeres,empleo.cat = puestos) %>%
+  right_join(puestos) %>% 
+  group_by(clae6_desc,clae6) %>% 
+  mutate(empleo.prom = mean(puestos,na.rm=T)) %>% 
+  ungroup() %>% 
+  mutate(fecha = as.Date(fecha)) %>% 
+  filter(rct == "RCT")
+
+grafico_genero_series_2 <- ggplot(data_grafico_genero_todas)+
+  geom_line(aes(x=fecha,y=share_mujer,group=clae6,size=empleo.prom,
+                text = paste('fecha:', format(fecha,"%b-%y"),
+                                              '<br>CLAE:', clae6, 
+                                              '<br>puestos totales:', format(puestos,big.mark="."),
+                                              '<br>% mujeres:', format(round(100*share_mujer,1),decimal.mark=","),"%")),
+            alpha=.1)+ 
+  geom_point(aes(x=fecha,y=share.cat,color=cat.rct,
+                text = paste('fecha:', format(fecha,"%b-%y"),
+                                              '<br>categoría:', cat.rct,
+                                              '<br>puestos totales:', format(empleo.cat,big.mark="."),
+                                              '<br>% mujeres:', format(round(100*share.cat,1),decimal.mark=","),"%")
+                ),size=.1)+
+  geom_line(aes(x=fecha,y=share.cat,color=cat.rct))+
+  scale_y_continuous(labels=scales::percent_format(decimal.mark = ","),limits = c(0,.8))+
+  scale_x_date(#limits = c(as.Date("2019-01-01"),as.Date(mes.empleo)),
+               date_breaks = "6 months",
+               date_labels = "%b%y",
+               expand=c(0,10))+
+  scale_color_manual(values=cols_arg2)+
+   scale_size_continuous(range = c(.1,2))+
+  theme_minimal()+
+  labs(title="Evolución del porcentaje de mujeres en puestos de trabajo",subtitle = " grosor de la línea depende del peso de cada rama en el empleo",
+    x="",y="",
+       caption="DNMyE en base a MDP")+
+  theme(
+    text = element_text(family = "Encode Sans Normal"), 
+    plot.title    = element_markdown(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    plot.caption  = element_markdown(size = 6),
+    strip.text.y  = element_text(size = 8, face = "bold"),
+    axis.text.x   = element_text(size = 6,angle=90),
+    axis.text.y   = element_text(size = 8),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "none",
+    strip.placement = "outside",
+    strip.text = element_text(face ="bold")
+  )+
+  coord_cartesian(clip = "off")+
+  facet_wrap(~cat.rct)
+# ggsave(plot=grafico_empleo_series_2,"empleo_categorias_facet.png",
+#         width = 9,height = 5)
+
+ggplotly(grafico_genero_series_2,tooltip = "text") %>% 
+  layout(title = list(text = 'Participación de mujeres en todas las ramas.'),
+         hoverlabel=list(bgcolor="white",alpha=0))
+```
+
+## EMPRESAS
+
+En la siguiente sección se presentan las series relativas a ramas turísticas en términos de empleadores que declararon trabajadores.
+
+### RCT VS NO RCT
+
+```{r}
+indice.empresas <- puestos %>% 
+  filter(fecha <= fecha_empresas ) %>% 
+  group_by(fecha,rct) %>%
+  summarise(empresas = sum(empresas,na.rm = T)) %>%
+  group_by(rct) %>% 
+  mutate(indice = empresas/first(empresas),
+         var.i.a. = empresas/lag(empresas,12)-1,
+         var.a.2.anios = empresas/lag(empresas,24)-1)
+```
+
+
+En el mes de **`r format(as.Date(fecha_empresas),"%B %Y")`** se registraron `r indice.empresas%>% filter(fecha == max(fecha) & rct == "RCT") %>% pull(empresas) %>% format(.,big.mark=".")` empresas en ramas turísticas, presentando una variación de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "RCT","var.i.a."],1),decimal.mark=",") `% con respecto a  `r format(as.Date(max(indice.empresas$fecha))-years(1),"%B %Y")`. El resto de los sectores presentó una variación de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "NO RCT","var.i.a."],1),decimal.mark=",") `%.
+En la comparación con `r format(as.Date(max(indice.empresas$fecha))-years(2),"%B %Y")`, la variación en ramas turísticas fue de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "RCT","var.a.2.anios"],1),decimal.mark=",") `%, mientras que en el resto de las ramas fue de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "NO RCT","var.a.2.anios"],1),decimal.mark=",") `%
+
+```{r}
+grafico_empresas_series <- ggplot(indice.empresas,aes(x=as.Date(fecha),y=indice,color=rct,group=rct,
+                                                  text=paste0('fecha: ', format(as.Date(fecha),"%b-%y"),
+                                             '<br> categoría: ' ,rct,
+                                             '<br> empresas: ',format(round(empresas,1),big.mark=".",decimal.mark=","),
+                                             '<br> indice: ',format(round(100*indice,0)))))+
+  geom_line()+
+  #geom_point()+
+  scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
+  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
+               date_breaks = "6 months",
+               date_labels = "%b%y",
+               expand=c(0,0))+
+  # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
+  #                                       aes(label = rct),
+  #                  nudge_x = 1,
+  #                  na.rm = TRUE,
+  #                  xlim = c(as.Date(max(indice.empleo$fecha)), as.Date(max(indice.empleo$fecha)) + months(6)),
+  #                  size=3,
+  #                  segment.colour = "black")+
+  scale_color_manual(values=cols_arg2)+
+  theme_minimal()+
+  labs(title="Evolución de los empleadores. Índice ene-2007 = 100",x="",y="",
+       caption="DNMyE en base a MDP")+
+  theme(
+    text = element_text(family = "Encode Sans Normal"), 
+    plot.title    = element_markdown(size = 12),
+    plot.subtitle = element_markdown(size = 10),
+    plot.caption  = element_markdown(size = 8),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "right",
+    strip.placement = "outside",
+    legend.title = element_blank()
+  )+
+  coord_cartesian(clip = "off")
+g5 <- ggplotly(grafico_empresas_series,tooltip="text")
+# for (i in 1:length(g1$x$data)){
+#     if (!is.null(g1$x$data[[i]]$name)){
+#         g1$x$data[[i]]$name =  gsub("\\(","",str_split(g1$x$data[[i]]$name,",")[[1]][1])
+#     }
+# }
+# g1$x$data[[6]]$name <- "balanza"
+#g1$x$data[[7]]$name <- "balanza (superávit)"
+g5 %>% layout(legend = list(
+      orientation = "v",x=0.9
+    )
+  ,hoverlabel=list(bgcolor="white"))
+```
+<br>
+
+
+### CATEGORÍAS
+
+```{r}
+indice.empresas.cat.rct <- puestos %>%  
+  filter(fecha <= fecha_empresas) %>% 
+  group_by(fecha,cat.rct) %>%
+  summarise(empresas = sum(empresas,na.rm = T)) %>%
+  group_by(cat.rct) %>% 
+  mutate(indice = empresas/first(empresas),
+         var.i.a. = empresas/lag(empresas,12)-1,
+         var.a.2.anios = empresas/lag(empresas,24)-1)
+```
+
+A continuación se detalla la información de empleadores en ramas turísticas agrupados en categorías:
+
+```{r}
+data_grafico_empresas_cat_rct <- indice.empresas.cat.rct %>% 
+  filter(cat.rct != "NO RCT" & fecha == max(fecha))
+
+grafico_empresas_cat_rct <- ggplot(data_grafico_empresas_cat_rct,aes(x=reorder(cat.rct,empresas),y=empresas))+
+  geom_col(fill=cols_arg2[2])+
+  geom_text(aes(label=format(round(empresas*1e-3,1),big.mar=".",decimal.mark = ",")),
+            hjust=-.1)+
+  geom_label(aes(label=paste0(format(round(100*var.i.a.,1),decimal.mark = ","),"%"),y=max(empresas)*1.25),
+             color="#f7a1c9")+
+  geom_label(aes(label=paste0(format(round(100*var.a.2.anios,1),decimal.mark = ","),"%"),y=max(empresas)*1.45),
+             color = "#F7941E")+
+  geom_hline(yintercept = 0, size = 0.1) +
+  #scale_fill_manual(values = cols_arg2[2])+
+  scale_y_continuous(labels = scales::number_format(big.mark = ".", decimal.mark = ",")) +
+  theme_minimal() + 
+  theme(
+    text = element_text(family = familia_fuente), 
+    plot.title    = element_markdown(size = 12),
+    plot.subtitle = element_markdown(size = 8, face = "bold"),
+    plot.caption  = element_markdown(size = 6),
+    strip.text.y  = element_text(size = 6, face = "bold"),
+    axis.text.x   = element_text(size = 6),
+    axis.text.y   = element_text(size = 8),
+    panel.grid.minor.x = element_blank(),
+    #panel.grid.major = element_blank(),
+    legend.position = "none",
+    strip.placement = "outside") +
+  coord_flip(clip = "off")+
+  labs(x="",y="",title= "Empleadores en Ramas Características del Turismo",
+       subtitle = paste0("Miles de empresas.","julio 2021 <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a MDP")
+grafico_empresas_cat_rct
+```
+
+```{r}
+grafico_empresas_cat_series <- ggplot(indice.empresas.cat.rct,aes(x=as.Date(fecha),y=indice,color=cat.rct,group=cat.rct,
+                                                  text=paste0('fecha: ', format(as.Date(fecha),"%b-%y"),
+                                             '<br> categoría: ' ,cat.rct,
+                                             '<br> empresas: ',format(round(empresas,1),big.mark=".",decimal.mark=","),
+                                             '<br> indice: ',format(round(100*indice,0)))))+
+  geom_line()+
+  #geom_point()+
+  scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
+  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
+               date_breaks = "6 months",
+               date_labels = "%b%y",
+               expand=c(0,0))+
+  # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
+  #                                       aes(label = rct),
+  #                  nudge_x = 1,
+  #                  na.rm = TRUE,
+  #                  xlim = c(as.Date(max(indice.empleo$fecha)), as.Date(max(indice.empleo$fecha)) + months(6)),
+  #                  size=3,
+  #                  segment.colour = "black")+
+  scale_color_manual(values=cols_arg2)+
+  theme_minimal()+
+  labs(title="Evolución de los empleadores en ramas turísticas. Índice ene-2007 = 100",x="",y="",
+       caption="DNMyE en base a MDP")+
+  theme(
+    text = element_text(family = "Encode Sans Normal"), 
+    plot.title    = element_markdown(size = 12),
+    plot.subtitle = element_markdown(size = 10),
+    plot.caption  = element_markdown(size = 8),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "right",
+    strip.placement = "outside",
+    legend.title = element_blank()
+  )+
+  coord_cartesian(clip = "off")
+g6 <- ggplotly(grafico_empresas_cat_series,tooltip="text")
+# for (i in 1:length(g1$x$data)){
+#     if (!is.null(g1$x$data[[i]]$name)){
+#         g1$x$data[[i]]$name =  gsub("\\(","",str_split(g1$x$data[[i]]$name,",")[[1]][1])
+#     }
+# }
+# g1$x$data[[6]]$name <- "balanza"
+#g1$x$data[[7]]$name <- "balanza (superávit)"
+g6 %>% layout(legend = list(
+      orientation = "h",y=-.5)
+  ,hoverlabel=list(bgcolor="white"))
+```
+
+### TODAS LAS RAMAS 
+
+A continuación se presenta la evolución de los empleadores en todas las ramas turísticas, agrupadas por categorías. Cada línea gris es una rama a 6 dígitos y el **grosor** de cada una depende del peso que tiene el número de empresas promedio de todo el período en esa rama sobre el total. Puede consultarse en el Anexo a qué actividad coresponde el código de CLAE.
+
+```{r}
+indice_empresas_todas <- puestos %>% 
+  filter(fecha <= fecha_empresas) %>% 
+   group_by(clae6,cat.rct) %>% 
+  mutate(indice = 100*round(empresas/first(empresas),2), 
+         var.i.a. = empresas/lag(empresas,12)-1,
+         var.a.2.anios = empresas/lag(empresas,24)-1)
+```
+
+```{r}
+data_grafico_empresas_todas <- indice.empresas.cat.rct %>% 
+  select(fecha,cat.rct,indice.cat = indice,empresas.cat = empresas) %>%
+  right_join(indice_empresas_todas) %>% 
+  group_by(clae6_desc,clae6) %>% 
+  mutate(empresas.prom = mean(empresas,na.rm=T)) %>% 
+  ungroup() %>% 
+  mutate(fecha = as.Date(fecha),
+         indice.cat = 100*indice.cat) %>% 
+  filter(rct == "RCT")
+
+grafico_empresas_series_2 <- ggplot(data_grafico_empresas_todas)+
+  geom_line(aes(x=fecha,y=indice,group=clae6,size=empresas.prom,
+                text = paste('fecha:', format(fecha,"%b-%y"),
+                                              '<br>CLAE:', clae6, 
+                                              '<br>empresas:', format(empresas,big.mark="."),
+                                              '<br>indice:', indice)),
+            alpha=.1)+ 
+  geom_point(aes(x=fecha,y=indice.cat,color=cat.rct,
+                text = paste('fecha:', format(fecha,"%b-%y"),
+                                              '<br>categoría:', cat.rct,
+                                              '<br>empresas:', format(empresas.cat,big.mark="."),
+                                              '<br>indice:', round(indice.cat,0))
+                ),size=.1)+
+  geom_line(aes(x=fecha,y=indice.cat,color=cat.rct))+
+  scale_y_continuous(labels=scales::number_format(decimal.mark = ","),
+                     limits = c(90,200)
+                     )+
+  scale_x_date(#limits = c(as.Date("2019-01-01"),as.Date(mes.empleo)),
+               date_breaks = "6 months",
+               date_labels = "%b%y",
+               expand=c(0,10))+
+  scale_color_manual(values=cols_arg2)+
+   scale_size_continuous(range = c(.1,2))+
+  theme_minimal()+
+  labs(title="Evolución de las empresas en ramas turísticas",subtitle = "Indice ene 2007=100. El grosor de la línea depende del peso de cada rama en el número de empresas",
+    x="",y="",
+       caption="DNMyE en base a MDP")+
+  theme(
+    text = element_text(family = "Encode Sans Normal"), 
+    plot.title    = element_markdown(size = 10),
+    plot.subtitle = element_markdown(size = 8),
+    plot.caption  = element_markdown(size = 6),
+    strip.text.y  = element_text(size = 8, face = "bold"),
+    axis.text.x   = element_text(size = 6,angle=90),
+    axis.text.y   = element_text(size = 8),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "none",
+    strip.placement = "outside",
+    strip.text = element_text(face ="bold")
+  )+
+  coord_cartesian(clip = "off")+
+  facet_wrap(~cat.rct)
+# ggsave(plot=grafico_empleo_series_2,"empleo_categorias_facet.png",
+#         width = 9,height = 5)
+
+ggplotly(grafico_empresas_series_2,tooltip = "text") %>% 
+  layout(title = list(text = 'Cantidad de empresas en todas las ramas. Índice ene-07 = 100.'),
+         hoverlabel=list(bgcolor="white",alpha=0))
+```
+
+## ANEXO
+
+### RAMAS SELECCIONADAS
+
+```{r}
+ramas %>% 
+  arrange(clae6) %>% 
+  mutate(share_mujer = round(100*share_mujer,1)) %>% 
+  select("CLAE"=clae6,"Descripción" = clae6_desc,"Categoría" = cat.rct,"Puestos"=puestos,
+         "% de mujeres" = share_mujer, "Empleadores" = empresas) %>% 
+  datatable(caption=paste0("Ramas seleccionadas y valores de",format(as.Date(max(puestos$fecha)),"%B %Y")))
+```
+
