@@ -589,7 +589,7 @@ ggplotly(g6,tooltip = "text") %>% layout(legend = list(
   
 ```
 
-+ Mientras tanto, en el acumulado enero - `r mes` de `r as.character(anio_datos)`, el turismo ocupó el `r tabla5_acum$orden[tabla5_acum$rubro == "turismo"]`º lugar en cuanto a ingresos, pero el `r tabla6_acum$orden[tabla6_acum$rubro == "turismo"]`º en cuanto a egresos.
++ Mientras tanto, en el acumulado enero - `r mes` de `r as.character(anio_datos)`, el turismo ocupó el `r tabla5_acum$orden[tabla5_acum$rubro == "Turismo"]`º lugar en cuanto a ingresos, pero el `r tabla6_acum$orden[tabla6_acum$rubro == "Turismo"]`º en cuanto a egresos.
 
 ### Ingresos de divisas vía MULC. Apertura por sectores de servicios
 #### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares
@@ -697,6 +697,9 @@ tabla4$rubro <- tabla4$rubro %>%  as.factor() %>% recode_factor(
 
 + Por su parte, los egresos de divisas por cancelación de compras con tarjetas fueron de US\$`r round(tabla4 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-1),1)` millones, presentando una variación del `r round((tabla4 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-1)/tabla4 %>% filter(rubro == "Tarjetas") %>% last() %>% nth(-13)-1)*100,1)`% respecto al mismo mes del año `r as.character(anio_datos-1)`. Los egresos por pagos al exterior realizados por operadores turísticos locales fueron de US\$`r round(tail(tabla4$pagos[tabla4$rubro == "Operadores turísticos"],n=1),1)` millones, presentando una variación del `r round((tabla4 %>% filter(rubro == "Operadores turísticos") %>% last() %>% nth(-1)/tabla4 %>% filter(rubro == "Operadores turísticos") %>% last() %>% nth(-13)-1)*100,1)`% interanual.
 
+### Ingresos de divisas por viajes y otros pagos con tarjeta. Apertura por rubros
+
+#### En millones de dólares
 ```{r}
 g3 <- tabla3 %>% 
   ggplot(aes(x = fecha, y = cobros, fill = rubro
@@ -728,10 +731,14 @@ g3 <- tabla3 %>%
     legend.title = element_blank(), 
     strip.placement = "outside")
 
-#ggplotly(g3,tooltip = "text") %>% 
-#  layout(legend = list(orientation = "v",x=0.8),
-#         hovermode = "x") 
+ggplotly(g3,tooltip = "text") %>%
+ layout(legend = list(orientation = "v",x=0.8),
+        hovermode = "x")
+```
 
+### Egresos de divisas por viajes y otros pagos con tarjeta. Apertura por rubros
+#### En millones de dólares
+```{r}
 
 g4 <- tabla4 %>% 
   ggplot(aes(x = fecha, y = pagos, fill = rubro
