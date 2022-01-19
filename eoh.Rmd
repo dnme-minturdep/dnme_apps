@@ -37,8 +37,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2021-10-01")
-mes <- "Octubre"
+fecha <- as.Date("2021-11-01")
+mes <- "Noviembre"
 #trimestre <- "2do"
 anio <- "2021"
 
@@ -89,8 +89,8 @@ theme_imet <- function() {
 
 ```{r}
 #Importo datos
-pernoctes_residencia <- read_csv("/srv/DataDNMYE/eoh/Pernoctes-residentes-y-no-residentes.csv")
-viajeros_residencia <- read_csv("/srv/DataDNMYE/eoh/Viajeros-hospedados-residentes-y-no-residentes.csv")
+pernoctes_residencia <- read_csv("/srv/DataDNMYE/eoh/recursos/Pernoctes-residentes-y-no-residentes.csv")
+viajeros_residencia <- read_csv("/srv/DataDNMYE/eoh/recursos/Viajeros-hospedados-residentes-y-no-residentes.csv")
 
 eoh <- pernoctes_residencia %>% 
   rename(origen_viajeros = origen_pernoctes) %>% 
@@ -206,8 +206,8 @@ tablafinal_ficha <- tabla1_A %>% select(indice_tiempo, origen_viajeros, pernocte
 ### TABLA 2 - pernoctaciones por categoría
 
 #Importo datos
-pernoctaciones_categoria <- read_csv("/srv/DataDNMYE/eoh/pernoctaciones-por-categoria.csv")
-plazas_categoria <- read_csv("/srv/DataDNMYE/eoh/plazas-disponibles-por-categoria.csv")
+pernoctaciones_categoria <- read_csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/pernoctaciones-por-categoria.csv")
+plazas_categoria <- read_csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/plazas-disponibles-por-categoria.csv")
 
 tabla2 <- pernoctaciones_categoria %>% left_join(plazas_categoria) %>% 
   mutate(indice_tiempo = ym(indice_tiempo)) %>% 
@@ -226,7 +226,7 @@ tabla2 <- pernoctaciones_categoria %>% left_join(plazas_categoria) %>%
   filter(year(indice_tiempo) == year(fecha)) %>%
   arrange(desc(categoria_del_hotel)) %>% #AD HOC AGOSTO 2021
   mutate(across(where(is.numeric), ~ case_when(is.infinite(.) ~ NA_real_,
-                                           TRUE ~ .)))%>% #AD HOC AGOSTO 2021
+                                           TRUE ~ .)))%>% #AD HOC 
   mutate(var_ia_pernoctes_total = case_when(!categoria_del_hotel == "Total" ~
                                        `is.na<-`(var_ia_pernoctes_total),
                                      TRUE ~ var_ia_pernoctes_total),
@@ -581,7 +581,7 @@ grafico2 <- datos_grafico2 %>%
   scale_y_continuous(limits = c(0,dato_escala)) +
   theme(
     plot.title = element_markdown(size = 14, family = familia_fuente, colour = "#AAAAAA", hjust = 2.8),
-    plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = 1.8),
+    plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = 1.5),
     plot.caption = element_markdown(size = 8, family = familia_fuente),
     axis.text.x = element_blank(),
     axis.text.y = element_text(size = 12, colour = "black", face = "bold"),
@@ -604,8 +604,8 @@ grafico2
 ```{r}
 ## TABLA 3
 #Importo datos
-pernoctes_destino <- read.csv("/srv/DataDNMYE/eoh/Pernoctes-residentes-y-no-residentes-por-destino.csv", encoding = "UTF-8")
-viajeros_destino <- read.csv("/srv/DataDNMYE/eoh/Viajeros-hospedados-residentes-y-no-residentes-por-destino.csv", encoding = "UTF-8")
+pernoctes_destino <- read.csv("/srv/DataDNMYE/eoh/recursos/Pernoctes-residentes-y-no-residentes-por-destino.csv", encoding = "UTF-8")
+viajeros_destino <- read.csv("/srv/DataDNMYE/eoh/recursos/Viajeros-hospedados-residentes-y-no-residentes-por-destino.csv", encoding = "UTF-8")
 
 destinos <- pernoctes_destino %>% 
   rename(origen_viajeros = origen_pernoctes) %>% 
@@ -785,15 +785,11 @@ grafico3
 
 ```{r}
 #Importo datos
-pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/pernoctes-viajeros-y-estadia-media-por-localidad.csv", encoding = "UTF-8")
+pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/pernoctes-viajeros-y-estadia-media-por-localidad.csv", encoding = "UTF-8")
 
 #Localidades que no corresponde mostrar datos (AD HOC,INDEC)
-localidades_sin_datos <- c("Mar del Plata", "Pinamar", "Villa Gesell", "CABA",
-                               "La Falda","Mar Chiquita","Mina Clavero",
-                               "Carlos Paz","Villa General Belgrano",
-                               "San Luis","Gualeguaychú","Resistencia",
-                           "Termas de Río Hondo", "El Calafate","Las Grutas","Viedma")
-localidades_insuficiencia <- c("Puerto Iguazú", "Posadas")
+localidades_sin_datos <- c("Mar del Plata", "Tandil", "CABA", "San Luis", "Gualeguaychú", "Resistencia", "Calafate", "Las Grutas", "Rio Gallegos")
+localidades_insuficiencia <- c("Malargue-Las Leñas","Puerto Iguazú", "Rafaela", "Puerto Madryn", "Viedma")
 
 
 #Tabla localidades
