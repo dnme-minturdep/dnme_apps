@@ -108,7 +108,7 @@ eoh <- pernoctes_residencia %>%
 ### GRÁFICO 1 - Evolución de pernoctaciones
 datos_grafico1 <- eoh %>%
   filter(year(indice_tiempo) >= 2018) %>% 
-  mutate(pernoctes = round(pernoctes/1000, 3)) %>% 
+  mutate(pernoctes = round(pernoctes/1000000, 1)) %>% 
    mutate(pernoctes = case_when(
       indice_tiempo %in% c(as.Date("2020-04-01"), as.Date("2020-05-01")) & anio == 2021 ~ 0,
       TRUE ~ pernoctes))
@@ -124,8 +124,8 @@ grafico1 <- datos_grafico1 %>%
   scale_x_date(date_breaks = "1 months",
                date_labels = "%b %y",
                expand = c(0,10)) +
-  scale_y_continuous(breaks = seq(min(datos_grafico1$pernoctes, na.rm = T), max(datos_grafico1$pernoctes, na.rm = T), by = 500),
-                     labels = scales::number_format(big.mark = ".", decimal.mark = ",")) +
+  scale_y_continuous(breaks = seq(min(datos_grafico1$pernoctes, na.rm = T), max(datos_grafico1$pernoctes, na.rm = T), by = 0.5),
+                     labels = scales::number_format(big.mark = ",", decimal.mark = ",",accuracy = 0.1)) +
   theme_minimal() +
   theme_imet() +
   theme(
@@ -137,7 +137,7 @@ grafico1 <- datos_grafico1 %>%
     panel.grid.major = element_line(colour="grey90",size = rel(0.5)),         
     panel.grid.minor = element_blank()) +
   labs(
-       title = tolower(glue("en miles de noches. enero 2018-{mes} {anio}. <span style='color:{cols_arg2[6]}'>residentes</span> y <span style='color:{cols_arg2[1]}'>no residentes</span>")),subtitle="",
+       title = tolower(glue("en millones de noches. enero 2018-{mes} {anio}. <span style='color:{cols_arg2[6]}'>residentes</span> y <span style='color:{cols_arg2[1]}'>no residentes</span>")),subtitle="",
                        x="",y="", fill = "",
        caption = "Fuente: Encuesta de Ocupación Hotelera (EOH), INDEC y Dirección Nacional de Mercados y Estadística, Subsecretaría de Desarrollo Estratégico, Ministerio de Turismo y Deportes")
 ```
@@ -162,8 +162,8 @@ totales <- tabla1 %>% select(indice_tiempo, origen_viajeros, pernoctes_total, vi
 tabla1_A <- tabla1 %>% 
   select(-c(pernoctes_total, viajeros_total)) %>% 
   rbind(totales) %>% 
-  mutate(pernoctes  = round(pernoctes / 1000, 3),
-         viajeros  = round(viajeros / 1000, 3),
+  mutate(pernoctes  = pernoctes,
+         viajeros  = viajeros,
          estadia = round(pernoctes / viajeros, 3)) %>%
   mutate(mes = month(indice_tiempo),
          anio = year(indice_tiempo)) %>% 
@@ -199,7 +199,9 @@ acumulados <- tabla1_A %>% select(1,2, 11:16) %>%
 #Junto tablas para graficar
 tablafinal_ficha <- tabla1_A %>% select(indice_tiempo, origen_viajeros, pernoctes, var_ia_pernoctes,
                             viajeros, var_ia_viajeros,
-                            estadia, var_ia_estadia) %>%  rbind(acumulados)
+                            estadia, var_ia_estadia) %>%  rbind(acumulados) %>% 
+  mutate(pernoctes = pernoctes/1000000,
+         viajeros = viajeros/1000000)
 ```
 
 ```{r}
@@ -212,15 +214,15 @@ plazas_categoria <- read_csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/plazas-
 tabla2 <- pernoctaciones_categoria %>% left_join(plazas_categoria) %>% 
   mutate(indice_tiempo = ym(indice_tiempo)) %>% 
   filter(month(indice_tiempo) == month(fecha) & year(indice_tiempo) >= year(fecha)-1) %>%
-  mutate(pernoctes = round(pernoctes/1000, 3),
-         plazas_disponibles = round(plazas_disponibles/1000, 3),
+  mutate(pernoctes = pernoctes,
+         plazas_disponibles = plazas_disponibles,
          origen_viajeros = case_when(origen_viajeros == "Residentes" ~ "res",
          origen_viajeros == "No residentes" ~ "nores",
          origen_viajeros == "Total" ~ "total")) %>%
   group_by(categoria_del_hotel, origen_viajeros) %>%
   mutate(pernoctes = case_when(pernoctes == 0 ~ `is.na<-`(pernoctes),
       TRUE ~ pernoctes)) %>% 
-  mutate(var_ia_pernoctes  = round(pernoctes / lag(pernoctes, n = 1) -1, 3)) %>%
+  mutate(var_ia_pernoctes  = pernoctes / lag(pernoctes, n = 1) -1) %>%
   ungroup() %>%
   pivot_wider(names_from = "origen_viajeros", values_from = c("pernoctes", "var_ia_pernoctes")) %>% 
   filter(year(indice_tiempo) == year(fecha)) %>%
@@ -245,11 +247,11 @@ tabla2 <- tabla2[c(1,3,4,5,2),]
 ### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste(tolower(mes)," de ",anio)`)
 
 
-+ En `r tolower(mes)` de `r anio`, se hospedaron `r format(round(as.numeric(tablafinal_ficha[3,5]),1), decimal.mark = ",", big.mark = ".")` viajeros (creciendo `r format(round(as.numeric(tablafinal_ficha[3,6]*100),1), decimal.mark = ",", big.mark = ".")`% en comparación con el mismo mes de 2020) con una estadía de `r format(round(as.numeric(tablafinal_ficha[3,7]),1), decimal.mark = ",", big.mark = ".")` noches en promedio (`r format(round(as.numeric(tablafinal_ficha[3,8]*100),1), decimal.mark = ",", big.mark = ".")`% i.a). **El total de pernoctes registrados ascendió a `r format(round(as.numeric(tablafinal_ficha[3,3]),1), decimal.mark = ",", big.mark = ".")` mil noches (`r format(round(as.numeric(tablafinal_ficha[3,4]*100),0), decimal.mark = ",", big.mark = ".")`% i.a)**. 
++ En `r tolower(mes)` de `r anio`, se hospedaron `r format(round(as.numeric(tablafinal_ficha[3,5]),1), decimal.mark = ",", big.mark = ".")` millones de viajeros (creciendo `r format(round(as.numeric(tablafinal_ficha[3,6]*100),1), decimal.mark = ",", big.mark = ".")`% en comparación con el mismo mes de 2020) con una estadía de `r format(round(as.numeric(tablafinal_ficha[3,7]),1), decimal.mark = ",", big.mark = ".")` noches en promedio (`r format(round(as.numeric(tablafinal_ficha[3,8]*100),1), decimal.mark = ",", big.mark = ".")`% i.a). **El total de pernoctes registrados ascendió a `r format(round(as.numeric(tablafinal_ficha[3,3]),1), decimal.mark = ",", big.mark = ".")` millones de noches (`r format(round(as.numeric(tablafinal_ficha[3,4]*100),0), decimal.mark = ",", big.mark = ".")`% i.a)**. 
 
 + El `r format(round(as.numeric(tablafinal_ficha[1,5]/tablafinal_ficha[3,5]*100),0), decimal.mark = ",", big.mark = ".")`% de los viajeros hospedados fueron residentes, los cuales registraron el `r format(round(as.numeric(tablafinal_ficha[1,3]/tablafinal_ficha[3,3]*100),0), decimal.mark = ",", big.mark = ".")`% de las pernoctaciones.
 
-+ **Los establecimientos de `r tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "categoria_del_hotel"]` concentraron la mayor cantidad de pernoctaciones (`r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"]),digits=1),decimal.mark = ",", big.mark = ".")` mil)**, con una tasa de ocupación de plazas de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`%; seguidos por los establecimientos `r tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "categoria_del_hotel"]`, con `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"]),digits=0),decimal.mark = ",", big.mark = ".")` mil pernoctes y una ocupación de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`% de las plazas disponibles.
++ **Los establecimientos de `r tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "categoria_del_hotel"]` concentraron la mayor cantidad de pernoctaciones (`r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"])/1000000, 1),decimal.mark = ",", big.mark = ".")` millón)**, con una tasa de ocupación de plazas de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`%; seguidos por los establecimientos `r tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "categoria_del_hotel"]`, con `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"])/1000,digits=0),decimal.mark = ",", big.mark = ".")` mil pernoctes y una ocupación de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`% de las plazas disponibles.
 
 <br>
 <br>
@@ -278,9 +280,9 @@ tabla1_ficha <- tablafinal_ficha %>%
   cols_label(
     origen_viajeros = md("**Origen de los viajeros**"),
     indice_tiempo = md("**Período**"),
-    pernoctes = md("Miles de noches"),
+    pernoctes = md("Millones de noches"),
     var_ia_pernoctes = md("Var % i.a."),
-    viajeros  = md("Miles de viajeros") ,
+    viajeros  = md("Millones de viajeros") ,
     var_ia_viajeros  = md("Var % i.a."),
     estadia    = md("Noches"),
     var_ia_estadia    = md("Var % i.a.")
@@ -405,16 +407,20 @@ tabla1_ficha
 
 tabla2_ficha <- tabla2 %>% 
   select(categoria_del_hotel, plazas_disponibles, pernoctes_total, var_ia_pernoctes_total,
-         pernoctes_res, var_ia_pernoctes_res, pernoctes_nores, var_ia_pernoctes_nores) %>% 
+         pernoctes_res, var_ia_pernoctes_res, pernoctes_nores, var_ia_pernoctes_nores) %>%
+  mutate(plazas_disponibles = plazas_disponibles/1000000,
+         pernoctes_total = pernoctes_total/1000000,
+         pernoctes_res = pernoctes_res/1000000,
+         pernoctes_nores = pernoctes_nores/1000000) %>% 
   gt() %>% 
   cols_label(
     categoria_del_hotel = md("**Categoría**"),
-    plazas_disponibles = md("Miles"),
-    pernoctes_total = md("Miles de noches"),
+    plazas_disponibles = md("Millones"),
+    pernoctes_total = md("Millones de noches"),
     var_ia_pernoctes_total  = md("Var % i.a."),
-    pernoctes_res = md("Miles de noches"),
+    pernoctes_res = md("Millones de noches"),
     var_ia_pernoctes_res  = md("Var % i.a."),
-    pernoctes_nores = md("Miles de noches"),
+    pernoctes_nores = md("Millones de noches"),
     var_ia_pernoctes_nores  = md("Var % i.a.")
   ) %>% 
   fmt_number(columns = c(2,3,5,7), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
@@ -552,7 +558,9 @@ datos_grafico2 <- tabla2 %>%
   mutate(categoria_del_hotel = fct_relevel(categoria_del_hotel, c("Para Hoteles",
                                                                   "1 y 2 estrellas",
                                                                   "3 estrellas/boutiques/aparts",
-                                                                  "4 y 5 estrellas")))
+                                                                  "4 y 5 estrellas")),
+         cantidad = cantidad/1000000)
+
 #Dato para ajustar el gráfico
 dato_escala <- max(datos_grafico2$cantidad) * 2
 
@@ -562,7 +570,7 @@ grafico2 <- datos_grafico2 %>%
   geom_bar(aes(categoria_del_hotel, cantidad, fill = indicador),
            stat = "identity", position = "dodge") +
   geom_text(aes(categoria_del_hotel, cantidad,
-                label = format(cantidad, big.mark = ".", decimal.mark = ",", digits = 0),
+                label = format(cantidad, big.mark = ".", decimal.mark = ",", digits = 1),
                 group = indicador, family = familia_fuente), size = 6,
             position = position_dodge(width = 1), hjust = -0.1) +
   geom_label(aes(categoria_del_hotel, dato_escala * 0.80, 
@@ -581,14 +589,14 @@ grafico2 <- datos_grafico2 %>%
   scale_y_continuous(limits = c(0,dato_escala)) +
   theme(
     plot.title = element_markdown(size = 14, family = familia_fuente, colour = "#AAAAAA", hjust = 2.8),
-    plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = 1.5),
+    plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = 1.3),
     plot.caption = element_markdown(size = 8, family = familia_fuente),
     axis.text.x = element_blank(),
     axis.text.y = element_text(size = 12, colour = "black", face = "bold"),
     panel.grid.major = element_blank(),         
     panel.grid.minor = element_blank()) +
   labs(title = "**Plazas disponibles, pernoctaciones y tasa de ocupación, según categoría**",
-       subtitle = tolower(glue("**en miles y porcentaje, {mes} {anio}.** <span style='color:{cols_arg2[2]}'>**plazas disponibles**</span>**,** <span style='color:{cols_arg2[6]}'>**ocupadas**</span> **y** <span style='color: #3D4D7C'>**tasa de ocupación**</span>")),
+       subtitle = tolower(glue("**en millones y porcentaje, {mes} {anio}.** <span style='color:{cols_arg2[2]}'>**plazas disponibles**</span>**,** <span style='color:{cols_arg2[6]}'>**ocupadas**</span> **y** <span style='color: #3D4D7C'>**tasa de ocupación**</span>")),
                        x="",y="", fill = "",
        caption = "Fuente: Encuesta de Ocupación Hotelera (EOH), INDEC y Dirección Nacional de Mercados y Estadística, Subsecretaría de Desarrollo Estratégico, Ministerio de Turismo y Deportes")
 
@@ -754,14 +762,14 @@ grafico3 <- datos_grafico3 %>% ggplot() +
   scale_y_continuous(limits = c(-1, dato_escala2)) +
   theme(
     #plot.title = element_markdown(size = 14, family = familia_fuente, colour = "#AAAAAA", hjust = -0.18),
-    plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = -0.1),
+    plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = -0.2),
     plot.caption = element_markdown(size = 8, family = familia_fuente),
     axis.text.x = element_blank(),
     axis.text.y = element_text(size = 12, colour = "black", face = "bold"),
     panel.grid.major = element_blank(),         
     panel.grid.minor = element_blank()) +
   labs(#title = "**Pernoctaciones por región**",
-       subtitle = tolower(glue("**{mes} {anio}.** <span style='color:{cols_arg2[6]}'>**residentes**</span> **y** <span style='color:{cols_arg2[2]}'>**no residentes**</span>")),
+       subtitle = tolower(glue("**en miles, {mes} {anio}.** <span style='color:{cols_arg2[6]}'>**residentes**</span> **y** <span style='color:{cols_arg2[2]}'>**no residentes**</span>")),
                        x="",y="", fill = "",
        caption = "Fuente: Encuesta de Ocupación Hotelera (EOH), INDEC y Dirección Nacional de Mercados y Estadística, Subsecretaría de Desarrollo Estratégico, Ministerio de Turismo y Deportes")
 
