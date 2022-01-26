@@ -408,19 +408,19 @@ tabla1_ficha
 tabla2_ficha <- tabla2 %>% 
   select(categoria_del_hotel, plazas_disponibles, pernoctes_total, var_ia_pernoctes_total,
          pernoctes_res, var_ia_pernoctes_res, pernoctes_nores, var_ia_pernoctes_nores) %>%
-  mutate(plazas_disponibles = plazas_disponibles/1000000,
-         pernoctes_total = pernoctes_total/1000000,
-         pernoctes_res = pernoctes_res/1000000,
-         pernoctes_nores = pernoctes_nores/1000000) %>% 
+  mutate(plazas_disponibles = plazas_disponibles/1000,
+         pernoctes_total = pernoctes_total/1000,
+         pernoctes_res = pernoctes_res/1000,
+         pernoctes_nores = pernoctes_nores/1000) %>% 
   gt() %>% 
   cols_label(
     categoria_del_hotel = md("**Categoría**"),
-    plazas_disponibles = md("Millones"),
-    pernoctes_total = md("Millones de noches"),
+    plazas_disponibles = md("Miles"),
+    pernoctes_total = md("Miles de noches"),
     var_ia_pernoctes_total  = md("Var % i.a."),
-    pernoctes_res = md("Millones de noches"),
+    pernoctes_res = md("Miles de noches"),
     var_ia_pernoctes_res  = md("Var % i.a."),
-    pernoctes_nores = md("Millones de noches"),
+    pernoctes_nores = md("Miles de noches"),
     var_ia_pernoctes_nores  = md("Var % i.a.")
   ) %>% 
   fmt_number(columns = c(2,3,5,7), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
@@ -559,7 +559,7 @@ datos_grafico2 <- tabla2 %>%
                                                                   "1 y 2 estrellas",
                                                                   "3 estrellas/boutiques/aparts",
                                                                   "4 y 5 estrellas")),
-         cantidad = cantidad/1000000)
+         cantidad = cantidad/1000)
 
 #Dato para ajustar el gráfico
 dato_escala <- max(datos_grafico2$cantidad) * 2
@@ -589,14 +589,14 @@ grafico2 <- datos_grafico2 %>%
   scale_y_continuous(limits = c(0,dato_escala)) +
   theme(
     plot.title = element_markdown(size = 14, family = familia_fuente, colour = "#AAAAAA", hjust = 2.8),
-    plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = 1.3),
+    plot.subtitle  = element_markdown(family = familia_fuente, size = 12, hjust = 1.5),
     plot.caption = element_markdown(size = 8, family = familia_fuente),
     axis.text.x = element_blank(),
     axis.text.y = element_text(size = 12, colour = "black", face = "bold"),
     panel.grid.major = element_blank(),         
     panel.grid.minor = element_blank()) +
   labs(title = "**Plazas disponibles, pernoctaciones y tasa de ocupación, según categoría**",
-       subtitle = tolower(glue("**en millones y porcentaje, {mes} {anio}.** <span style='color:{cols_arg2[2]}'>**plazas disponibles**</span>**,** <span style='color:{cols_arg2[6]}'>**ocupadas**</span> **y** <span style='color: #3D4D7C'>**tasa de ocupación**</span>")),
+       subtitle = tolower(glue("**en miles y porcentaje, {mes} {anio}.** <span style='color:{cols_arg2[2]}'>**plazas disponibles**</span>**,** <span style='color:{cols_arg2[6]}'>**ocupadas**</span> **y** <span style='color: #3D4D7C'>**tasa de ocupación**</span>")),
                        x="",y="", fill = "",
        caption = "Fuente: Encuesta de Ocupación Hotelera (EOH), INDEC y Dirección Nacional de Mercados y Estadística, Subsecretaría de Desarrollo Estratégico, Ministerio de Turismo y Deportes")
 
