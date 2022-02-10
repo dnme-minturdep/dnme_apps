@@ -39,8 +39,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 #source("0_funciones_de_trabajo.R", encoding = "UTF-8")
 
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2021-11-01"
-mes <- "Noviembre"
+fecha <- "2021-12-01"
+mes <- "Diciembre"
 anio <- 2021
 
 # PALETAS Y FUENTES ---------------------------------------------------------
