@@ -24,6 +24,8 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 fecha <- "2021-09-01"
 mes <- "septiembre"
 anio <- "2021"
+
+parques <- c("lago puelo", "sierra de las quijadas", "los cardones")
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -289,7 +291,7 @@ grafico_1 <- ggplot(data_grafico_1)  +
 ggplotly(grafico_1,tooltip = "text")
 ```
 
-```{r}
+```{r include=F, eval=F}
 #Grafico 2
 data_grafico_2 <- tabla.1.mes %>% select(period,"residentes" = var.n_residentes,"no_residentes"=var.n_no_residentes) %>% 
   filter(period >= "2018-01-01" & period <= fecha) %>% 
@@ -337,7 +339,7 @@ grafico_2 <- ggplot(data = data_grafico_2, aes(x = period, y = value)) +
        subtitle = tolower(glue("enero 2018 - {mes} {anio}. <span style='color:{cols_arg2[2]}'>residentes</span> y <span style='color:{cols_arg2[6]}'>no residentes")))
 ggplotly(grafico_2,tooltip="text")
 ```
-**Nota**: por causa de la pandemia, la actividad turística en el período de abril a junio 2020 fue considerada nula. Debido a esto no es posible establecer comparaciones con el mismo período de 2021.
+
 
 <br>
 
@@ -387,7 +389,7 @@ resto_pn <- data_tabla_2 %>%
     var_ia_visitantes_2021_tot = `is.na<-`(var_ia_visitantes_2021_tot),
     var_ia_visitantes_res = `is.na<-`(var_ia_visitantes_res),
     var_ia_visitantes_no_res = `is.na<-`(var_ia_visitantes_no_res)
-    )
+    ) 
 data_tabla_2 <- data_tabla_2 %>% 
   filter(presentacion != "Resto") %>% 
   bind_rows(resto_pn) %>% 
@@ -397,7 +399,9 @@ data_tabla_2 <- data_tabla_2 %>%
          visitantes_2021_residentes, var_ia_visitantes_res,
          visitantes_2021_no_residentes, var_ia_visitantes_no_res,
          acumulado_2021_total, var_ia_acumulado_total, 
-         participacion)
+         participacion) %>% 
+  mutate(across(where(is.numeric), ~ case_when(parque_nacional %in% parques ~ NA_real_,
+                                           TRUE ~ .)))
 #tabla2 <- 
   data_tabla_2 %>% 
   mutate(parque_nacional = str_to_title(parque_nacional)) %>% 
@@ -530,7 +534,7 @@ data_tabla_2 <- data_tabla_2 %>%
                   var_ia_acumulado_total,
                   participacion)) %>%
   tab_stubhead(label = md("**Parque Nacional**")) %>% 
-  fmt_missing(columns = 1:7,
+  fmt_missing(columns = 1:10,
               missing_text = "///") %>% 
   tab_source_note(glue("///: Dato que no corresponde mostrar debido a la naturaleza de las cosas.")) #%>% 
     #tab_source_note("Nota: entre el 22 y 30 de mayo los parques nacionales se cerraron a las visitas (según DI-2021-95-APN-DNO#APNAC) en adhesión a las medidas nacionales (Decreto 334/2021).")
