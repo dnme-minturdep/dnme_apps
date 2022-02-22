@@ -37,8 +37,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2021-11-01")
-mes <- "Noviembre"
+fecha <- as.Date("2021-12-01")
+mes <- "Diciembre"
 #trimestre <- "2do"
 anio <- "2021"
 
@@ -214,8 +214,8 @@ plazas_categoria <- read_csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/plazas-
 tabla2 <- pernoctaciones_categoria %>% left_join(plazas_categoria) %>% 
   mutate(indice_tiempo = ym(indice_tiempo)) %>% 
   filter(month(indice_tiempo) == month(fecha) & year(indice_tiempo) >= year(fecha)-1) %>%
-  mutate(pernoctes = pernoctes,
-         plazas_disponibles = plazas_disponibles,
+  mutate(pernoctes = round(pernoctes/1000, 3),
+         plazas_disponibles = round(plazas_disponibles/1000, 3),
          origen_viajeros = case_when(origen_viajeros == "Residentes" ~ "res",
          origen_viajeros == "No residentes" ~ "nores",
          origen_viajeros == "Total" ~ "total")) %>%
@@ -247,12 +247,11 @@ tabla2 <- tabla2[c(1,3,4,5,2),]
 ### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste(tolower(mes)," de ",anio)`)
 
 
-+ En `r tolower(mes)` de `r anio`, se hospedaron `r format(round(as.numeric(tablafinal_ficha[3,5]),1), decimal.mark = ",", big.mark = ".")` millones de viajeros (creciendo `r format(round(as.numeric(tablafinal_ficha[3,6]*100),1), decimal.mark = ",", big.mark = ".")`% en comparación con el mismo mes de 2020) con una estadía de `r format(round(as.numeric(tablafinal_ficha[3,7]),1), decimal.mark = ",", big.mark = ".")` noches en promedio (`r format(round(as.numeric(tablafinal_ficha[3,8]*100),1), decimal.mark = ",", big.mark = ".")`% i.a). **El total de pernoctes registrados ascendió a `r format(round(as.numeric(tablafinal_ficha[3,3]),1), decimal.mark = ",", big.mark = ".")` millones de noches (`r format(round(as.numeric(tablafinal_ficha[3,4]*100),0), decimal.mark = ",", big.mark = ".")`% i.a)**. 
++ En `r tolower(mes)` de `r anio`, se hospedaron `r format(round(as.numeric(tablafinal_ficha[3,5]),1), decimal.mark = ",", big.mark = ".")` millones de viajeros (creciendo `r format(round(as.numeric(tablafinal_ficha[3,6]*100),0), decimal.mark = ",", big.mark = ".")`% en comparación con el mismo mes de 2020) con una estadía de `r format(round(as.numeric(tablafinal_ficha[3,7]),1), decimal.mark = ",", big.mark = ".")` noches en promedio (`r format(round(as.numeric(tablafinal_ficha[3,8]*100),1), decimal.mark = ",", big.mark = ".")`% i.a). **El total de pernoctes registrados ascendió a `r format(round(as.numeric(tablafinal_ficha[3,3]),1), decimal.mark = ",", big.mark = ".")` millones de noches (`r format(round(as.numeric(tablafinal_ficha[3,4]*100),0), decimal.mark = ",", big.mark = ".")`% i.a)**. 
 
 + El `r format(round(as.numeric(tablafinal_ficha[1,5]/tablafinal_ficha[3,5]*100),0), decimal.mark = ",", big.mark = ".")`% de los viajeros hospedados fueron residentes, los cuales registraron el `r format(round(as.numeric(tablafinal_ficha[1,3]/tablafinal_ficha[3,3]*100),0), decimal.mark = ",", big.mark = ".")`% de las pernoctaciones.
 
-+ **Los establecimientos de `r tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "categoria_del_hotel"]` concentraron la mayor cantidad de pernoctaciones (`r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"])/1000000, 1),decimal.mark = ",", big.mark = ".")` millón)**, con una tasa de ocupación de plazas de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`%; seguidos por los establecimientos `r tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "categoria_del_hotel"]`, con `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"])/1000,digits=0),decimal.mark = ",", big.mark = ".")` mil pernoctes y una ocupación de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`% de las plazas disponibles.
-
++ **Los establecimientos de `r tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "categoria_del_hotel"]` concentraron la mayor cantidad de pernoctaciones (`r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"]), 1),decimal.mark = ",", big.mark = ".")` mil)**, con una tasa de ocupación de plazas de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`%; seguidos por los establecimientos `r tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "categoria_del_hotel"]`, con `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"]),1),decimal.mark = ",", big.mark = ".")` mil pernoctes y una ocupación de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`% de las plazas disponibles.
 <br>
 <br>
 
@@ -408,10 +407,6 @@ tabla1_ficha
 tabla2_ficha <- tabla2 %>% 
   select(categoria_del_hotel, plazas_disponibles, pernoctes_total, var_ia_pernoctes_total,
          pernoctes_res, var_ia_pernoctes_res, pernoctes_nores, var_ia_pernoctes_nores) %>%
-  mutate(plazas_disponibles = plazas_disponibles/1000,
-         pernoctes_total = pernoctes_total/1000,
-         pernoctes_res = pernoctes_res/1000,
-         pernoctes_nores = pernoctes_nores/1000) %>% 
   gt() %>% 
   cols_label(
     categoria_del_hotel = md("**Categoría**"),
@@ -796,9 +791,8 @@ grafico3
 pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/pernoctes-viajeros-y-estadia-media-por-localidad.csv", encoding = "UTF-8")
 
 #Localidades que no corresponde mostrar datos (AD HOC,INDEC)
-localidades_sin_datos <- c("Mar del Plata", "Tandil", "CABA", "San Luis", "Gualeguaychú", "Resistencia", "Calafate", "Las Grutas", "Rio Gallegos")
-localidades_insuficiencia <- c("Malargue-Las Leñas","Puerto Iguazú", "Rafaela", "Puerto Madryn", "Viedma")
-
+localidades_sin_datos <- c("Pinamar", "Tandil","Villa Gesell","CABA","Resistencia","Calafate","Viedma")
+localidades_insuficiencia <- c("Puerto Iguazú", "Rafaela")
 
 #Tabla localidades
 tabla4 <- pernoctaciones_localidad %>% 
