@@ -164,13 +164,13 @@ tabla1_A <- tabla1 %>%
   rbind(totales) %>% 
   mutate(pernoctes  = pernoctes,
          viajeros  = viajeros,
-         estadia = round(pernoctes / viajeros, 3)) %>%
+         estadia = pernoctes / viajeros) %>%
   mutate(mes = month(indice_tiempo),
          anio = year(indice_tiempo)) %>% 
   group_by(origen_viajeros, mes) %>% 
-  mutate(var_ia_pernoctes  = round(pernoctes / lag(pernoctes, n = 1) -1, 3),
-         var_ia_viajeros  = round(viajeros / lag(viajeros, n = 1) -1, 3),
-         var_ia_estadia  = round(estadia / lag(estadia, n = 1) -1, 3)) %>%
+  mutate(var_ia_pernoctes  = round(pernoctes / lag(pernoctes, n = 1) -1, 5),
+         var_ia_viajeros  = round(viajeros / lag(viajeros, n = 1) -1, 5),
+         var_ia_estadia  = round(estadia / lag(estadia, n = 1) -1, 5)) %>%
   ungroup() %>% 
   group_by(anio, origen_viajeros) %>% 
   mutate(acum_pernoctes = sum(pernoctes, na.rm = T),
@@ -179,9 +179,9 @@ tabla1_A <- tabla1 %>%
   ungroup() %>% 
   filter(mes == month(fecha)) %>%
   group_by(origen_viajeros) %>% 
-  mutate(var_ia_acum_pernoctes = round(acum_pernoctes/lag(acum_pernoctes, n = 1) -1, 3),
+  mutate(var_ia_acum_pernoctes = round(acum_pernoctes/lag(acum_pernoctes, n = 1) -1, 5),
          var_ia_acum_viajeros = round(acum_viajeros/lag(acum_viajeros, n = 1) -1, 5),
-         var_ia_acum_estadia = round(acum_estadia/lag(acum_estadia, n = 1) -1, 3)) %>%
+         var_ia_acum_estadia = round(acum_estadia/lag(acum_estadia, n = 1) -1, 5)) %>%
   ungroup() %>% 
   filter(year(indice_tiempo) == year(fecha)) %>%
   mutate(indice_tiempo = capitalize(format(indice_tiempo, "%b %y"))) 
@@ -214,8 +214,8 @@ plazas_categoria <- read_csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/plazas-
 tabla2 <- pernoctaciones_categoria %>% left_join(plazas_categoria) %>% 
   mutate(indice_tiempo = ym(indice_tiempo)) %>% 
   filter(month(indice_tiempo) == month(fecha) & year(indice_tiempo) >= year(fecha)-1) %>%
-  mutate(pernoctes = round(pernoctes/1000, 3),
-         plazas_disponibles = round(plazas_disponibles/1000, 3),
+  mutate(pernoctes = round(pernoctes/1000, 5),
+         plazas_disponibles = round(plazas_disponibles/1000, 5),
          origen_viajeros = case_when(origen_viajeros == "Residentes" ~ "res",
          origen_viajeros == "No residentes" ~ "nores",
          origen_viajeros == "Total" ~ "total")) %>%
@@ -249,9 +249,13 @@ tabla2 <- tabla2[c(1,3,4,5,2),]
 
 + En `r tolower(mes)` de `r anio`, se hospedaron `r format(round(as.numeric(tablafinal_ficha[3,5]),1), decimal.mark = ",", big.mark = ".")` millones de viajeros (creciendo `r format(round(as.numeric(tablafinal_ficha[3,6]*100),0), decimal.mark = ",", big.mark = ".")`% en comparación con el mismo mes de 2020) con una estadía de `r format(round(as.numeric(tablafinal_ficha[3,7]),1), decimal.mark = ",", big.mark = ".")` noches en promedio (`r format(round(as.numeric(tablafinal_ficha[3,8]*100),1), decimal.mark = ",", big.mark = ".")`% i.a). **El total de pernoctes registrados ascendió a `r format(round(as.numeric(tablafinal_ficha[3,3]),1), decimal.mark = ",", big.mark = ".")` millones de noches (`r format(round(as.numeric(tablafinal_ficha[3,4]*100),0), decimal.mark = ",", big.mark = ".")`% i.a)**. 
 
++ Además, los viajeros residentes crecieron 4% vs diciembre 2019, en tanto que los pernoctes de residentes lo hicieron en un 16%; siendo la primera vez que en ambas variables se superan valores pre-pandemia desde que comenzó a impactar la COVID 19 en la Argentina en marzo 2020.
+
 + El `r format(round(as.numeric(tablafinal_ficha[1,5]/tablafinal_ficha[3,5]*100),0), decimal.mark = ",", big.mark = ".")`% de los viajeros hospedados fueron residentes, los cuales registraron el `r format(round(as.numeric(tablafinal_ficha[1,3]/tablafinal_ficha[3,3]*100),0), decimal.mark = ",", big.mark = ".")`% de las pernoctaciones.
 
 + **Los establecimientos de `r tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "categoria_del_hotel"]` concentraron la mayor cantidad de pernoctaciones (`r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"]), 1),decimal.mark = ",", big.mark = ".")` mil)**, con una tasa de ocupación de plazas de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`%; seguidos por los establecimientos `r tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "categoria_del_hotel"]`, con `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"]),1),decimal.mark = ",", big.mark = ".")` mil pernoctes y una ocupación de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`% de las plazas disponibles.
+
++ En todo el 2021, se registraron 10,6 millones de viajeros (82% vs 2020), en tanto que las pernoctaciones ascendieron a 26,8 millones (68% vs 2020).
 <br>
 <br>
 
@@ -407,15 +411,19 @@ tabla1_ficha
 tabla2_ficha <- tabla2 %>% 
   select(categoria_del_hotel, plazas_disponibles, pernoctes_total, var_ia_pernoctes_total,
          pernoctes_res, var_ia_pernoctes_res, pernoctes_nores, var_ia_pernoctes_nores) %>%
+  mutate(plazas_disponibles = plazas_disponibles/1000,
+         pernoctes_total = pernoctes_total/1000,
+         pernoctes_res = pernoctes_res/1000,
+         pernoctes_nores = pernoctes_nores/1000) %>% 
   gt() %>% 
   cols_label(
     categoria_del_hotel = md("**Categoría**"),
-    plazas_disponibles = md("Miles"),
-    pernoctes_total = md("Miles de noches"),
+    plazas_disponibles = md("Millones"),
+    pernoctes_total = md("Millones de noches"),
     var_ia_pernoctes_total  = md("Var % i.a."),
-    pernoctes_res = md("Miles de noches"),
+    pernoctes_res = md("Millones de noches"),
     var_ia_pernoctes_res  = md("Var % i.a."),
-    pernoctes_nores = md("Miles de noches"),
+    pernoctes_nores = md("Millones de noches"),
     var_ia_pernoctes_nores  = md("Var % i.a.")
   ) %>% 
   fmt_number(columns = c(2,3,5,7), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
@@ -553,8 +561,7 @@ datos_grafico2 <- tabla2 %>%
   mutate(categoria_del_hotel = fct_relevel(categoria_del_hotel, c("Para Hoteles",
                                                                   "1 y 2 estrellas",
                                                                   "3 estrellas/boutiques/aparts",
-                                                                  "4 y 5 estrellas")),
-         cantidad = cantidad/1000)
+                                                                  "4 y 5 estrellas")))
 
 #Dato para ajustar el gráfico
 dato_escala <- max(datos_grafico2$cantidad) * 2
