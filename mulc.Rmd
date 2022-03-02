@@ -207,7 +207,15 @@ var_eg_acum_ia_2 <- (eg_acum/eg_acum_ia_2-1)*100
 bza_acum <- ing_acum-eg_acum
 
 ```
-+ En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-2)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-2)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones. 
+
+```{r}
+# SACO EL ACUMULADO EN ENEROOOOO
+
+# + En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-2)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-2)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones. 
+```
+
+
+
 
 
 
@@ -291,8 +299,11 @@ tabla2 <- ss_mensual %>% filter(year(fecha) >= 2017,
 ing_acum_total <- filter(tabla2, year(fecha) == anio_datos, transac == "cobros") %>% select(total) %>% sum()
 
 eg_acum_total <- filter(tabla2, year(fecha) == anio_datos, transac == "pagos") %>% select(total) %>% sum()
+
+# + Por su lado, en el acumulado del año, los egresos por turismo representaron un `r ((eg_acum/eg_acum_total)*100) %>% round(1)`% y los ingresos por turismo un `r ((ing_acum/ing_acum_total)*100) %>% round(1)`%.
+
 ```
-+ Por su lado, en el acumulado del año, los egresos por turismo representaron un `r ((eg_acum/eg_acum_total)*100) %>% round(1)`% y los ingresos por turismo un `r ((ing_acum/ing_acum_total)*100) %>% round(1)`%.
+
 
 
 ### Contribución del turismo en el mercado oficial de divisas 
@@ -589,80 +600,91 @@ ggplotly(g6,tooltip = "text") %>% layout(legend = list(
   
 ```
 
-+ Mientras tanto, en el acumulado enero - `r mes` de `r as.character(anio_datos)`, el turismo ocupó el `r tabla5_acum$orden[tabla5_acum$rubro == "Turismo"]`º lugar en cuanto a ingresos, pero el `r tabla6_acum$orden[tabla6_acum$rubro == "Turismo"]`º en cuanto a egresos.
+
+```{r}
+#ACUMULADO EN ENERO LO SACAMOSSSS
+# + Mientras tanto, en el acumulado enero - `r mes` de `r as.character(anio_datos)`, el turismo ocupó el `r tabla5_acum$orden[tabla5_acum$rubro == "Turismo"]`º lugar en cuanto a ingresos, pero el `r tabla6_acum$orden[tabla6_acum$rubro == "Turismo"]`º en cuanto a egresos.
 
 ### Ingresos de divisas vía MULC. Apertura por sectores de servicios
 #### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares
-```{r}
-g5_acum <- tabla5_acum %>% 
-  ggplot(aes(x = cobros, y = reorder(rubro, -orden), 
-             text = paste0('<br>rubro: ',rubro,
-                           '<br>monto: US$',   format(round(cobros,1),big.mark=".",decimal.mark=",")," M"))) +
-  geom_col(aes(fill=es_turismo))+
-  geom_hline(yintercept = 0, size = 0.1) +
-  #geom_text(aes(label=format(round(cobros,1),big.mar=".",decimal.mark = ",")),
-  #         hjust=-.1)+
-    xlim(0,max(tabla5_acum$cobros)*1.1)+
-  scale_fill_manual(values = c("no" = cols_arg, 
-                               "si" = cols_arg2[1]))+
-  scale_color_manual(values = c("no" = cols_arg, 
-                               "si" = cols_arg2[1]))+
-  labs(title="",
-       subtitle = "",x="",y="",
-       caption="DNMyE en base a BCRA")+
-  theme_minimal()+
-  theme(
-    text = element_text(family = familia_fuente), 
-    plot.title    = element_markdown(size = 14),
-    plot.subtitle = element_markdown(size = 12),
-    plot.caption  = element_markdown(size = 10),
-    strip.text.y  = element_text(size = 10, face = "bold"),
-    axis.text.x   = element_text(size = 10,angle=90),
-    axis.text.y   = element_text(size = 10),
-    panel.grid.minor.x = element_blank(),
-    legend.position = "none",
-    strip.placement = "outside")
-
-ggplotly(g5_acum,tooltip = "text") %>% layout(legend = list(
-       orientation = "v",x=0.8
-     )) 
 ```
 
+
+```{r}
+# g5_acum <- tabla5_acum %>% 
+#   ggplot(aes(x = cobros, y = reorder(rubro, -orden), 
+#              text = paste0('<br>rubro: ',rubro,
+#                            '<br>monto: US$',   format(round(cobros,1),big.mark=".",decimal.mark=",")," M"))) +
+#   geom_col(aes(fill=es_turismo))+
+#   geom_hline(yintercept = 0, size = 0.1) +
+#   #geom_text(aes(label=format(round(cobros,1),big.mar=".",decimal.mark = ",")),
+#   #         hjust=-.1)+
+#     xlim(0,max(tabla5_acum$cobros)*1.1)+
+#   scale_fill_manual(values = c("no" = cols_arg, 
+#                                "si" = cols_arg2[1]))+
+#   scale_color_manual(values = c("no" = cols_arg, 
+#                                "si" = cols_arg2[1]))+
+#   labs(title="",
+#        subtitle = "",x="",y="",
+#        caption="DNMyE en base a BCRA")+
+#   theme_minimal()+
+#   theme(
+#     text = element_text(family = familia_fuente), 
+#     plot.title    = element_markdown(size = 14),
+#     plot.subtitle = element_markdown(size = 12),
+#     plot.caption  = element_markdown(size = 10),
+#     strip.text.y  = element_text(size = 10, face = "bold"),
+#     axis.text.x   = element_text(size = 10,angle=90),
+#     axis.text.y   = element_text(size = 10),
+#     panel.grid.minor.x = element_blank(),
+#     legend.position = "none",
+#     strip.placement = "outside")
+# 
+# ggplotly(g5_acum,tooltip = "text") %>% layout(legend = list(
+#        orientation = "v",x=0.8
+#      )) 
+```
+
+```{r}
+#ACUMULADO ENERO LO SACAMOSSSSSS
 ### Egresos de divisas vía MULC. Apertura por sectores de servicios
 #### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares
-```{r}
-g6_acum <- tabla6_acum %>% 
-  ggplot(aes(x = pagos, y = reorder(rubro, -orden),
-             text = paste0('<br>rubro: ',rubro,
-                           '<br>monto: US$',   format(round(pagos,1),big.mark=".",decimal.mark=",")," M"))) +
-  geom_col(aes(fill=es_turismo))+
-  geom_hline(yintercept = 0, size = 0.1) +
-  #geom_text(aes(label=format(round(pagos,1),big.mar=".",decimal.mark = ",")),
-  #          hjust=-.1)+
-  scale_fill_manual(values = c("no" = cols_arg2[6], 
-                               "si" = cols_arg2[1]))+
-  scale_color_manual(values = c("no" = cols_arg2[6], 
-                               "si" = cols_arg2[1]))+
-  xlim(0,max(tabla6_acum$pagos)*1.1)+
-  labs(title="",
-       subtitle = "",x="",y="",
-       caption="DNMyE en base a BCRA")+
-  theme_minimal()+
-  theme(
-    text = element_text(family = familia_fuente), 
-    plot.title    = element_markdown(size = 14),
-    plot.subtitle = element_markdown(size = 12),
-    plot.caption  = element_markdown(size = 10),
-    strip.text.y  = element_text(size = 10, face = "bold"),
-    axis.text.x   = element_text(size = 10,angle=90),
-    axis.text.y   = element_text(size = 10),
-    panel.grid.minor.x = element_blank(),
-    legend.position = "none",
-    strip.placement = "outside")
+```
 
-ggplotly(g6_acum,tooltip = "text") %>% layout(legend = list(
-       orientation = "v",x=0.8
-     )) 
+
+```{r}
+# g6_acum <- tabla6_acum %>% 
+#   ggplot(aes(x = pagos, y = reorder(rubro, -orden),
+#              text = paste0('<br>rubro: ',rubro,
+#                            '<br>monto: US$',   format(round(pagos,1),big.mark=".",decimal.mark=",")," M"))) +
+#   geom_col(aes(fill=es_turismo))+
+#   geom_hline(yintercept = 0, size = 0.1) +
+#   #geom_text(aes(label=format(round(pagos,1),big.mar=".",decimal.mark = ",")),
+#   #          hjust=-.1)+
+#   scale_fill_manual(values = c("no" = cols_arg2[6], 
+#                                "si" = cols_arg2[1]))+
+#   scale_color_manual(values = c("no" = cols_arg2[6], 
+#                                "si" = cols_arg2[1]))+
+#   xlim(0,max(tabla6_acum$pagos)*1.1)+
+#   labs(title="",
+#        subtitle = "",x="",y="",
+#        caption="DNMyE en base a BCRA")+
+#   theme_minimal()+
+#   theme(
+#     text = element_text(family = familia_fuente), 
+#     plot.title    = element_markdown(size = 14),
+#     plot.subtitle = element_markdown(size = 12),
+#     plot.caption  = element_markdown(size = 10),
+#     strip.text.y  = element_text(size = 10, face = "bold"),
+#     axis.text.x   = element_text(size = 10,angle=90),
+#     axis.text.y   = element_text(size = 10),
+#     panel.grid.minor.x = element_blank(),
+#     legend.position = "none",
+#     strip.placement = "outside")
+# 
+# ggplotly(g6_acum,tooltip = "text") %>% layout(legend = list(
+#        orientation = "v",x=0.8
+#      )) 
   
 ```
 ### Apertura del rubro "Viajes y otros pagos con tarjeta"
