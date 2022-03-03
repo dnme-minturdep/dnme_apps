@@ -76,7 +76,7 @@ gs4_deauth() # Importar sheet de google sin interactividad de autorizacion
 ```{r}
 # DATOS
 
-turismo_interno_sheet <- read_sheet("https://docs.google.com/spreadsheets/d/1TJxj48EVOXdWAfwEjgJ2FEFVEZUFMEeXyjWvhMMMfCg/edit#gid=0") %>%
+turismo_interno_sheet <- read_sheet("https://docs.google.com/spreadsheets/d/1-GBjB_Ow5D3mpurT07eCrLFIO6fYn5QsTa1U-wdLX3o/edit#gid=0") %>%
    mutate(across(everything(), .fns = as.numeric))
    
 ```
