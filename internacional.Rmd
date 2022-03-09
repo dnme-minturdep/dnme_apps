@@ -1,6 +1,6 @@
 ---
 title: "Turismo Internacional"
-description: "Resumen de la estimación de turistas emisivos y receptivos de la Argentina, por todas las vías, en base a los registros migratorios de la Dirección Nacional de Migraciones (DNM) y la Encuesta de Turismo Internacional (ETI)"
+description: "Resumen de la estimación del turismo emisivo y receptivo de la Argentina, por todas las vías, en base a los registros migratorios de la Dirección Nacional de Migraciones (DNM) y la Encuesta de Turismo Internacional (ETI)"
 output: distill::distill_article
 ---
 
@@ -39,9 +39,9 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 #source("0_funciones_de_trabajo.R", encoding = "UTF-8")
 
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2021-12-01"
-mes <- "Diciembre"
-anio <- 2021
+fecha <- "2022-01-01"
+mes <- "Enero"
+anio <- 2022
 
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
@@ -75,7 +75,8 @@ data.frame(pais = c("bol","bra","chi","py","uy","eeuu_can","rest_am","euro","res
            etiqueta = c("Bolivia","Brasil","Chile","Paraguay","Uruguay","EE.UU.  y Canadá","Resto de América","Europa","Resto del mundo"))
 ```
 
-### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste(mes," ",anio)`)
+### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste((tolower(mes)),
+" ",anio)`)
 <br>
 
 ```{r} 
@@ -125,7 +126,9 @@ turismo_internacional_ficha <- as.data.table(sapply(turismo_internacional_ficha,
 
 En el mes de `r tolower(mes)` de `r tolower(anio)` se estimaron `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(as.numeric(receptivo_turistas),0)],big.mark = ".",decimal.mark = ",")` turistas no residentes en el país (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(100*as.numeric(.SD),1),.SDcols=4],decimal.mark = ",")`% interanual), mientras que se estimaron `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(as.numeric(emisivo_turistas),0)],big.mark = ".",decimal.mark=",")` turistas residentes que viajaron al exterior (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`% interanual).
 
-En el acumulado del año, suman un total de `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(receptivo_turistas),0)],big.mark=".",decimal.mark=",")` turistas extranjeros en el país (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=4],decimal.mark=",")`% en relación al año anterior) y `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(emisivo_turistas),0)],big.mark=".",decimal.mark=",")` turistas argentinos en el exterior (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`% en relación al año anterior).
+
+<!-- En el acumulado del año, suman un total de `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(receptivo_turistas),0)],big.mark=".",decimal.mark=",")` turistas extranjeros en el país (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=4],decimal.mark=",")`% en relación al año anterior) y `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(emisivo_turistas),0)],big.mark=".",decimal.mark=",")` turistas argentinos en el exterior (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`% en relación al año anterior). -->
+
 
 
 ```{r}
