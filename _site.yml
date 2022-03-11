@@ -7,6 +7,8 @@ navbar:
     image: logo.png
     href: http://turismo.gob.ar/
   right:
+    - text: "Calendario"
+      href: http://calendario.yvera.gob.ar/
     - text: "Datos Abiertos"
       href: http://datos.yvera.gob.ar/
     - text: "Informes"
