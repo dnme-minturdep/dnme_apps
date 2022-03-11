@@ -21,11 +21,11 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2021-09-01"
-mes <- "septiembre"
+fecha <- "2021-10-01"
+mes <- "octubre"
 anio <- "2021"
 
-parques <- c("lago puelo", "sierra de las quijadas", "los cardones")
+parques <- c("lago puelo", "sierra de las quijadas")
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -360,7 +360,9 @@ data_tabla_2 <- tabla_parques %>%
          acumulado_2021_total = acumulado_2021_residentes + acumulado_2021_no_residentes,
          acumulado_2020_total  = acumulado_2020_residentes + acumulado_2020_no_residentes,
          acumulado_2019_total  = acumulado_2019_residentes + acumulado_2019_no_residentes,
-         participacion = round(acumulado_2021_total / sum(acumulado_2021_total), 3)) %>% 
+         participacion = round(acumulado_2021_total / sum(acumulado_2021_total), 3)) %>%
+  mutate(across(where(is.numeric), ~ case_when(parque_nacional %in% parques ~ NA_real_,
+                                           TRUE ~ .))) %>% 
   arrange(-participacion) %>%
   mutate(var_ia_visitantes_2021_tot = visitantes_2021_total/visitantes_2020_total-1,
          var_ia_visitantes_res = visitantes_2021_residentes/visitantes_2020_residentes-1,
@@ -399,9 +401,8 @@ data_tabla_2 <- data_tabla_2 %>%
          visitantes_2021_residentes, var_ia_visitantes_res,
          visitantes_2021_no_residentes, var_ia_visitantes_no_res,
          acumulado_2021_total, var_ia_acumulado_total, 
-         participacion) %>% 
-  mutate(across(where(is.numeric), ~ case_when(parque_nacional %in% parques ~ NA_real_,
-                                           TRUE ~ .)))
+         participacion)
+
 #tabla2 <- 
   data_tabla_2 %>% 
   mutate(parque_nacional = str_to_title(parque_nacional)) %>% 
