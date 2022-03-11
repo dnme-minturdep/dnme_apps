@@ -8,9 +8,9 @@ navbar:
     href: http://turismo.gob.ar/
   right:
     - text: "Calendario"
-      href: http://calendario.yvera.gob.ar/
+      href: https://calendario.yvera.gob.ar/
     - text: "Datos Abiertos"
-      href: http://datos.yvera.gob.ar/
+      href: https://datos.yvera.gob.ar/
     - text: "Informes"
       href: https://www.yvera.tur.ar/estadistica/informe
     - text: "Bitácora"
