@@ -307,7 +307,7 @@ eg_acum_total <- filter(tabla2, year(fecha) == anio_datos, transac == "pagos") %
 
 
 ### Contribución del turismo en el mercado oficial de divisas 
-#### Proporción de <span style='color:#37BBED'>Ingresos</span> y <span style='color:#9283BE'>egresos </span> vía MULC por Turismo sobre el total en %.
+#### Proporción de <span style='color:#9283BE'>Ingresos</span> y <span style='color:#37BBED'>egresos </span> vía MULC por Turismo sobre el total en %.
 ```{r}
 g2 <- tabla2 %>% 
   mutate(transac = case_when(transac == "cobros" ~"ingresos",
