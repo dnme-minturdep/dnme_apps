@@ -4,7 +4,7 @@ favicon: img/favicon.ico
 output_dir: "docs"
 navbar:
   logo:
-    image: logo.png
+    image: sinta.png
     href: http://turismo.gob.ar/
   right:
     - text: "SINTA"
