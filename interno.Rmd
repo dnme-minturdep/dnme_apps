@@ -316,7 +316,7 @@ data_grafico <- turismo_interno2[1:nrow(turismo_interno2),] %>%
                       labels = c("Turistas \n(en millones)", "Var. i.a. (%)")),
     n = case_when(indicador == "turistas" ~ n / 1000000, TRUE ~ n)
   ) %>% filter(year >= 2015) %>% 
-  mutate(n_mod = ifelse(n>100 & indicador == "variacion_tur",50,n)) #CORTE DE BARRAS
+  mutate(n_mod = ifelse(n>100 & indicador == "variacion_tur",110,n)) #CORTE DE BARRAS
 
 
 # GRAFICO
@@ -332,8 +332,9 @@ grafico <- data_grafico %>%
   geom_col(data = filter(data_grafico, (indicador == "variacion_tur" & !is.na(n))),
            aes(fill = variacion_color, text=paste('período: ',trim,'° trim. ',year,
                                                   '<br>variación: ',format(round(n,2),decimal.mark=",",big.mark="."), "%")))+
-  geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-1", xend ="2021-3",y = 35, yend = 50), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
-  geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-2", xend ="2021-4",y = 35, yend = 50), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
+  geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-1", xend ="2021-3",y = 55, yend = 90), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
+  geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-2", xend ="2021-4",y = 55, yend = 90), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
+  geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-3", xend ="2021-5",y = 55, yend = 90), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
   scale_fill_manual(values = c("negativa" = cols_arg2[1], 
                                "positiva" = cols_arg2[2],
                                "anticipo" = "yellow")) +
