@@ -36,12 +36,12 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2022-01-28"
+fecha <- "2022-04-03"
 #mes <- "Marzo"
-trimestre <- "3ro"
+trimestre <- "4to"
 anio <- "2021"
-trim_actual <- 3
-trim_anterior <- 2
+trim_actual <- 4
+trim_anterior <- 3
 anio_anterior <- 2020
 
 
@@ -76,7 +76,7 @@ gs4_deauth() # Importar sheet de google sin interactividad de autorizacion
 ```{r}
 # DATOS
 
-turismo_interno_sheet <- read_sheet("https://docs.google.com/spreadsheets/d/1-GBjB_Ow5D3mpurT07eCrLFIO6fYn5QsTa1U-wdLX3o/edit#gid=0") %>%
+turismo_interno_sheet <- read_sheet("https://docs.google.com/spreadsheets/d/1TJxj48EVOXdWAfwEjgJ2FEFVEZUFMEeXyjWvhMMMfCg/edit#gid=0") %>%
    mutate(across(everything(), .fns = as.numeric))
    
 ```
@@ -316,7 +316,7 @@ data_grafico <- turismo_interno2[1:nrow(turismo_interno2),] %>%
                       labels = c("Turistas \n(en millones)", "Var. i.a. (%)")),
     n = case_when(indicador == "turistas" ~ n / 1000000, TRUE ~ n)
   ) %>% filter(year >= 2015) %>% 
-  mutate(n_mod = ifelse(n>100 & indicador == "variacion_tur",50,n)) #CORTE DE BARRAS
+  mutate(n_mod = ifelse(n>100 & indicador == "variacion_tur",110,n)) #CORTE DE BARRAS
 
 
 # GRAFICO
@@ -332,8 +332,9 @@ grafico <- data_grafico %>%
   geom_col(data = filter(data_grafico, (indicador == "variacion_tur" & !is.na(n))),
            aes(fill = variacion_color, text=paste('período: ',trim,'° trim. ',year,
                                                   '<br>variación: ',format(round(n,2),decimal.mark=",",big.mark="."), "%")))+
-  geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-1", xend ="2021-3",y = 35, yend = 50), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
-  geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-2", xend ="2021-4",y = 35, yend = 50), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
+  geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-1", xend ="2021-3",y = 55, yend = 90), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
+  geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-2", xend ="2021-4",y = 55, yend = 90), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
+  geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-3", xend ="2021-5",y = 55, yend = 90), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
   scale_fill_manual(values = c("negativa" = cols_arg2[1], 
                                "positiva" = cols_arg2[2],
                                "anticipo" = "yellow")) +
@@ -367,7 +368,7 @@ ggplotly(grafico,tooltip="text")
 ```{r}
 #perfil_turista_interno <- read_sheet("https://docs.google.com/spreadsheets/d/12z46U9VrM9RL_wmt-NH7bJ3VuSICLDBlr6ZC-8bMvqc/edit?usp=sharing", sheet = "7.perfil_turista_interno" )
 
-perfil_turista_interno <- read_sheet("https://docs.google.com/spreadsheets/d/12z46U9VrM9RL_wmt-NH7bJ3VuSICLDBlr6ZC-8bMvqc/edit?usp=sharing", sheet = "7.perfil_turista_interno" )
+perfil_turista_interno <- read_sheet("https://docs.google.com/spreadsheets/d/12z46U9VrM9RL_wmt-NH7bJ3VuSICLDBlr6ZC-8bMvqc/edit#gid=1582375188", sheet = "7.perfil_turista_interno" )
 
 ```
 ```{r}
