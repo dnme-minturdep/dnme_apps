@@ -605,7 +605,7 @@ ggplotly(g6,tooltip = "text") %>% layout(legend = list(
 #ACUMULADO EN ENERO LO SACAMOSSSS
 
 ```
-### Acumlado `r {as.character(anio_actual)}`
+### Acumlado 2022
 
 + Mientras tanto, en el acumulado enero - `r mes` de `r as.character(anio_datos)`, el turismo ocupó el `r tabla5_acum$orden[tabla5_acum$rubro == "Turismo"]`º lugar en cuanto a ingresos, pero el `r tabla6_acum$orden[tabla6_acum$rubro == "Turismo"]`º en cuanto a egresos.
 
