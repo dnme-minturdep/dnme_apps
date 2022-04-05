@@ -211,13 +211,13 @@ bza_acum <- ing_acum-eg_acum
 ```{r}
 # SACO EL ACUMULADO EN ENEROOOOO
 
-# + En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-2)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-2)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones. 
+# 
 ```
 
 
++ En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-2)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-2)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones. 
 
-
-
+<br>
 
 ### Evolución de las transacciones de Turismo en el MULC
 #### En millones de dólares.
@@ -244,7 +244,7 @@ g1 <- tabla1 %>%
   scale_x_date(limits = c(min(as.Date(tabla1$fecha, origin = "1970-01-01"))-months(1),max(as.Date(tabla1$fecha, origin = "1970-01-01"))+months(1)),
                date_breaks = "2 months", 
                date_labels = "%b%y", 
-               expand = c(0,10))+
+               expand = c(0,0))+
   guides(fill = F)+
   labs(title="",x="",y="",
        caption="DNMyE en base a BCRA")+
@@ -300,10 +300,10 @@ ing_acum_total <- filter(tabla2, year(fecha) == anio_datos, transac == "cobros")
 
 eg_acum_total <- filter(tabla2, year(fecha) == anio_datos, transac == "pagos") %>% select(total) %>% sum()
 
-# + Por su lado, en el acumulado del año, los egresos por turismo representaron un `r ((eg_acum/eg_acum_total)*100) %>% round(1)`% y los ingresos por turismo un `r ((ing_acum/ing_acum_total)*100) %>% round(1)`%.
 
 ```
 
++ Por su lado, en el acumulado del año, los egresos por turismo representaron un `r ((eg_acum/eg_acum_total)*100) %>% round(1)`% y los ingresos por turismo un `r ((ing_acum/ing_acum_total)*100) %>% round(1)`%.
 
 
 ### Contribución del turismo en el mercado oficial de divisas 
@@ -321,7 +321,7 @@ g2 <- tabla2 %>%
     limits = c(min(tabla2$fecha)-months(1),max(tabla2$fecha)+months(1)),
                date_breaks = "2 months", 
                date_labels = "%b%y", 
-               expand = c(0,10))+
+               expand = c(0,0))+
   labs(title="",
        subtitle = "En %",x="",y="",
        caption="DNMyE en base a BCRA")+
@@ -603,88 +603,89 @@ ggplotly(g6,tooltip = "text") %>% layout(legend = list(
 
 ```{r}
 #ACUMULADO EN ENERO LO SACAMOSSSS
-# + Mientras tanto, en el acumulado enero - `r mes` de `r as.character(anio_datos)`, el turismo ocupó el `r tabla5_acum$orden[tabla5_acum$rubro == "Turismo"]`º lugar en cuanto a ingresos, pero el `r tabla6_acum$orden[tabla6_acum$rubro == "Turismo"]`º en cuanto a egresos.
+
+```
+### Acumlado `r {as.character(anio_actual)}`
+
++ Mientras tanto, en el acumulado enero - `r mes` de `r as.character(anio_datos)`, el turismo ocupó el `r tabla5_acum$orden[tabla5_acum$rubro == "Turismo"]`º lugar en cuanto a ingresos, pero el `r tabla6_acum$orden[tabla6_acum$rubro == "Turismo"]`º en cuanto a egresos.
 
 ### Ingresos de divisas vía MULC. Apertura por sectores de servicios
 #### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares
-```
-
-
 ```{r}
-# g5_acum <- tabla5_acum %>% 
-#   ggplot(aes(x = cobros, y = reorder(rubro, -orden), 
-#              text = paste0('<br>rubro: ',rubro,
-#                            '<br>monto: US$',   format(round(cobros,1),big.mark=".",decimal.mark=",")," M"))) +
-#   geom_col(aes(fill=es_turismo))+
-#   geom_hline(yintercept = 0, size = 0.1) +
-#   #geom_text(aes(label=format(round(cobros,1),big.mar=".",decimal.mark = ",")),
-#   #         hjust=-.1)+
-#     xlim(0,max(tabla5_acum$cobros)*1.1)+
-#   scale_fill_manual(values = c("no" = cols_arg, 
-#                                "si" = cols_arg2[1]))+
-#   scale_color_manual(values = c("no" = cols_arg, 
-#                                "si" = cols_arg2[1]))+
-#   labs(title="",
-#        subtitle = "",x="",y="",
-#        caption="DNMyE en base a BCRA")+
-#   theme_minimal()+
-#   theme(
-#     text = element_text(family = familia_fuente), 
-#     plot.title    = element_markdown(size = 14),
-#     plot.subtitle = element_markdown(size = 12),
-#     plot.caption  = element_markdown(size = 10),
-#     strip.text.y  = element_text(size = 10, face = "bold"),
-#     axis.text.x   = element_text(size = 10,angle=90),
-#     axis.text.y   = element_text(size = 10),
-#     panel.grid.minor.x = element_blank(),
-#     legend.position = "none",
-#     strip.placement = "outside")
-# 
-# ggplotly(g5_acum,tooltip = "text") %>% layout(legend = list(
-#        orientation = "v",x=0.8
-#      )) 
+g5_acum <- tabla5_acum %>%
+  ggplot(aes(x = cobros, y = reorder(rubro, -orden),
+             text = paste0('<br>rubro: ',rubro,
+                           '<br>monto: US$',   format(round(cobros,1),big.mark=".",decimal.mark=",")," M"))) +
+  geom_col(aes(fill=es_turismo))+
+  geom_hline(yintercept = 0, size = 0.1) +
+  #geom_text(aes(label=format(round(cobros,1),big.mar=".",decimal.mark = ",")),
+  #         hjust=-.1)+
+    xlim(0,max(tabla5_acum$cobros)*1.1)+
+  scale_fill_manual(values = c("no" = cols_arg,
+                               "si" = cols_arg2[1]))+
+  scale_color_manual(values = c("no" = cols_arg,
+                               "si" = cols_arg2[1]))+
+  labs(title="",
+       subtitle = "",x="",y="",
+       caption="DNMyE en base a BCRA")+
+  theme_minimal()+
+  theme(
+    text = element_text(family = familia_fuente),
+    plot.title    = element_markdown(size = 14),
+    plot.subtitle = element_markdown(size = 12),
+    plot.caption  = element_markdown(size = 10),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "none",
+    strip.placement = "outside")
+
+ggplotly(g5_acum,tooltip = "text") %>% layout(legend = list(
+       orientation = "v",x=0.8
+     ))
 ```
 
 ```{r}
 #ACUMULADO ENERO LO SACAMOSSSSSS
+
+```
 ### Egresos de divisas vía MULC. Apertura por sectores de servicios
 #### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares
-```
-
 
 ```{r}
-# g6_acum <- tabla6_acum %>% 
-#   ggplot(aes(x = pagos, y = reorder(rubro, -orden),
-#              text = paste0('<br>rubro: ',rubro,
-#                            '<br>monto: US$',   format(round(pagos,1),big.mark=".",decimal.mark=",")," M"))) +
-#   geom_col(aes(fill=es_turismo))+
-#   geom_hline(yintercept = 0, size = 0.1) +
-#   #geom_text(aes(label=format(round(pagos,1),big.mar=".",decimal.mark = ",")),
-#   #          hjust=-.1)+
-#   scale_fill_manual(values = c("no" = cols_arg2[6], 
-#                                "si" = cols_arg2[1]))+
-#   scale_color_manual(values = c("no" = cols_arg2[6], 
-#                                "si" = cols_arg2[1]))+
-#   xlim(0,max(tabla6_acum$pagos)*1.1)+
-#   labs(title="",
-#        subtitle = "",x="",y="",
-#        caption="DNMyE en base a BCRA")+
-#   theme_minimal()+
-#   theme(
-#     text = element_text(family = familia_fuente), 
-#     plot.title    = element_markdown(size = 14),
-#     plot.subtitle = element_markdown(size = 12),
-#     plot.caption  = element_markdown(size = 10),
-#     strip.text.y  = element_text(size = 10, face = "bold"),
-#     axis.text.x   = element_text(size = 10,angle=90),
-#     axis.text.y   = element_text(size = 10),
-#     panel.grid.minor.x = element_blank(),
-#     legend.position = "none",
-#     strip.placement = "outside")
-# 
-# ggplotly(g6_acum,tooltip = "text") %>% layout(legend = list(
-#        orientation = "v",x=0.8
-#      )) 
+g6_acum <- tabla6_acum %>%
+  ggplot(aes(x = pagos, y = reorder(rubro, -orden),
+             text = paste0('<br>rubro: ',rubro,
+                           '<br>monto: US$',   format(round(pagos,1),big.mark=".",decimal.mark=",")," M"))) +
+  geom_col(aes(fill=es_turismo))+
+  geom_hline(yintercept = 0, size = 0.1) +
+  #geom_text(aes(label=format(round(pagos,1),big.mar=".",decimal.mark = ",")),
+  #          hjust=-.1)+
+  scale_fill_manual(values = c("no" = cols_arg2[6],
+                               "si" = cols_arg2[1]))+
+  scale_color_manual(values = c("no" = cols_arg2[6],
+                               "si" = cols_arg2[1]))+
+  xlim(0,max(tabla6_acum$pagos)*1.1)+
+  labs(title="",
+       subtitle = "",x="",y="",
+       caption="DNMyE en base a BCRA")+
+  theme_minimal()+
+  theme(
+    text = element_text(family = familia_fuente),
+    plot.title    = element_markdown(size = 14),
+    plot.subtitle = element_markdown(size = 12),
+    plot.caption  = element_markdown(size = 10),
+    strip.text.y  = element_text(size = 10, face = "bold"),
+    axis.text.x   = element_text(size = 10,angle=90),
+    axis.text.y   = element_text(size = 10),
+    panel.grid.minor.x = element_blank(),
+    legend.position = "none",
+    strip.placement = "outside")
+
+ggplotly(g6_acum,tooltip = "text") %>% layout(legend = list(
+       orientation = "v",x=0.8
+     ))
   
 ```
 ### Apertura del rubro "Viajes y otros pagos con tarjeta"
@@ -878,7 +879,7 @@ g8 <- tabla8 %>% ggplot(aes(fecha, prop_mulc_bp,
 ```
 
 
-+ En el tercer trimestre de 2021, se registraron US\$`r (tabla7$value[tabla7$turismo_cobros=="BP"]) %>% last() %>% round(1)` millones de ingresos totales asociados al turismo, según la Balanza de Pagos ("BP"). Por su lado, un `r last(tabla8$prop_mulc_bp) %>% round(1)`% de esos ingresos se canalizaron por el mercado oficial de cambios, es decir, US\$`r tabla7$value[tabla7$turismo_cobros=="MULC"] %>% last() %>% round(1)` millones.
++ En el cuarto trimestre de 2021, se registraron US\$`r (tabla7$value[tabla7$turismo_cobros=="BP"]) %>% last() %>% round(1)` millones de ingresos totales asociados al turismo, según la Balanza de Pagos ("BP"). Por su lado, un `r last(tabla8$prop_mulc_bp) %>% round(1)`% de esos ingresos se canalizaron por el mercado oficial de cambios, es decir, US\$`r tabla7$value[tabla7$turismo_cobros=="MULC"] %>% last() %>% round(1)` millones.
 
 *NOTA: Es importante notar que, los ingresos por turismo a través del mercado oficial de cambios (MULC) siempre deberían ser menores, o al menos iguales, al total de ingresos por turismo que percibe la Argentina según la Balanza de Pagos. Sin embargo, en los trimestres 2, 3 y 4 del año 2020 y 3 de 2021, la proporción MULC/BP es mayor al 100%. Esto es debido a las diferencias en cuanto a la metodología de registración de ambas fuentes de información y los desfasajes en la vuelta de los turistas no residentes a sus lugares de origen, producto de las restricciones al tránsito internacional por la pandemia por el virus COVID-19.*
 
@@ -974,9 +975,9 @@ g10 <- tabla10 %>% ggplot(aes(fecha, prop_mulc_bp,
     strip.placement = "outside")
 ```
 
-+ En cuanto a los egresos, en el tercer trimestre de 2021, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1)` millones de egresos totales asociados al turismo, según la BP. Por su lado, el MULC registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1)` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1)`% de los egresos registrados por la BP.
++ En cuanto a los egresos, en el cuarto trimestre de 2021, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1)` millones de egresos totales asociados al turismo, según la BP. Por su lado, el MULC registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1)` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1)`% de los egresos registrados por la BP.
 
-*NOTA: nuevamente, los egresos por turismo a través del mercado oficial de cambios (MULC) siempre deberían ser menores, o al menos iguales, al total de egresos por turismo de la Argentina según la Balanza de Pagos. Sin embargo, en repetidas ocasiones esto no es así, especialmente en los trimestres 2, 3 y 4 del año 2020 y los trimestres 1, 2 y 3 del año 2021. En el caso de los egresos, sucede que el componente turístico del MULC incluye pagos con tarjeta realizados por residentes en Argentina a residentes en el exterior y que pueden no ser gastos turísticos. Ejemplos de esto podrían ser los pagos de servicios de streaming. Por lo tanto, en los casos en que el ratio MULC/BP es mayor al 100% se evidencia que los gastos con tarjeta por motivos no turísticos aumentaron la componente "viajes y otros gastos con tarjeta" del MULC por encima de los gastos del turismo emisivo registrado por la BP. En los trimestres comprendidos en la pandemia por COVID-19, esta situación se refleja aún más debido a la reducción de cercana al 100% i.a. del turismo emisivo.*
+*NOTA: nuevamente, los egresos por turismo a través del mercado oficial de cambios (MULC) siempre deberían ser menores, o al menos iguales, al total de egresos por turismo de la Argentina según la Balanza de Pagos. Sin embargo, en repetidas ocasiones esto no es así, especialmente en los trimestres 2, 3 y 4 del año 2020 y los trimestres 1, 2, 3 y 4 del año 2021. En el caso de los egresos, sucede que el componente turístico del MULC incluye pagos con tarjeta realizados por residentes en Argentina a residentes en el exterior y que pueden no ser gastos turísticos. Ejemplos de esto podrían ser los pagos de servicios de streaming. Por lo tanto, en los casos en que el ratio MULC/BP es mayor al 100% se evidencia que los gastos con tarjeta por motivos no turísticos aumentaron la componente "viajes y otros gastos con tarjeta" del MULC por encima de los gastos del turismo emisivo registrado por la BP. En los trimestres comprendidos en la pandemia por COVID-19, esta situación se refleja aún más debido a la reducción de cercana al 100% i.a. del turismo emisivo.*
 
 ### Evolución trimestral de los egresos por turismo - BP vs MULC 
 #### en millones de dólares
