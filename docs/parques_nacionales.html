@@ -56,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -77,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>TABLEROS y REPORTES: Parques Nacionales</title>
@@ -1863,7 +1864,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -6996,7 +7000,7 @@ SINTA
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<h3 id="publicado-en-marzo-2022-con-datos-actualizados-a-octubre-de-2021">(Publicado en marzo 2022 con datos actualizados a octubre de 2021)</h3>
+<h3 id="publicado-en-abril-2022-con-datos-actualizados-a-octubre-de-2021">(Publicado en abril 2022 con datos actualizados a octubre de 2021)</h3>
 <br>
 <div class="layout-chunk" data-layout="l-body">
 
@@ -7011,12 +7015,12 @@ SINTA
 <p>En el acumulado del año las visitas suman un total de 1.464.130 (1.459.638 residentes y 4.492 no residentes), lo que implica una variación de -9,1% con respecto al mismo período del año anterior.</p>
 <br>
 <div class="layout-chunk" data-layout="l-body">
-<div id="ynkfmpkfrz" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="dccpptugfy" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ynkfmpkfrz .gt_table {
+#dccpptugfy .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -7041,7 +7045,7 @@ SINTA
   border-left-color: #D3D3D3;
 }
 
-#ynkfmpkfrz .gt_heading {
+#dccpptugfy .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -7053,7 +7057,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#ynkfmpkfrz .gt_title {
+#dccpptugfy .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -7063,7 +7067,7 @@ SINTA
   border-bottom-width: 0;
 }
 
-#ynkfmpkfrz .gt_subtitle {
+#dccpptugfy .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -7073,13 +7077,13 @@ SINTA
   border-top-width: 0;
 }
 
-#ynkfmpkfrz .gt_bottom_border {
+#dccpptugfy .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ynkfmpkfrz .gt_col_headings {
+#dccpptugfy .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7094,7 +7098,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#ynkfmpkfrz .gt_col_heading {
+#dccpptugfy .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7114,7 +7118,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#ynkfmpkfrz .gt_column_spanner_outer {
+#dccpptugfy .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7126,15 +7130,15 @@ SINTA
   padding-right: 4px;
 }
 
-#ynkfmpkfrz .gt_column_spanner_outer:first-child {
+#dccpptugfy .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ynkfmpkfrz .gt_column_spanner_outer:last-child {
+#dccpptugfy .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ynkfmpkfrz .gt_column_spanner {
+#dccpptugfy .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -7146,7 +7150,7 @@ SINTA
   width: 100%;
 }
 
-#ynkfmpkfrz .gt_group_heading {
+#dccpptugfy .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -7168,7 +7172,7 @@ SINTA
   vertical-align: middle;
 }
 
-#ynkfmpkfrz .gt_empty_group_heading {
+#dccpptugfy .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -7183,15 +7187,15 @@ SINTA
   vertical-align: middle;
 }
 
-#ynkfmpkfrz .gt_from_md > :first-child {
+#dccpptugfy .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ynkfmpkfrz .gt_from_md > :last-child {
+#dccpptugfy .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ynkfmpkfrz .gt_row {
+#dccpptugfy .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7210,7 +7214,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#ynkfmpkfrz .gt_stub {
+#dccpptugfy .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7222,7 +7226,7 @@ SINTA
   padding-left: 12px;
 }
 
-#ynkfmpkfrz .gt_summary_row {
+#dccpptugfy .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7232,7 +7236,7 @@ SINTA
   padding-right: 5px;
 }
 
-#ynkfmpkfrz .gt_first_summary_row {
+#dccpptugfy .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7242,7 +7246,7 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#ynkfmpkfrz .gt_grand_summary_row {
+#dccpptugfy .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7252,7 +7256,7 @@ SINTA
   padding-right: 5px;
 }
 
-#ynkfmpkfrz .gt_first_grand_summary_row {
+#dccpptugfy .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7262,11 +7266,11 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#ynkfmpkfrz .gt_striped {
+#dccpptugfy .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ynkfmpkfrz .gt_table_body {
+#dccpptugfy .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7275,7 +7279,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#ynkfmpkfrz .gt_footnotes {
+#dccpptugfy .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7289,13 +7293,13 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#ynkfmpkfrz .gt_footnote {
+#dccpptugfy .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#ynkfmpkfrz .gt_sourcenotes {
+#dccpptugfy .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7309,41 +7313,41 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#ynkfmpkfrz .gt_sourcenote {
+#dccpptugfy .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#ynkfmpkfrz .gt_left {
+#dccpptugfy .gt_left {
   text-align: left;
 }
 
-#ynkfmpkfrz .gt_center {
+#dccpptugfy .gt_center {
   text-align: center;
 }
 
-#ynkfmpkfrz .gt_right {
+#dccpptugfy .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ynkfmpkfrz .gt_font_normal {
+#dccpptugfy .gt_font_normal {
   font-weight: normal;
 }
 
-#ynkfmpkfrz .gt_font_bold {
+#dccpptugfy .gt_font_bold {
   font-weight: bold;
 }
 
-#ynkfmpkfrz .gt_font_italic {
+#dccpptugfy .gt_font_italic {
   font-style: italic;
 }
 
-#ynkfmpkfrz .gt_super {
+#dccpptugfy .gt_super {
   font-size: 65%;
 }
 
-#ynkfmpkfrz .gt_footnote_marks {
+#dccpptugfy .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -7411,21 +7415,21 @@ SINTA
 </div>
 <p><br></p>
 <div class="layout-chunk" data-layout="l-body">
-<div id="htmlwidget-b072d488918689e1c8e9" style="width:624px;height:384px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b072d488918689e1c8e9">{"x":{"data":[{"x":[17517,18916],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,0,0,0,7)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901],"y":[682.3,516.4,375.1,255.3,162.7,131.8,343.5,234.4,269.1,342,352.8,362.1,615,476.1,408.7,310.1,176.5,184.3,376,258,294.6,359,404.5,436.2,779,616.9,177.7,0,0,0,3.4,5.7,10.5,17.2,26.5,39.2,203.5,226,165.7,103.5,31.5,19.9,143,137.4,162.1,271.4],"text":"","type":"scatter","mode":"lines","line":{"width":3.77952755905512,"color":"rgba(146,131,190,0,5)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901],"y":[682.3,516.4,375.1,255.3,162.7,131.8,343.5,234.4,269.1,342,352.8,362.1,615,476.1,408.7,310.1,176.5,184.3,376,258,294.6,359,404.5,436.2,779,616.9,177.7,0,0,0,3.4,5.7,10.5,17.2,26.5,39.2,203.5,226,165.7,103.5,31.5,19.9,143,137.4,162.1,271.4],"text":["fecha:   ene-18 <br>visitas:  682,3  m","fecha:   feb-18 <br>visitas:  516,4  m","fecha:   mar-18 <br>visitas:  375,1  m","fecha:   abr-18 <br>visitas:  255,3  m","fecha:   may-18 <br>visitas:  162,7  m","fecha:   jun-18 <br>visitas:  131,8  m","fecha:   jul-18 <br>visitas:  343,5  m","fecha:   ago-18 <br>visitas:  234,4  m","fecha:   sep-18 <br>visitas:  269,1  m","fecha:   oct-18 <br>visitas:  342,0  m","fecha:   nov-18 <br>visitas:  352,8  m","fecha:   dic-18 <br>visitas:  362,1  m","fecha:   ene-19 <br>visitas:  615,0  m","fecha:   feb-19 <br>visitas:  476,1  m","fecha:   mar-19 <br>visitas:  408,7  m","fecha:   abr-19 <br>visitas:  310,1  m","fecha:   may-19 <br>visitas:  176,5  m","fecha:   jun-19 <br>visitas:  184,3  m","fecha:   jul-19 <br>visitas:  376,0  m","fecha:   ago-19 <br>visitas:  258,0  m","fecha:   sep-19 <br>visitas:  294,6  m","fecha:   oct-19 <br>visitas:  359,0  m","fecha:   nov-19 <br>visitas:  404,5  m","fecha:   dic-19 <br>visitas:  436,2  m","fecha:   ene-20 <br>visitas:  779,0  m","fecha:   feb-20 <br>visitas:  616,9  m","fecha:   mar-20 <br>visitas:  177,7  m","fecha:   abr-20 <br>visitas:    0,0  m","fecha:   may-20 <br>visitas:    0,0  m","fecha:   jun-20 <br>visitas:    0,0  m","fecha:   jul-20 <br>visitas:    3,4  m","fecha:   ago-20 <br>visitas:    5,7  m","fecha:   sep-20 <br>visitas:   10,5  m","fecha:   oct-20 <br>visitas:   17,2  m","fecha:   nov-20 <br>visitas:   26,5  m","fecha:   dic-20 <br>visitas:   39,2  m","fecha:   ene-21 <br>visitas:  203,5  m","fecha:   feb-21 <br>visitas:  226,0  m","fecha:   mar-21 <br>visitas:  165,7  m","fecha:   abr-21 <br>visitas:  103,5  m","fecha:   may-21 <br>visitas:   31,5  m","fecha:   jun-21 <br>visitas:   19,9  m","fecha:   jul-21 <br>visitas:  143,0  m","fecha:   ago-21 <br>visitas:  137,4  m","fecha:   sep-21 <br>visitas:  162,1  m","fecha:   oct-21 <br>visitas:  271,4  m"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(146,131,190,1)","opacity":1,"size":4.15748031496063,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(146,131,190,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.4063926940639,"r":7.30593607305936,"b":35.4503943545039,"l":22.9140722291407},"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187},"title":{"text":"Visitas en Parques Nacionales","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[17517,18916],"tickmode":"array","ticktext":["ene18","feb18","mar18","abr18","may18","jun18","jul18","ago18","sep18","oct18","nov18","dic18","ene19","feb19","mar19","abr19","may19","jun19","jul19","ago19","sep19","oct19","nov19","dic19","ene20","feb20","mar20","abr20","may20","jun20","jul20","ago20","sep20","oct20","nov20","dic20","ene21","feb21","mar21","abr21","may21","jun21","jul21","ago21","sep21","oct21"],"tickvals":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901],"categoryorder":"array","categoryarray":["ene18","feb18","mar18","abr18","may18","jun18","jul18","ago18","sep18","oct18","nov18","dic18","ene19","feb19","mar19","abr19","may19","jun19","jul19","ago19","sep19","oct19","nov19","dic19","ene20","feb20","mar20","abr20","may20","jun20","jul20","ago20","sep20","oct20","nov20","dic20","ene21","feb21","mar21","abr21","may21","jun21","jul21","ago21","sep21","oct21"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":7.97011207970112},"tickangle":-90,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0.33208800332088,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-38.95,817.95],"tickmode":"array","ticktext":["0","100","200","300","400","500","600","700","800"],"tickvals":[0,100,200,300,400,500,600,700,800],"categoryorder":"array","categoryarray":["0","100","200","300","400","500","600","700","800"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":7.97011207970112},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0.33208800332088,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"76d63a793289":{"yintercept":{},"type":"scatter"},"76d66383a7f0":{"x":{},"y":{}},"76d67abe0721":{"x":{},"y":{},"text":{}}},"cur_data":"76d63a793289","visdat":{"76d63a793289":["function (y) ","x"],"76d66383a7f0":["function (y) ","x"],"76d67abe0721":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-4d38723419ac6a484422" style="width:624px;height:384px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4d38723419ac6a484422">{"x":{"data":[{"x":[17517,18916],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,0,0,0,7)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901],"y":[682.3,516.4,375.1,255.3,162.7,131.8,343.5,234.4,269.1,342,352.8,362.1,615,476.1,408.7,310.1,176.5,184.3,376,258,294.6,359,404.5,436.2,779,616.9,177.7,0,0,0,3.4,5.7,10.5,17.2,26.5,39.2,203.5,226,165.7,103.5,31.5,19.9,143,137.4,162.1,271.4],"text":"","type":"scatter","mode":"lines","line":{"width":3.77952755905512,"color":"rgba(146,131,190,0,5)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901],"y":[682.3,516.4,375.1,255.3,162.7,131.8,343.5,234.4,269.1,342,352.8,362.1,615,476.1,408.7,310.1,176.5,184.3,376,258,294.6,359,404.5,436.2,779,616.9,177.7,0,0,0,3.4,5.7,10.5,17.2,26.5,39.2,203.5,226,165.7,103.5,31.5,19.9,143,137.4,162.1,271.4],"text":["fecha:   ene-18 <br>visitas:  682,3  m","fecha:   feb-18 <br>visitas:  516,4  m","fecha:   mar-18 <br>visitas:  375,1  m","fecha:   abr-18 <br>visitas:  255,3  m","fecha:   may-18 <br>visitas:  162,7  m","fecha:   jun-18 <br>visitas:  131,8  m","fecha:   jul-18 <br>visitas:  343,5  m","fecha:   ago-18 <br>visitas:  234,4  m","fecha:   sep-18 <br>visitas:  269,1  m","fecha:   oct-18 <br>visitas:  342,0  m","fecha:   nov-18 <br>visitas:  352,8  m","fecha:   dic-18 <br>visitas:  362,1  m","fecha:   ene-19 <br>visitas:  615,0  m","fecha:   feb-19 <br>visitas:  476,1  m","fecha:   mar-19 <br>visitas:  408,7  m","fecha:   abr-19 <br>visitas:  310,1  m","fecha:   may-19 <br>visitas:  176,5  m","fecha:   jun-19 <br>visitas:  184,3  m","fecha:   jul-19 <br>visitas:  376,0  m","fecha:   ago-19 <br>visitas:  258,0  m","fecha:   sep-19 <br>visitas:  294,6  m","fecha:   oct-19 <br>visitas:  359,0  m","fecha:   nov-19 <br>visitas:  404,5  m","fecha:   dic-19 <br>visitas:  436,2  m","fecha:   ene-20 <br>visitas:  779,0  m","fecha:   feb-20 <br>visitas:  616,9  m","fecha:   mar-20 <br>visitas:  177,7  m","fecha:   abr-20 <br>visitas:    0,0  m","fecha:   may-20 <br>visitas:    0,0  m","fecha:   jun-20 <br>visitas:    0,0  m","fecha:   jul-20 <br>visitas:    3,4  m","fecha:   ago-20 <br>visitas:    5,7  m","fecha:   sep-20 <br>visitas:   10,5  m","fecha:   oct-20 <br>visitas:   17,2  m","fecha:   nov-20 <br>visitas:   26,5  m","fecha:   dic-20 <br>visitas:   39,2  m","fecha:   ene-21 <br>visitas:  203,5  m","fecha:   feb-21 <br>visitas:  226,0  m","fecha:   mar-21 <br>visitas:  165,7  m","fecha:   abr-21 <br>visitas:  103,5  m","fecha:   may-21 <br>visitas:   31,5  m","fecha:   jun-21 <br>visitas:   19,9  m","fecha:   jul-21 <br>visitas:  143,0  m","fecha:   ago-21 <br>visitas:  137,4  m","fecha:   sep-21 <br>visitas:  162,1  m","fecha:   oct-21 <br>visitas:  271,4  m"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(146,131,190,1)","opacity":1,"size":4.15748031496063,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(146,131,190,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.4063926940639,"r":7.30593607305936,"b":35.4503943545039,"l":22.9140722291407},"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187},"title":{"text":"Visitas en Parques Nacionales","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[17517,18916],"tickmode":"array","ticktext":["ene18","feb18","mar18","abr18","may18","jun18","jul18","ago18","sep18","oct18","nov18","dic18","ene19","feb19","mar19","abr19","may19","jun19","jul19","ago19","sep19","oct19","nov19","dic19","ene20","feb20","mar20","abr20","may20","jun20","jul20","ago20","sep20","oct20","nov20","dic20","ene21","feb21","mar21","abr21","may21","jun21","jul21","ago21","sep21","oct21"],"tickvals":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901],"categoryorder":"array","categoryarray":["ene18","feb18","mar18","abr18","may18","jun18","jul18","ago18","sep18","oct18","nov18","dic18","ene19","feb19","mar19","abr19","may19","jun19","jul19","ago19","sep19","oct19","nov19","dic19","ene20","feb20","mar20","abr20","may20","jun20","jul20","ago20","sep20","oct20","nov20","dic20","ene21","feb21","mar21","abr21","may21","jun21","jul21","ago21","sep21","oct21"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":7.97011207970112},"tickangle":-90,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0.33208800332088,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-38.95,817.95],"tickmode":"array","ticktext":["0","100","200","300","400","500","600","700","800"],"tickvals":[0,100,200,300,400,500,600,700,800],"categoryorder":"array","categoryarray":["0","100","200","300","400","500","600","700","800"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":7.97011207970112},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0.33208800332088,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"488c3e36dadc":{"yintercept":{},"type":"scatter"},"488c7b177e12":{"x":{},"y":{}},"488c5cf534cb":{"x":{},"y":{},"text":{}}},"cur_data":"488c3e36dadc","visdat":{"488c3e36dadc":["function (y) ","x"],"488c7b177e12":["function (y) ","x"],"488c5cf534cb":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <p><br></p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div id="ggscstpyof" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="lndazfdlnw" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Encode+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 html {
   font-family: 'Encode Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ggscstpyof .gt_table {
+#lndazfdlnw .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -7450,7 +7454,7 @@ html {
   border-left-color: #D3D3D3;
 }
 
-#ggscstpyof .gt_heading {
+#lndazfdlnw .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -7462,7 +7466,7 @@ html {
   border-right-color: #D3D3D3;
 }
 
-#ggscstpyof .gt_title {
+#lndazfdlnw .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -7472,7 +7476,7 @@ html {
   border-bottom-width: 0;
 }
 
-#ggscstpyof .gt_subtitle {
+#lndazfdlnw .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -7482,13 +7486,13 @@ html {
   border-top-width: 0;
 }
 
-#ggscstpyof .gt_bottom_border {
+#lndazfdlnw .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ggscstpyof .gt_col_headings {
+#lndazfdlnw .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7503,7 +7507,7 @@ html {
   border-right-color: #D3D3D3;
 }
 
-#ggscstpyof .gt_col_heading {
+#lndazfdlnw .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7523,7 +7527,7 @@ html {
   overflow-x: hidden;
 }
 
-#ggscstpyof .gt_column_spanner_outer {
+#lndazfdlnw .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7535,15 +7539,15 @@ html {
   padding-right: 4px;
 }
 
-#ggscstpyof .gt_column_spanner_outer:first-child {
+#lndazfdlnw .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ggscstpyof .gt_column_spanner_outer:last-child {
+#lndazfdlnw .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ggscstpyof .gt_column_spanner {
+#lndazfdlnw .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -7555,7 +7559,7 @@ html {
   width: 100%;
 }
 
-#ggscstpyof .gt_group_heading {
+#lndazfdlnw .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -7577,7 +7581,7 @@ html {
   vertical-align: middle;
 }
 
-#ggscstpyof .gt_empty_group_heading {
+#lndazfdlnw .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -7592,15 +7596,15 @@ html {
   vertical-align: middle;
 }
 
-#ggscstpyof .gt_from_md > :first-child {
+#lndazfdlnw .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ggscstpyof .gt_from_md > :last-child {
+#lndazfdlnw .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ggscstpyof .gt_row {
+#lndazfdlnw .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7619,7 +7623,7 @@ html {
   overflow-x: hidden;
 }
 
-#ggscstpyof .gt_stub {
+#lndazfdlnw .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7631,7 +7635,7 @@ html {
   padding-left: 12px;
 }
 
-#ggscstpyof .gt_summary_row {
+#lndazfdlnw .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7641,7 +7645,7 @@ html {
   padding-right: 5px;
 }
 
-#ggscstpyof .gt_first_summary_row {
+#lndazfdlnw .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7651,7 +7655,7 @@ html {
   border-top-color: #D3D3D3;
 }
 
-#ggscstpyof .gt_grand_summary_row {
+#lndazfdlnw .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7661,7 +7665,7 @@ html {
   padding-right: 5px;
 }
 
-#ggscstpyof .gt_first_grand_summary_row {
+#lndazfdlnw .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7671,11 +7675,11 @@ html {
   border-top-color: #D3D3D3;
 }
 
-#ggscstpyof .gt_striped {
+#lndazfdlnw .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ggscstpyof .gt_table_body {
+#lndazfdlnw .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7684,7 +7688,7 @@ html {
   border-bottom-color: #D3D3D3;
 }
 
-#ggscstpyof .gt_footnotes {
+#lndazfdlnw .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7698,13 +7702,13 @@ html {
   border-right-color: #D3D3D3;
 }
 
-#ggscstpyof .gt_footnote {
+#lndazfdlnw .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#ggscstpyof .gt_sourcenotes {
+#lndazfdlnw .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7718,41 +7722,41 @@ html {
   border-right-color: #D3D3D3;
 }
 
-#ggscstpyof .gt_sourcenote {
+#lndazfdlnw .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#ggscstpyof .gt_left {
+#lndazfdlnw .gt_left {
   text-align: left;
 }
 
-#ggscstpyof .gt_center {
+#lndazfdlnw .gt_center {
   text-align: center;
 }
 
-#ggscstpyof .gt_right {
+#lndazfdlnw .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ggscstpyof .gt_font_normal {
+#lndazfdlnw .gt_font_normal {
   font-weight: normal;
 }
 
-#ggscstpyof .gt_font_bold {
+#lndazfdlnw .gt_font_bold {
   font-weight: bold;
 }
 
-#ggscstpyof .gt_font_italic {
+#lndazfdlnw .gt_font_italic {
   font-style: italic;
 }
 
-#ggscstpyof .gt_super {
+#lndazfdlnw .gt_super {
   font-size: 65%;
 }
 
-#ggscstpyof .gt_footnote_marks {
+#lndazfdlnw .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
