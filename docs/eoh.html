@@ -56,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -77,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>TABLEROS y REPORTES: Sector hotelero</title>
@@ -1863,7 +1864,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -7005,7 +7009,7 @@ SINTA
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<h3 id="publicado-en-marzo-2022-con-datos-actualizados-a-enero-de-2022">(Publicado en marzo 2022 con datos actualizados a enero de 2022)</h3>
+<h3 id="publicado-en-abril-2022-con-datos-actualizados-a-enero-de-2022">(Publicado en abril 2022 con datos actualizados a enero de 2022)</h3>
 <ul>
 <li><p>En enero de 2022, se hospedaron 1,8 millones de viajeros (creciendo 97% en comparación con el mismo mes de 2020) con una estadía de 3,2 noches en promedio (4,7% i.a). <strong>El total de pernoctes registrados ascendió a 5,8 millones de noches (106% i.a)</strong>.</p></li>
 <li><p>El 94% de los viajeros hospedados fueron residentes, los cuales registraron el 96% de las pernoctaciones.</p></li>
@@ -7018,18 +7022,18 @@ SINTA
 <h3 id="evolución-de-las-pernoctaciones">Evolución de las pernoctaciones</h3>
 <br>
 <div class="layout-chunk" data-layout="l-body">
-<div id="htmlwidget-c7d5c27b1c00a4e61432" style="width:1152px;height:384px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c7d5c27b1c00a4e61432">{"x":{"data":[{"x":[17522,19003],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(190,190,190,0.7)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993],"y":[1,0.9,0.9,0.7,0.6,0.5,0.8,0.7,0.8,0.9,1.1,1,1.2,1,1,0.8,0.7,0.7,0.9,0.8,0.8,0.9,1.1,1.1,1.1,1,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.2],"text":"","type":"scatter","mode":"lines","line":{"width":4.53543307086614,"color":"rgba(238,61,143,0.8)","dash":"solid"},"hoveron":"points","name":"No residentes","legendgroup":"No residentes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993],"y":[5.1,4.6,3.5,2.7,2.3,2.1,3.7,3,2.9,3.1,2.9,2.7,4.8,4.2,3.2,2.6,2.3,2.3,3.9,3,3,3.1,3,2.9,5.2,4.6,1.6,0,0,0.1,0.1,0.1,0.1,0.2,0.3,1,2.8,2.8,2,1.4,0.7,0.6,2.2,2.2,2.4,2.8,3,3.4,5.5],"text":"","type":"scatter","mode":"lines","line":{"width":4.53543307086614,"color":"rgba(146,131,190,0.8)","dash":"solid"},"hoveron":"points","name":"Residentes","legendgroup":"Residentes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993],"y":[1,0.9,0.9,0.7,0.6,0.5,0.8,0.7,0.8,0.9,1.1,1,1.2,1,1,0.8,0.7,0.7,0.9,0.8,0.8,0.9,1.1,1.1,1.1,1,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.2],"text":["fecha:   ene-18 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   feb-18 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   mar-18 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   abr-18 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   may-18 <br>pernoctaciones:  0,6  m <br>origen: No residentes","fecha:   jun-18 <br>pernoctaciones:  0,5  m <br>origen: No residentes","fecha:   jul-18 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   ago-18 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   sep-18 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   oct-18 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   nov-18 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   dic-18 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   ene-19 <br>pernoctaciones:  1,2  m <br>origen: No residentes","fecha:   feb-19 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   mar-19 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   abr-19 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   may-19 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   jun-19 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   jul-19 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   ago-19 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   sep-19 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   oct-19 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   nov-19 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   dic-19 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   ene-20 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   feb-20 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   mar-20 <br>pernoctaciones:  0,5  m <br>origen: No residentes","fecha:   abr-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   may-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jun-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jul-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   ago-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   sep-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   oct-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   nov-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   dic-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   ene-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   feb-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   mar-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   abr-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   may-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jun-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jul-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   ago-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   sep-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   oct-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   nov-21 <br>pernoctaciones:  0,1  m <br>origen: No residentes","fecha:   dic-21 <br>pernoctaciones:  0,2  m <br>origen: No residentes","fecha:   ene-22 <br>pernoctaciones:  0,2  m <br>origen: No residentes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(238,61,143,1)","opacity":0.8,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(238,61,143,1)"}},"hoveron":"points","name":"No residentes","legendgroup":"No residentes","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993],"y":[5.1,4.6,3.5,2.7,2.3,2.1,3.7,3,2.9,3.1,2.9,2.7,4.8,4.2,3.2,2.6,2.3,2.3,3.9,3,3,3.1,3,2.9,5.2,4.6,1.6,0,0,0.1,0.1,0.1,0.1,0.2,0.3,1,2.8,2.8,2,1.4,0.7,0.6,2.2,2.2,2.4,2.8,3,3.4,5.5],"text":["fecha:   ene-18 <br>pernoctaciones:  5,1  m <br>origen: Residentes","fecha:   feb-18 <br>pernoctaciones:  4,6  m <br>origen: Residentes","fecha:   mar-18 <br>pernoctaciones:  3,5  m <br>origen: Residentes","fecha:   abr-18 <br>pernoctaciones:  2,7  m <br>origen: Residentes","fecha:   may-18 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jun-18 <br>pernoctaciones:  2,1  m <br>origen: Residentes","fecha:   jul-18 <br>pernoctaciones:  3,7  m <br>origen: Residentes","fecha:   ago-18 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   sep-18 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   oct-18 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   nov-18 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   dic-18 <br>pernoctaciones:  2,7  m <br>origen: Residentes","fecha:   ene-19 <br>pernoctaciones:  4,8  m <br>origen: Residentes","fecha:   feb-19 <br>pernoctaciones:  4,2  m <br>origen: Residentes","fecha:   mar-19 <br>pernoctaciones:  3,2  m <br>origen: Residentes","fecha:   abr-19 <br>pernoctaciones:  2,6  m <br>origen: Residentes","fecha:   may-19 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jun-19 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jul-19 <br>pernoctaciones:  3,9  m <br>origen: Residentes","fecha:   ago-19 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   sep-19 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   oct-19 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   nov-19 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   dic-19 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   ene-20 <br>pernoctaciones:  5,2  m <br>origen: Residentes","fecha:   feb-20 <br>pernoctaciones:  4,6  m <br>origen: Residentes","fecha:   mar-20 <br>pernoctaciones:  1,6  m <br>origen: Residentes","fecha:   abr-20 <br>pernoctaciones:  0,0  m <br>origen: Residentes","fecha:   may-20 <br>pernoctaciones:  0,0  m <br>origen: Residentes","fecha:   jun-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   jul-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   ago-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   sep-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   oct-20 <br>pernoctaciones:  0,2  m <br>origen: Residentes","fecha:   nov-20 <br>pernoctaciones:  0,3  m <br>origen: Residentes","fecha:   dic-20 <br>pernoctaciones:  1,0  m <br>origen: Residentes","fecha:   ene-21 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   feb-21 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   mar-21 <br>pernoctaciones:  2,0  m <br>origen: Residentes","fecha:   abr-21 <br>pernoctaciones:  1,4  m <br>origen: Residentes","fecha:   may-21 <br>pernoctaciones:  0,7  m <br>origen: Residentes","fecha:   jun-21 <br>pernoctaciones:  0,6  m <br>origen: Residentes","fecha:   jul-21 <br>pernoctaciones:  2,2  m <br>origen: Residentes","fecha:   ago-21 <br>pernoctaciones:  2,2  m <br>origen: Residentes","fecha:   sep-21 <br>pernoctaciones:  2,4  m <br>origen: Residentes","fecha:   oct-21 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   nov-21 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   dic-21 <br>pernoctaciones:  3,4  m <br>origen: Residentes","fecha:   ene-22 <br>pernoctaciones:  5,5  m <br>origen: Residentes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(146,131,190,1)","opacity":0.8,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(146,131,190,1)"}},"hoveron":"points","name":"Residentes","legendgroup":"Residentes","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":7.30593607305936,"b":61.4362806143628,"l":28.8916562889166},"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187},"title":{"text":"en millones de noches. enero 2018-enero 2022. <span style='color:#9283be'>residentes<\/span> y <span style='color:#ee3d8f'>no residentes<\/span>","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":15.9402241594022},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[17522,19003],"tickmode":"array","ticktext":["ene 18","feb 18","mar 18","abr 18","may 18","jun 18","jul 18","ago 18","sep 18","oct 18","nov 18","dic 18","ene 19","feb 19","mar 19","abr 19","may 19","jun 19","jul 19","ago 19","sep 19","oct 19","nov 19","dic 19","ene 20","feb 20","mar 20","abr 20","may 20","jun 20","jul 20","ago 20","sep 20","oct 20","nov 20","dic 20","ene 21","feb 21","mar 21","abr 21","may 21","jun 21","jul 21","ago 21","sep 21","oct 21","nov 21","dic 21","ene 22"],"tickvals":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993],"categoryorder":"array","categoryarray":["ene 18","feb 18","mar 18","abr 18","may 18","jun 18","jul 18","ago 18","sep 18","oct 18","nov 18","dic 18","ene 19","feb 19","mar 19","abr 19","may 19","jun 19","jul 19","ago 19","sep 19","oct 19","nov 19","dic 19","ene 20","feb 20","mar 20","abr 20","may 20","jun 20","jul 20","ago 20","sep 20","oct 20","nov 20","dic 20","ene 21","feb 21","mar 21","abr 21","may 21","jun 21","jul 21","ago 21","sep 21","oct 21","nov 21","dic 21","ene 22"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":11.9551681195517},"tickangle":-90,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0.33208800332088,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.275,5.775],"tickmode":"array","ticktext":["0,0","0,5","1,0","1,5","2,0","2,5","3,0","3,5","4,0","4,5","5,0","5,5"],"tickvals":[0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5],"categoryorder":"array","categoryarray":["0,0","0,5","1,0","1,5","2,0","2,5","3,0","3,5","4,0","4,5","5,0","5,5"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":11.9551681195517},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0.33208800332088,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"76d6648c28b8":{"yintercept":{},"type":"scatter"},"76d637e891e8":{"x":{},"y":{},"colour":{}},"76d676331c96":{"x":{},"y":{},"colour":{},"text":{}}},"cur_data":"76d6648c28b8","visdat":{"76d6648c28b8":["function (y) ","x"],"76d637e891e8":["function (y) ","x"],"76d676331c96":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-012321934e402a2ad470" style="width:1152px;height:384px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-012321934e402a2ad470">{"x":{"data":[{"x":[17522,19003],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(190,190,190,0.7)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993],"y":[1,0.9,0.9,0.7,0.6,0.5,0.8,0.7,0.8,0.9,1.1,1,1.2,1,1,0.8,0.7,0.7,0.9,0.8,0.8,0.9,1.1,1.1,1.1,1,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.2],"text":"","type":"scatter","mode":"lines","line":{"width":4.53543307086614,"color":"rgba(238,61,143,0.8)","dash":"solid"},"hoveron":"points","name":"No residentes","legendgroup":"No residentes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993],"y":[5.1,4.6,3.5,2.7,2.3,2.1,3.7,3,2.9,3.1,2.9,2.7,4.8,4.2,3.2,2.6,2.3,2.3,3.9,3,3,3.1,3,2.9,5.2,4.6,1.6,0,0,0.1,0.1,0.1,0.1,0.2,0.3,1,2.8,2.8,2,1.4,0.7,0.6,2.2,2.2,2.4,2.8,3,3.4,5.5],"text":"","type":"scatter","mode":"lines","line":{"width":4.53543307086614,"color":"rgba(146,131,190,0.8)","dash":"solid"},"hoveron":"points","name":"Residentes","legendgroup":"Residentes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993],"y":[1,0.9,0.9,0.7,0.6,0.5,0.8,0.7,0.8,0.9,1.1,1,1.2,1,1,0.8,0.7,0.7,0.9,0.8,0.8,0.9,1.1,1.1,1.1,1,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.2],"text":["fecha:   ene-18 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   feb-18 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   mar-18 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   abr-18 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   may-18 <br>pernoctaciones:  0,6  m <br>origen: No residentes","fecha:   jun-18 <br>pernoctaciones:  0,5  m <br>origen: No residentes","fecha:   jul-18 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   ago-18 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   sep-18 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   oct-18 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   nov-18 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   dic-18 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   ene-19 <br>pernoctaciones:  1,2  m <br>origen: No residentes","fecha:   feb-19 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   mar-19 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   abr-19 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   may-19 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   jun-19 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   jul-19 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   ago-19 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   sep-19 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   oct-19 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   nov-19 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   dic-19 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   ene-20 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   feb-20 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   mar-20 <br>pernoctaciones:  0,5  m <br>origen: No residentes","fecha:   abr-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   may-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jun-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jul-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   ago-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   sep-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   oct-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   nov-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   dic-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   ene-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   feb-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   mar-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   abr-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   may-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jun-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jul-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   ago-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   sep-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   oct-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   nov-21 <br>pernoctaciones:  0,1  m <br>origen: No residentes","fecha:   dic-21 <br>pernoctaciones:  0,2  m <br>origen: No residentes","fecha:   ene-22 <br>pernoctaciones:  0,2  m <br>origen: No residentes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(238,61,143,1)","opacity":0.8,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(238,61,143,1)"}},"hoveron":"points","name":"No residentes","legendgroup":"No residentes","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993],"y":[5.1,4.6,3.5,2.7,2.3,2.1,3.7,3,2.9,3.1,2.9,2.7,4.8,4.2,3.2,2.6,2.3,2.3,3.9,3,3,3.1,3,2.9,5.2,4.6,1.6,0,0,0.1,0.1,0.1,0.1,0.2,0.3,1,2.8,2.8,2,1.4,0.7,0.6,2.2,2.2,2.4,2.8,3,3.4,5.5],"text":["fecha:   ene-18 <br>pernoctaciones:  5,1  m <br>origen: Residentes","fecha:   feb-18 <br>pernoctaciones:  4,6  m <br>origen: Residentes","fecha:   mar-18 <br>pernoctaciones:  3,5  m <br>origen: Residentes","fecha:   abr-18 <br>pernoctaciones:  2,7  m <br>origen: Residentes","fecha:   may-18 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jun-18 <br>pernoctaciones:  2,1  m <br>origen: Residentes","fecha:   jul-18 <br>pernoctaciones:  3,7  m <br>origen: Residentes","fecha:   ago-18 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   sep-18 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   oct-18 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   nov-18 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   dic-18 <br>pernoctaciones:  2,7  m <br>origen: Residentes","fecha:   ene-19 <br>pernoctaciones:  4,8  m <br>origen: Residentes","fecha:   feb-19 <br>pernoctaciones:  4,2  m <br>origen: Residentes","fecha:   mar-19 <br>pernoctaciones:  3,2  m <br>origen: Residentes","fecha:   abr-19 <br>pernoctaciones:  2,6  m <br>origen: Residentes","fecha:   may-19 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jun-19 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jul-19 <br>pernoctaciones:  3,9  m <br>origen: Residentes","fecha:   ago-19 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   sep-19 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   oct-19 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   nov-19 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   dic-19 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   ene-20 <br>pernoctaciones:  5,2  m <br>origen: Residentes","fecha:   feb-20 <br>pernoctaciones:  4,6  m <br>origen: Residentes","fecha:   mar-20 <br>pernoctaciones:  1,6  m <br>origen: Residentes","fecha:   abr-20 <br>pernoctaciones:  0,0  m <br>origen: Residentes","fecha:   may-20 <br>pernoctaciones:  0,0  m <br>origen: Residentes","fecha:   jun-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   jul-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   ago-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   sep-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   oct-20 <br>pernoctaciones:  0,2  m <br>origen: Residentes","fecha:   nov-20 <br>pernoctaciones:  0,3  m <br>origen: Residentes","fecha:   dic-20 <br>pernoctaciones:  1,0  m <br>origen: Residentes","fecha:   ene-21 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   feb-21 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   mar-21 <br>pernoctaciones:  2,0  m <br>origen: Residentes","fecha:   abr-21 <br>pernoctaciones:  1,4  m <br>origen: Residentes","fecha:   may-21 <br>pernoctaciones:  0,7  m <br>origen: Residentes","fecha:   jun-21 <br>pernoctaciones:  0,6  m <br>origen: Residentes","fecha:   jul-21 <br>pernoctaciones:  2,2  m <br>origen: Residentes","fecha:   ago-21 <br>pernoctaciones:  2,2  m <br>origen: Residentes","fecha:   sep-21 <br>pernoctaciones:  2,4  m <br>origen: Residentes","fecha:   oct-21 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   nov-21 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   dic-21 <br>pernoctaciones:  3,4  m <br>origen: Residentes","fecha:   ene-22 <br>pernoctaciones:  5,5  m <br>origen: Residentes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(146,131,190,1)","opacity":0.8,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(146,131,190,1)"}},"hoveron":"points","name":"Residentes","legendgroup":"Residentes","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":7.30593607305936,"b":61.4362806143628,"l":28.8916562889166},"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187},"title":{"text":"en millones de noches. enero 2018-enero 2022. <span style='color:#9283be'>residentes<\/span> y <span style='color:#ee3d8f'>no residentes<\/span>","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":15.9402241594022},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[17522,19003],"tickmode":"array","ticktext":["ene 18","feb 18","mar 18","abr 18","may 18","jun 18","jul 18","ago 18","sep 18","oct 18","nov 18","dic 18","ene 19","feb 19","mar 19","abr 19","may 19","jun 19","jul 19","ago 19","sep 19","oct 19","nov 19","dic 19","ene 20","feb 20","mar 20","abr 20","may 20","jun 20","jul 20","ago 20","sep 20","oct 20","nov 20","dic 20","ene 21","feb 21","mar 21","abr 21","may 21","jun 21","jul 21","ago 21","sep 21","oct 21","nov 21","dic 21","ene 22"],"tickvals":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993],"categoryorder":"array","categoryarray":["ene 18","feb 18","mar 18","abr 18","may 18","jun 18","jul 18","ago 18","sep 18","oct 18","nov 18","dic 18","ene 19","feb 19","mar 19","abr 19","may 19","jun 19","jul 19","ago 19","sep 19","oct 19","nov 19","dic 19","ene 20","feb 20","mar 20","abr 20","may 20","jun 20","jul 20","ago 20","sep 20","oct 20","nov 20","dic 20","ene 21","feb 21","mar 21","abr 21","may 21","jun 21","jul 21","ago 21","sep 21","oct 21","nov 21","dic 21","ene 22"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":11.9551681195517},"tickangle":-90,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0.33208800332088,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.275,5.775],"tickmode":"array","ticktext":["0,0","0,5","1,0","1,5","2,0","2,5","3,0","3,5","4,0","4,5","5,0","5,5"],"tickvals":[0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5],"categoryorder":"array","categoryarray":["0,0","0,5","1,0","1,5","2,0","2,5","3,0","3,5","4,0","4,5","5,0","5,5"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":11.9551681195517},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0.33208800332088,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"2096180aebcb":{"yintercept":{},"type":"scatter"},"20964f5a860b":{"x":{},"y":{},"colour":{}},"20966ba69835":{"x":{},"y":{},"colour":{},"text":{}}},"cur_data":"2096180aebcb","visdat":{"2096180aebcb":["function (y) ","x"],"20964f5a860b":["function (y) ","x"],"20966ba69835":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <p><br></p>
 <h3 id="pernoctaciones-viajeros-y-estadía">Pernoctaciones, viajeros y estadía</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div id="ulqlknvakg" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="krtuabycuq" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ulqlknvakg .gt_table {
+#krtuabycuq .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: 0;
@@ -7054,7 +7058,7 @@ SINTA
   border-left-color: #D3D3D3;
 }
 
-#ulqlknvakg .gt_heading {
+#krtuabycuq .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -7066,7 +7070,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#ulqlknvakg .gt_title {
+#krtuabycuq .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -7076,7 +7080,7 @@ SINTA
   border-bottom-width: 0;
 }
 
-#ulqlknvakg .gt_subtitle {
+#krtuabycuq .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -7086,13 +7090,13 @@ SINTA
   border-top-width: 0;
 }
 
-#ulqlknvakg .gt_bottom_border {
+#krtuabycuq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ulqlknvakg .gt_col_headings {
+#krtuabycuq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7107,7 +7111,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#ulqlknvakg .gt_col_heading {
+#krtuabycuq .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7127,7 +7131,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#ulqlknvakg .gt_column_spanner_outer {
+#krtuabycuq .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7139,15 +7143,15 @@ SINTA
   padding-right: 4px;
 }
 
-#ulqlknvakg .gt_column_spanner_outer:first-child {
+#krtuabycuq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ulqlknvakg .gt_column_spanner_outer:last-child {
+#krtuabycuq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ulqlknvakg .gt_column_spanner {
+#krtuabycuq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -7159,7 +7163,7 @@ SINTA
   width: 100%;
 }
 
-#ulqlknvakg .gt_group_heading {
+#krtuabycuq .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -7181,7 +7185,7 @@ SINTA
   vertical-align: middle;
 }
 
-#ulqlknvakg .gt_empty_group_heading {
+#krtuabycuq .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -7196,15 +7200,15 @@ SINTA
   vertical-align: middle;
 }
 
-#ulqlknvakg .gt_from_md > :first-child {
+#krtuabycuq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ulqlknvakg .gt_from_md > :last-child {
+#krtuabycuq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ulqlknvakg .gt_row {
+#krtuabycuq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7223,7 +7227,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#ulqlknvakg .gt_stub {
+#krtuabycuq .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7235,7 +7239,7 @@ SINTA
   padding-left: 12px;
 }
 
-#ulqlknvakg .gt_summary_row {
+#krtuabycuq .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7245,7 +7249,7 @@ SINTA
   padding-right: 5px;
 }
 
-#ulqlknvakg .gt_first_summary_row {
+#krtuabycuq .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7255,7 +7259,7 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#ulqlknvakg .gt_grand_summary_row {
+#krtuabycuq .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7265,7 +7269,7 @@ SINTA
   padding-right: 5px;
 }
 
-#ulqlknvakg .gt_first_grand_summary_row {
+#krtuabycuq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7275,11 +7279,11 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#ulqlknvakg .gt_striped {
+#krtuabycuq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ulqlknvakg .gt_table_body {
+#krtuabycuq .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7288,7 +7292,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#ulqlknvakg .gt_footnotes {
+#krtuabycuq .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7302,13 +7306,13 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#ulqlknvakg .gt_footnote {
+#krtuabycuq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#ulqlknvakg .gt_sourcenotes {
+#krtuabycuq .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7322,41 +7326,41 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#ulqlknvakg .gt_sourcenote {
+#krtuabycuq .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#ulqlknvakg .gt_left {
+#krtuabycuq .gt_left {
   text-align: left;
 }
 
-#ulqlknvakg .gt_center {
+#krtuabycuq .gt_center {
   text-align: center;
 }
 
-#ulqlknvakg .gt_right {
+#krtuabycuq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ulqlknvakg .gt_font_normal {
+#krtuabycuq .gt_font_normal {
   font-weight: normal;
 }
 
-#ulqlknvakg .gt_font_bold {
+#krtuabycuq .gt_font_bold {
   font-weight: bold;
 }
 
-#ulqlknvakg .gt_font_italic {
+#krtuabycuq .gt_font_italic {
   font-style: italic;
 }
 
-#ulqlknvakg .gt_super {
+#krtuabycuq .gt_super {
   font-size: 65%;
 }
 
-#ulqlknvakg .gt_footnote_marks {
+#krtuabycuq .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -7436,12 +7440,12 @@ SINTA
 <h2 id="categoría-hotelera">CATEGORÍA HOTELERA</h2>
 <h3 id="plazas-y-pernoctaciones">Plazas y pernoctaciones</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div id="ijuaoelogh" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="ttylllktmx" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ijuaoelogh .gt_table {
+#ttylllktmx .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: 0;
@@ -7466,7 +7470,7 @@ SINTA
   border-left-color: #D3D3D3;
 }
 
-#ijuaoelogh .gt_heading {
+#ttylllktmx .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -7478,7 +7482,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#ijuaoelogh .gt_title {
+#ttylllktmx .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -7488,7 +7492,7 @@ SINTA
   border-bottom-width: 0;
 }
 
-#ijuaoelogh .gt_subtitle {
+#ttylllktmx .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -7498,13 +7502,13 @@ SINTA
   border-top-width: 0;
 }
 
-#ijuaoelogh .gt_bottom_border {
+#ttylllktmx .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ijuaoelogh .gt_col_headings {
+#ttylllktmx .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7519,7 +7523,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#ijuaoelogh .gt_col_heading {
+#ttylllktmx .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7539,7 +7543,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#ijuaoelogh .gt_column_spanner_outer {
+#ttylllktmx .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7551,15 +7555,15 @@ SINTA
   padding-right: 4px;
 }
 
-#ijuaoelogh .gt_column_spanner_outer:first-child {
+#ttylllktmx .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ijuaoelogh .gt_column_spanner_outer:last-child {
+#ttylllktmx .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ijuaoelogh .gt_column_spanner {
+#ttylllktmx .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -7571,7 +7575,7 @@ SINTA
   width: 100%;
 }
 
-#ijuaoelogh .gt_group_heading {
+#ttylllktmx .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -7593,7 +7597,7 @@ SINTA
   vertical-align: middle;
 }
 
-#ijuaoelogh .gt_empty_group_heading {
+#ttylllktmx .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -7608,15 +7612,15 @@ SINTA
   vertical-align: middle;
 }
 
-#ijuaoelogh .gt_from_md > :first-child {
+#ttylllktmx .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ijuaoelogh .gt_from_md > :last-child {
+#ttylllktmx .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ijuaoelogh .gt_row {
+#ttylllktmx .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7635,7 +7639,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#ijuaoelogh .gt_stub {
+#ttylllktmx .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7647,7 +7651,7 @@ SINTA
   padding-left: 12px;
 }
 
-#ijuaoelogh .gt_summary_row {
+#ttylllktmx .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7657,7 +7661,7 @@ SINTA
   padding-right: 5px;
 }
 
-#ijuaoelogh .gt_first_summary_row {
+#ttylllktmx .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7667,7 +7671,7 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#ijuaoelogh .gt_grand_summary_row {
+#ttylllktmx .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7677,7 +7681,7 @@ SINTA
   padding-right: 5px;
 }
 
-#ijuaoelogh .gt_first_grand_summary_row {
+#ttylllktmx .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7687,11 +7691,11 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#ijuaoelogh .gt_striped {
+#ttylllktmx .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ijuaoelogh .gt_table_body {
+#ttylllktmx .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7700,7 +7704,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#ijuaoelogh .gt_footnotes {
+#ttylllktmx .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7714,13 +7718,13 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#ijuaoelogh .gt_footnote {
+#ttylllktmx .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#ijuaoelogh .gt_sourcenotes {
+#ttylllktmx .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7734,41 +7738,41 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#ijuaoelogh .gt_sourcenote {
+#ttylllktmx .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#ijuaoelogh .gt_left {
+#ttylllktmx .gt_left {
   text-align: left;
 }
 
-#ijuaoelogh .gt_center {
+#ttylllktmx .gt_center {
   text-align: center;
 }
 
-#ijuaoelogh .gt_right {
+#ttylllktmx .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ijuaoelogh .gt_font_normal {
+#ttylllktmx .gt_font_normal {
   font-weight: normal;
 }
 
-#ijuaoelogh .gt_font_bold {
+#ttylllktmx .gt_font_bold {
   font-weight: bold;
 }
 
-#ijuaoelogh .gt_font_italic {
+#ttylllktmx .gt_font_italic {
   font-style: italic;
 }
 
-#ijuaoelogh .gt_super {
+#ttylllktmx .gt_super {
   font-size: 65%;
 }
 
-#ijuaoelogh .gt_footnote_marks {
+#ttylllktmx .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -7870,12 +7874,12 @@ SINTA
 <h2 id="regiones">REGIONES</h2>
 <h3 id="pernoctaciones-viajeros-y-estadía-1">Pernoctaciones, viajeros y estadía</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div id="yaocmsuxcu" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="nztlaasuek" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#yaocmsuxcu .gt_table {
+#nztlaasuek .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: 0;
@@ -7900,7 +7904,7 @@ SINTA
   border-left-color: #D3D3D3;
 }
 
-#yaocmsuxcu .gt_heading {
+#nztlaasuek .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -7912,7 +7916,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#yaocmsuxcu .gt_title {
+#nztlaasuek .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -7922,7 +7926,7 @@ SINTA
   border-bottom-width: 0;
 }
 
-#yaocmsuxcu .gt_subtitle {
+#nztlaasuek .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -7932,13 +7936,13 @@ SINTA
   border-top-width: 0;
 }
 
-#yaocmsuxcu .gt_bottom_border {
+#nztlaasuek .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#yaocmsuxcu .gt_col_headings {
+#nztlaasuek .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7953,7 +7957,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#yaocmsuxcu .gt_col_heading {
+#nztlaasuek .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7973,7 +7977,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#yaocmsuxcu .gt_column_spanner_outer {
+#nztlaasuek .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7985,15 +7989,15 @@ SINTA
   padding-right: 4px;
 }
 
-#yaocmsuxcu .gt_column_spanner_outer:first-child {
+#nztlaasuek .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#yaocmsuxcu .gt_column_spanner_outer:last-child {
+#nztlaasuek .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#yaocmsuxcu .gt_column_spanner {
+#nztlaasuek .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -8005,7 +8009,7 @@ SINTA
   width: 100%;
 }
 
-#yaocmsuxcu .gt_group_heading {
+#nztlaasuek .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -8027,7 +8031,7 @@ SINTA
   vertical-align: middle;
 }
 
-#yaocmsuxcu .gt_empty_group_heading {
+#nztlaasuek .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -8042,15 +8046,15 @@ SINTA
   vertical-align: middle;
 }
 
-#yaocmsuxcu .gt_from_md > :first-child {
+#nztlaasuek .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#yaocmsuxcu .gt_from_md > :last-child {
+#nztlaasuek .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#yaocmsuxcu .gt_row {
+#nztlaasuek .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8069,7 +8073,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#yaocmsuxcu .gt_stub {
+#nztlaasuek .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8081,7 +8085,7 @@ SINTA
   padding-left: 12px;
 }
 
-#yaocmsuxcu .gt_summary_row {
+#nztlaasuek .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -8091,7 +8095,7 @@ SINTA
   padding-right: 5px;
 }
 
-#yaocmsuxcu .gt_first_summary_row {
+#nztlaasuek .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8101,7 +8105,7 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#yaocmsuxcu .gt_grand_summary_row {
+#nztlaasuek .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -8111,7 +8115,7 @@ SINTA
   padding-right: 5px;
 }
 
-#yaocmsuxcu .gt_first_grand_summary_row {
+#nztlaasuek .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8121,11 +8125,11 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#yaocmsuxcu .gt_striped {
+#nztlaasuek .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#yaocmsuxcu .gt_table_body {
+#nztlaasuek .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -8134,7 +8138,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#yaocmsuxcu .gt_footnotes {
+#nztlaasuek .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -8148,13 +8152,13 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#yaocmsuxcu .gt_footnote {
+#nztlaasuek .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#yaocmsuxcu .gt_sourcenotes {
+#nztlaasuek .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -8168,41 +8172,41 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#yaocmsuxcu .gt_sourcenote {
+#nztlaasuek .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#yaocmsuxcu .gt_left {
+#nztlaasuek .gt_left {
   text-align: left;
 }
 
-#yaocmsuxcu .gt_center {
+#nztlaasuek .gt_center {
   text-align: center;
 }
 
-#yaocmsuxcu .gt_right {
+#nztlaasuek .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#yaocmsuxcu .gt_font_normal {
+#nztlaasuek .gt_font_normal {
   font-weight: normal;
 }
 
-#yaocmsuxcu .gt_font_bold {
+#nztlaasuek .gt_font_bold {
   font-weight: bold;
 }
 
-#yaocmsuxcu .gt_font_italic {
+#nztlaasuek .gt_font_italic {
   font-style: italic;
 }
 
-#yaocmsuxcu .gt_super {
+#nztlaasuek .gt_super {
   font-size: 65%;
 }
 
-#yaocmsuxcu .gt_footnote_marks {
+#nztlaasuek .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -8343,12 +8347,12 @@ SINTA
 
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div id="fhbfpcnjwr" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="psxjwwbaqa" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#fhbfpcnjwr .gt_table {
+#psxjwwbaqa .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: 0;
@@ -8373,7 +8377,7 @@ SINTA
   border-left-color: #D3D3D3;
 }
 
-#fhbfpcnjwr .gt_heading {
+#psxjwwbaqa .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -8385,7 +8389,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#fhbfpcnjwr .gt_title {
+#psxjwwbaqa .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -8395,7 +8399,7 @@ SINTA
   border-bottom-width: 0;
 }
 
-#fhbfpcnjwr .gt_subtitle {
+#psxjwwbaqa .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -8405,13 +8409,13 @@ SINTA
   border-top-width: 0;
 }
 
-#fhbfpcnjwr .gt_bottom_border {
+#psxjwwbaqa .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#fhbfpcnjwr .gt_col_headings {
+#psxjwwbaqa .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -8426,7 +8430,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#fhbfpcnjwr .gt_col_heading {
+#psxjwwbaqa .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8446,7 +8450,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#fhbfpcnjwr .gt_column_spanner_outer {
+#psxjwwbaqa .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8458,15 +8462,15 @@ SINTA
   padding-right: 4px;
 }
 
-#fhbfpcnjwr .gt_column_spanner_outer:first-child {
+#psxjwwbaqa .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#fhbfpcnjwr .gt_column_spanner_outer:last-child {
+#psxjwwbaqa .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#fhbfpcnjwr .gt_column_spanner {
+#psxjwwbaqa .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -8478,7 +8482,7 @@ SINTA
   width: 100%;
 }
 
-#fhbfpcnjwr .gt_group_heading {
+#psxjwwbaqa .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -8500,7 +8504,7 @@ SINTA
   vertical-align: middle;
 }
 
-#fhbfpcnjwr .gt_empty_group_heading {
+#psxjwwbaqa .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -8515,15 +8519,15 @@ SINTA
   vertical-align: middle;
 }
 
-#fhbfpcnjwr .gt_from_md > :first-child {
+#psxjwwbaqa .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#fhbfpcnjwr .gt_from_md > :last-child {
+#psxjwwbaqa .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#fhbfpcnjwr .gt_row {
+#psxjwwbaqa .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8542,7 +8546,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#fhbfpcnjwr .gt_stub {
+#psxjwwbaqa .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8554,7 +8558,7 @@ SINTA
   padding-left: 12px;
 }
 
-#fhbfpcnjwr .gt_summary_row {
+#psxjwwbaqa .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -8564,7 +8568,7 @@ SINTA
   padding-right: 5px;
 }
 
-#fhbfpcnjwr .gt_first_summary_row {
+#psxjwwbaqa .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8574,7 +8578,7 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#fhbfpcnjwr .gt_grand_summary_row {
+#psxjwwbaqa .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -8584,7 +8588,7 @@ SINTA
   padding-right: 5px;
 }
 
-#fhbfpcnjwr .gt_first_grand_summary_row {
+#psxjwwbaqa .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8594,11 +8598,11 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#fhbfpcnjwr .gt_striped {
+#psxjwwbaqa .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#fhbfpcnjwr .gt_table_body {
+#psxjwwbaqa .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -8607,7 +8611,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#fhbfpcnjwr .gt_footnotes {
+#psxjwwbaqa .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -8621,13 +8625,13 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#fhbfpcnjwr .gt_footnote {
+#psxjwwbaqa .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#fhbfpcnjwr .gt_sourcenotes {
+#psxjwwbaqa .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -8641,41 +8645,41 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#fhbfpcnjwr .gt_sourcenote {
+#psxjwwbaqa .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#fhbfpcnjwr .gt_left {
+#psxjwwbaqa .gt_left {
   text-align: left;
 }
 
-#fhbfpcnjwr .gt_center {
+#psxjwwbaqa .gt_center {
   text-align: center;
 }
 
-#fhbfpcnjwr .gt_right {
+#psxjwwbaqa .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#fhbfpcnjwr .gt_font_normal {
+#psxjwwbaqa .gt_font_normal {
   font-weight: normal;
 }
 
-#fhbfpcnjwr .gt_font_bold {
+#psxjwwbaqa .gt_font_bold {
   font-weight: bold;
 }
 
-#fhbfpcnjwr .gt_font_italic {
+#psxjwwbaqa .gt_font_italic {
   font-style: italic;
 }
 
-#fhbfpcnjwr .gt_super {
+#psxjwwbaqa .gt_super {
   font-size: 65%;
 }
 
-#fhbfpcnjwr .gt_footnote_marks {
+#psxjwwbaqa .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -8875,12 +8879,12 @@ SINTA
   
 </table>
 </div>
-<div id="rrxgbhcjtw" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="ifwgfiloei" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#rrxgbhcjtw .gt_table {
+#ifwgfiloei .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: 0;
@@ -8905,7 +8909,7 @@ SINTA
   border-left-color: #D3D3D3;
 }
 
-#rrxgbhcjtw .gt_heading {
+#ifwgfiloei .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -8917,7 +8921,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#rrxgbhcjtw .gt_title {
+#ifwgfiloei .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -8927,7 +8931,7 @@ SINTA
   border-bottom-width: 0;
 }
 
-#rrxgbhcjtw .gt_subtitle {
+#ifwgfiloei .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -8937,13 +8941,13 @@ SINTA
   border-top-width: 0;
 }
 
-#rrxgbhcjtw .gt_bottom_border {
+#ifwgfiloei .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#rrxgbhcjtw .gt_col_headings {
+#ifwgfiloei .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -8958,7 +8962,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#rrxgbhcjtw .gt_col_heading {
+#ifwgfiloei .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8978,7 +8982,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#rrxgbhcjtw .gt_column_spanner_outer {
+#ifwgfiloei .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8990,15 +8994,15 @@ SINTA
   padding-right: 4px;
 }
 
-#rrxgbhcjtw .gt_column_spanner_outer:first-child {
+#ifwgfiloei .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#rrxgbhcjtw .gt_column_spanner_outer:last-child {
+#ifwgfiloei .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#rrxgbhcjtw .gt_column_spanner {
+#ifwgfiloei .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -9010,7 +9014,7 @@ SINTA
   width: 100%;
 }
 
-#rrxgbhcjtw .gt_group_heading {
+#ifwgfiloei .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -9032,7 +9036,7 @@ SINTA
   vertical-align: middle;
 }
 
-#rrxgbhcjtw .gt_empty_group_heading {
+#ifwgfiloei .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -9047,15 +9051,15 @@ SINTA
   vertical-align: middle;
 }
 
-#rrxgbhcjtw .gt_from_md > :first-child {
+#ifwgfiloei .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#rrxgbhcjtw .gt_from_md > :last-child {
+#ifwgfiloei .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#rrxgbhcjtw .gt_row {
+#ifwgfiloei .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -9074,7 +9078,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#rrxgbhcjtw .gt_stub {
+#ifwgfiloei .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -9086,7 +9090,7 @@ SINTA
   padding-left: 12px;
 }
 
-#rrxgbhcjtw .gt_summary_row {
+#ifwgfiloei .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -9096,7 +9100,7 @@ SINTA
   padding-right: 5px;
 }
 
-#rrxgbhcjtw .gt_first_summary_row {
+#ifwgfiloei .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -9106,7 +9110,7 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#rrxgbhcjtw .gt_grand_summary_row {
+#ifwgfiloei .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -9116,7 +9120,7 @@ SINTA
   padding-right: 5px;
 }
 
-#rrxgbhcjtw .gt_first_grand_summary_row {
+#ifwgfiloei .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -9126,11 +9130,11 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#rrxgbhcjtw .gt_striped {
+#ifwgfiloei .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#rrxgbhcjtw .gt_table_body {
+#ifwgfiloei .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -9139,7 +9143,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#rrxgbhcjtw .gt_footnotes {
+#ifwgfiloei .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -9153,13 +9157,13 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#rrxgbhcjtw .gt_footnote {
+#ifwgfiloei .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#rrxgbhcjtw .gt_sourcenotes {
+#ifwgfiloei .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -9173,41 +9177,41 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#rrxgbhcjtw .gt_sourcenote {
+#ifwgfiloei .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#rrxgbhcjtw .gt_left {
+#ifwgfiloei .gt_left {
   text-align: left;
 }
 
-#rrxgbhcjtw .gt_center {
+#ifwgfiloei .gt_center {
   text-align: center;
 }
 
-#rrxgbhcjtw .gt_right {
+#ifwgfiloei .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#rrxgbhcjtw .gt_font_normal {
+#ifwgfiloei .gt_font_normal {
   font-weight: normal;
 }
 
-#rrxgbhcjtw .gt_font_bold {
+#ifwgfiloei .gt_font_bold {
   font-weight: bold;
 }
 
-#rrxgbhcjtw .gt_font_italic {
+#ifwgfiloei .gt_font_italic {
   font-style: italic;
 }
 
-#rrxgbhcjtw .gt_super {
+#ifwgfiloei .gt_super {
   font-size: 65%;
 }
 
-#rrxgbhcjtw .gt_footnote_marks {
+#ifwgfiloei .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
