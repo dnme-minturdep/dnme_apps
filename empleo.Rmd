@@ -32,7 +32,7 @@ familia_fuente <-"Encode Sans Normal"
 Sys.setlocale(locale = "es_AR.UTF-8")
 ```
 
-### (Publicado en `r format(Sys.Date(),'%B')` con datos actualizados a diciembre 2021)
+### (Publicado en `r format(Sys.Date(),'%B')` `r format(Sys.Date(),'%Y')` con datos actualizados a diciembre 2021)
 
 ```{r}
 #INSUMOS
@@ -193,7 +193,7 @@ grafico_empleo_series <- ggplot(indice.empleo,aes(x=as.Date(fecha),y=indice,colo
   scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
                date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,10))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -294,7 +294,7 @@ grafico_empleo_cat_series <- ggplot(indice.cat.rct,aes(x=as.Date(fecha),y=indice
   scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
                date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,10))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -455,7 +455,7 @@ grafico_genero_series <- ggplot(genero.rct.vs.no.rct,aes(x=as.Date(fecha),y=shar
   scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
                date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,10))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -522,7 +522,7 @@ grafico_genero_categorias <- ggplot(genero.categorias,aes(x=as.Date(fecha),y=sha
   scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
                date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,10))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -657,7 +657,7 @@ grafico_empresas_series <- ggplot(indice.empresas,aes(x=as.Date(fecha),y=indice,
   scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
                date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,50))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -760,7 +760,7 @@ grafico_empresas_cat_series <- ggplot(indice.empresas.cat.rct,aes(x=as.Date(fech
   scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
                date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,50))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -843,7 +843,7 @@ grafico_empresas_series_2 <- ggplot(data_grafico_empresas_todas)+
   scale_x_date(#limits = c(as.Date("2019-01-01"),as.Date(mes.empleo)),
                date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,10))+
+               expand=c(0,50))+
   scale_color_manual(values=cols_arg2)+
    scale_size_continuous(range = c(.1,2))+
   theme_minimal()+
@@ -881,8 +881,10 @@ ggplotly(grafico_empresas_series_2,tooltip = "text") %>%
 ramas %>% 
   arrange(clae6) %>% 
   mutate(share_mujer = round(100*share_mujer,1)) %>% 
-  select("CLAE"=clae6,"Descripción" = clae6_desc,"Categoría" = cat.rct,"Puestos"=puestos,
+  select(clae6,"Descripción" = clae6_desc,"Categoría" = cat.rct,"Puestos"=puestos,
          "% de mujeres" = share_mujer) %>% 
-  datatable(caption=paste0("Ramas seleccionadas y valores de",format(as.Date(max(puestos$fecha)),"%B %Y")))
+  left_join(puestos %>% filter(!is.na(empresas)) %>% filter(fecha == max(fecha)) %>% select(clae6,empresas),by="clae6") %>% 
+  rename("CLAE" = clae6,"Empresas"=empresas) %>% 
+  datatable(caption=glue("Ramas seleccionadas y valores de{ format(as.Date(max(puestos$fecha)),'%B %Y')} (exepto empresas -{format(as.Date(fecha_empresas),'%B %Y')}-)"))
 ```
 
