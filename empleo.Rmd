@@ -35,16 +35,16 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ### (Publicado en diciembre 2021 con datos actualizados a agosto 2021)
 
 ```{r}
-#INSUMOS: VER CÓMO AUTOMATIZAR LA DESCARGA DESDE DATOS ABIERTOS 
-empleo <- read.csv("/srv/DataDNMYE/empleo/puestos_total_empresas_mensual_por_clae6_06122021.csv")
+#INSUMOS
+empleo <- read.csv("https://cdn.produccion.gob.ar/cdn-cep/datos-por-actividad/puestos/puestos_total_empresas_mensual_por_clae6.csv")
 # salario.prom <- read.csv("Entradas/w_mean_total_empresas_mensual_por_clae6_21102021.csv")
 # salario.median <- read.csv("Entradas/w_median_total_empresas_mensual_por_clae6_21102021.csv")
-empleadores <- read.csv("/srv/DataDNMYE/empleo/empleadoras_total_empresas_por_clae6_06122021.csv")
+empleadores <- read.csv("https://cdn.produccion.gob.ar/cdn-cep/datos-por-actividad/empleadoras/empleadoras_total_empresas_por_clae6.csv")
 
 #ATENCIÓN: EN ESTA OPORTUNIDAD LOS DATOS DE EMPRESAS LLEGAN HASTA JULIO 2021, NO AGOSTO
 fecha_empresas <- "2021-07-01"
 
-puestos.genero <- read.csv("/srv/DataDNMYE/empleo/share_mujer_total_empresas_mensual_por_clae6_06122021.csv")
+puestos.genero <- read.csv("https://cdn.produccion.gob.ar/cdn-cep/datos-por-actividad/share-mujer/share_mujer_total_empresas_mensual_por_clae6.csv")
 ################################################################################
 #IPC PARA SALARIOS REALES
 #ipc <- read.delim("Entradas/IPC_argentina_script.txt",sep = ",")
