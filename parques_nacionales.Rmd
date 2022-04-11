@@ -21,11 +21,11 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2021-10-01"
-mes <- "octubre"
+fecha <- "2021-11-01"
+mes <- "noviembre"
 anio <- "2021"
 
-parques <- c("lago puelo", "sierra de las quijadas")
+parques <- c("el leoncito", "sierra de las quijadas")
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -70,7 +70,7 @@ theme_imet <- function() {
 ```{r}
 #Importo datos
 parques_nacionales <- read_excel("/srv/DataDNMYE/parques_nacionales/pivot_pn.xlsx",
-                                 sheet = "base PN 2008_2020")
+                                 sheet = "base PN")
 # parques_nacionales <- read_sheet("https://docs.google.com/spreadsheets/d/1ZM7PfvY16tImMcFKUj0fCn6ASc1yxlye/edit#gid=1610808314")
 #parques_nacionales <- read.xlsx("data/Pivot_PN_20201125.xlsx",sheet="base PN 2008_2020")
 ```
