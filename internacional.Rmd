@@ -39,8 +39,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 #source("0_funciones_de_trabajo.R", encoding = "UTF-8")
 
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2022-01-01"
-mes <- "Enero"
+fecha <- "2022-02-01"
+mes <- "Febrero"
 anio <- 2022
 
 # PALETAS Y FUENTES ---------------------------------------------------------
@@ -127,7 +127,7 @@ turismo_internacional_ficha <- as.data.table(sapply(turismo_internacional_ficha,
 En el mes de `r tolower(mes)` de `r tolower(anio)` se estimaron `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(as.numeric(receptivo_turistas),0)],big.mark = ".",decimal.mark = ",")` turistas no residentes en el país (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(100*as.numeric(.SD),1),.SDcols=4],decimal.mark = ",")`% interanual), mientras que se estimaron `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(as.numeric(emisivo_turistas),0)],big.mark = ".",decimal.mark=",")` turistas residentes que viajaron al exterior (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`% interanual).
 
 
-<!-- En el acumulado del año, suman un total de `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(receptivo_turistas),0)],big.mark=".",decimal.mark=",")` turistas extranjeros en el país (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=4],decimal.mark=",")`% en relación al año anterior) y `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(emisivo_turistas),0)],big.mark=".",decimal.mark=",")` turistas argentinos en el exterior (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`% en relación al año anterior). -->
+En el acumulado del año, suman un total de `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(receptivo_turistas),0)],big.mark=".",decimal.mark=",")` turistas extranjeros en el país (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=4],decimal.mark=",")`% en relación al año anterior) y `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(emisivo_turistas),0)],big.mark=".",decimal.mark=",")` turistas argentinos en el exterior (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`% en relación al año anterior). 
 
 
 
