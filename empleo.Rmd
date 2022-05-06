@@ -121,11 +121,11 @@ La metodología de las series elaboradas por el MDP se encuentra [aquí](https:/
 
 Se seleccionaron `r length(ramas_turismo_6d)` ramas de actividad a 6 dígitos de CLAE (ver Anexo), agrupándolas en 5 categorías:
 
-- <span style="color: #EE3D8F;">**Agencias de Viaje:**</span> `r length(unique(puestos[puestos$cat.rct == "Agencias de Viaje","clae6"]))` ramas.
-- <span style="color: #50B8B1;">**Alojamiento:**</span> `r length(unique(puestos[puestos$cat.rct == "Alojamiento","clae6"]))` ramas.
-- <span style="color: #F7941E;">**Gastronomía:**</span> `r length(unique(puestos[puestos$cat.rct == "Gastronomía","clae6"]))` ramas.
-- <span style="color: #D7DF23;">**Transporte:**</span> `r length(unique(puestos[puestos$cat.rct == "Transporte","clae6"]))` ramas.
-- <span style="color: #FFD100;">**Otros Servicios Turísticos:**</span> `r length(unique(puestos[puestos$cat.rct == "Otros Servicios Turísticos","clae6"]))` ramas.
+- <span style="color: #EE3D8F;">**Agencias de Viaje:**</span> `r nrow(unique(puestos[puestos$cat.rct == "Agencias de Viaje","clae6"]))` ramas.
+- <span style="color: #50B8B1;">**Alojamiento:**</span> `r nrow(unique(puestos[puestos$cat.rct == "Alojamiento","clae6"]))` ramas.
+- <span style="color: #F7941E;">**Gastronomía:**</span> `r nrow(unique(puestos[puestos$cat.rct == "Gastronomía","clae6"]))` ramas.
+- <span style="color: #D7DF23;">**Transporte:**</span> `r nrow(unique(puestos[puestos$cat.rct == "Transporte","clae6"]))` ramas.
+- <span style="color: #FFD100;">**Otros Servicios Turísticos:**</span> `r nrow(unique(puestos[puestos$cat.rct == "Otros Servicios Turísticos","clae6"]))` ramas.
 
 
 <br>
