@@ -181,7 +181,7 @@ tabla1 <- ss_mensual %>% filter(year(fecha) >= 2017,
                                                    TRUE ~ "déficit"))
 ```
 
-+ En el mes de `r mes`, los egresos de divisas por turismo, por el mercado oficial de cambios, alcanzaron un total de US\$`r tail(tabla1$pagos, n=1) %>% round(1)` millones, con una variación respecto al mismo mes del año `r as.character(anio_datos-1)` del `r ((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-12]-1)*100) %>% round(1)`%, y del `r ((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-24]-1)*100) %>% round(1)`% con respecto al mismo mes del año `r as.character(anio_datos-2)`. Por su parte, los ingresos fueron de US\$`r tail(tabla1$cobros, n=1) %>% round(1)` millones, con una variación interanual del `r ((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-12]-1)*100) %>% round(1)`% y del `r ((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-24]-1)*100) %>% round(1)`% con respecto a `r as.character(anio_datos-2)`.
++ En el mes de `r mes`, los egresos de divisas por turismo, por el mercado oficial de cambios, alcanzaron un total de US\$`r tail(tabla1$pagos, n=1) %>% round(1)` millones, con una variación respecto al mismo mes del año `r as.character(anio_datos-1)` del `r ((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-12]-1)*100) %>% round(1)`%, y del `r ((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-36]-1)*100) %>% round(1)`% con respecto al mismo mes del año `r as.character(anio_datos-3)`. Por su parte, los ingresos fueron de US\$`r tail(tabla1$cobros, n=1) %>% round(1)` millones, con una variación interanual del `r ((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-12]-1)*100) %>% round(1)`% y del `r ((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-36]-1)*100) %>% round(1)`% con respecto a `r as.character(anio_datos-3)`.
 
 + Continuando con la tendencia de los últimos años, la balanza de divisas en el mercado oficial, por turismo, es deficitaria. En el mes de `r mes` de `r as.character(anio_datos)`, se registró una balanza deficitaria en US\$`r ((-1)*tail(tabla1$balanza, n=1)) %>% round(1)` millones, mientras que en el mismo mes de `r as.character(anio_datos-1)` había sido también deficitaria en US\$`r ((-1)*(tabla1$balanza[length(tabla1$balanza)-12])) %>% round(1)` millones.
 
@@ -190,7 +190,7 @@ ing_acum <- filter(tabla1, year(fecha) == anio_datos) %>% select(cobros) %>% sum
 
 ing_acum_ia <- filter(tabla1, year(fecha) == anio_datos-1 & month(fecha) <= month(last(tabla1$fecha))) %>% select(cobros) %>% sum()
 
-ing_acum_ia_2 <- filter(tabla1, year(fecha) == anio_datos-2 & month(fecha) <= month(last(tabla1$fecha))) %>% select(cobros) %>% sum()
+ing_acum_ia_2 <- filter(tabla1, year(fecha) == anio_datos-3 & month(fecha) <= month(last(tabla1$fecha))) %>% select(cobros) %>% sum()
 
 var_ing_acum_ia <- (ing_acum/ing_acum_ia-1)*100
 var_ing_acum_ia_2 <- (ing_acum/ing_acum_ia_2-1)*100
@@ -199,7 +199,7 @@ eg_acum <- filter(tabla1, year(fecha) == anio_datos) %>% select(pagos) %>% sum()
 
 eg_acum_ia <- filter(tabla1, year(fecha) == anio_datos-1 & month(fecha) <= month(last(tabla1$fecha))) %>% select(pagos) %>% sum()
 
-eg_acum_ia_2 <- filter(tabla1, year(fecha) == anio_datos-2 & month(fecha) <= month(last(tabla1$fecha))) %>% select(pagos) %>% sum()
+eg_acum_ia_2 <- filter(tabla1, year(fecha) == anio_datos-3 & month(fecha) <= month(last(tabla1$fecha))) %>% select(pagos) %>% sum()
 
 var_eg_acum_ia <- (eg_acum/eg_acum_ia-1)*100
 var_eg_acum_ia_2 <- (eg_acum/eg_acum_ia_2-1)*100
@@ -215,7 +215,7 @@ bza_acum <- ing_acum-eg_acum
 ```
 
 
-+ En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-2)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-2)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones. 
++ En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-3)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-3)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones. 
 
 <br>
 

@@ -32,19 +32,15 @@ familia_fuente <-"Encode Sans Normal"
 Sys.setlocale(locale = "es_AR.UTF-8")
 ```
 
-### (Publicado en `r format(Sys.Date(),'%B')` `r format(Sys.Date(),'%Y')` con datos actualizados a diciembre 2021)
+### (Publicado en `r format(Sys.Date(),'%B')` `r format(Sys.Date(),'%Y')` con datos actualizados a enero 2022)
 
 ```{r}
 #INSUMOS
-empleo <- read.csv("https://cdn.produccion.gob.ar/cdn-cep/datos-por-actividad/puestos/puestos_total_empresas_mensual_por_clae6.csv")
-# salario.prom <- read.csv("Entradas/w_mean_total_empresas_mensual_por_clae6_21102021.csv")
-# salario.median <- read.csv("Entradas/w_median_total_empresas_mensual_por_clae6_21102021.csv")
-empleadores <- read.csv("https://cdn.produccion.gob.ar/cdn-cep/datos-por-actividad/empleadoras/empleadoras_total_empresas_por_clae6.csv")
-
-#ATENCIÓN: EN ESTA OPORTUNIDAD LOS DATOS DE EMPRESAS LLEGAN HASTA noviembre 2021, NO AGOSTO
+empleo <- read_csv("/srv/DataDNMYE/empleo/puestos_6_digitos.csv")
+empleadores <- read_csv("/srv/DataDNMYE/empleo/empresas_6_digitos.csv")
 fecha_empresas <- max(empleadores$fecha)
-
-puestos.genero <- read.csv("https://cdn.produccion.gob.ar/cdn-cep/datos-por-actividad/share-mujer/share_mujer_total_empresas_mensual_por_clae6.csv")
+puestos.genero <- read_csv("/srv/DataDNMYE/empleo/puestos_genero_6_digitos.csv")
+fecha_genero  <- max(puestos.genero$fecha)
 ################################################################################
 #IPC PARA SALARIOS REALES
 #ipc <- read.delim("Entradas/IPC_argentina_script.txt",sep = ",")
@@ -125,11 +121,11 @@ La metodología de las series elaboradas por el MDP se encuentra [aquí](https:/
 
 Se seleccionaron `r length(ramas_turismo_6d)` ramas de actividad a 6 dígitos de CLAE (ver Anexo), agrupándolas en 5 categorías:
 
-- <span style="color: #EE3D8F;">**Agencias de Viaje:**</span> `r length(unique(puestos[puestos$cat.rct == "Agencias de Viaje","clae6"]))` ramas.
-- <span style="color: #50B8B1;">**Alojamiento:**</span> `r length(unique(puestos[puestos$cat.rct == "Alojamiento","clae6"]))` ramas.
-- <span style="color: #F7941E;">**Gastronomía:**</span> `r length(unique(puestos[puestos$cat.rct == "Gastronomía","clae6"]))` ramas.
-- <span style="color: #D7DF23;">**Transporte:**</span> `r length(unique(puestos[puestos$cat.rct == "Transporte","clae6"]))` ramas.
-- <span style="color: #FFD100;">**Otros Servicios Turísticos:**</span> `r length(unique(puestos[puestos$cat.rct == "Otros Servicios Turísticos","clae6"]))` ramas.
+- <span style="color: #EE3D8F;">**Agencias de Viaje:**</span> `r nrow(unique(puestos[puestos$cat.rct == "Agencias de Viaje","clae6"]))` ramas.
+- <span style="color: #50B8B1;">**Alojamiento:**</span> `r nrow(unique(puestos[puestos$cat.rct == "Alojamiento","clae6"]))` ramas.
+- <span style="color: #F7941E;">**Gastronomía:**</span> `r nrow(unique(puestos[puestos$cat.rct == "Gastronomía","clae6"]))` ramas.
+- <span style="color: #D7DF23;">**Transporte:**</span> `r nrow(unique(puestos[puestos$cat.rct == "Transporte","clae6"]))` ramas.
+- <span style="color: #FFD100;">**Otros Servicios Turísticos:**</span> `r nrow(unique(puestos[puestos$cat.rct == "Otros Servicios Turísticos","clae6"]))` ramas.
 
 
 <br>
@@ -278,7 +274,7 @@ grafico_empleo_cat_rct <- ggplot(data_grafico_empleo_cat_rct,aes(x=reorder(cat.r
     strip.placement = "outside") +
   coord_flip(clip = "off")+
   labs(x="",y="",title= "Empleo en Ramas Características del Turismo",
-       subtitle = glue("Miles de puestos. {format(max(as.Date(puestos$fecha)),'%B')} {format(max(as.Date(puestos$fecha)),'%Y')} <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a MDP")
+       subtitle = glue("Miles de puestos. {format(max(as.Date(puestos$fecha)),'%B')} {format(max(as.Date(puestos$fecha)),'%Y')} <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2020</span>"), caption="**Fuente:** DNMyE en base a MDP")
 grafico_empleo_cat_rct
 ```
 
@@ -432,14 +428,16 @@ genero.rct.vs.no.rct <- puestos %>%
             puestos_varones = sum(puestos_varones,na.rm = T),
             puestos_mujeres = sum(puestos_mujeres,na.rm=T)) %>% 
   ungroup() %>% 
-  mutate(share_mujeres = puestos_mujeres/puestos)
+  mutate(share_mujeres = puestos_mujeres/puestos) %>% 
+  filter(fecha <= fecha_genero)
 genero.total <- puestos %>% 
   group_by(fecha) %>% 
   summarise(puestos = sum(puestos,na.rm = T),
             puestos_varones = sum(puestos_varones,na.rm = T),
             puestos_mujeres = sum(puestos_mujeres,na.rm=T)) %>% 
   ungroup() %>% 
-  mutate(share_mujeres = puestos_mujeres/puestos)
+  mutate(share_mujeres = puestos_mujeres/puestos) %>% 
+  filter(fecha <= fecha_genero)
 ```
 
 
@@ -506,7 +504,8 @@ genero.categorias <- puestos %>%
             puestos_varones = sum(puestos_varones,na.rm = T),
             puestos_mujeres = sum(puestos_mujeres,na.rm=T)) %>% 
   ungroup() %>% 
-  mutate(share_mujeres = puestos_mujeres/puestos)
+  mutate(share_mujeres = puestos_mujeres/puestos)  %>% 
+  filter(fecha <= fecha_genero)
 ```
 
 
@@ -881,10 +880,10 @@ ggplotly(grafico_empresas_series_2,tooltip = "text") %>%
 ramas %>% 
   arrange(clae6) %>% 
   mutate(share_mujer = round(100*share_mujer,1)) %>% 
-  select(clae6,"Descripción" = clae6_desc,"Categoría" = cat.rct,"Puestos"=puestos,
-         "% de mujeres" = share_mujer) %>% 
-  left_join(puestos %>% filter(!is.na(empresas)) %>% filter(fecha == max(fecha)) %>% select(clae6,empresas),by="clae6") %>% 
-  rename("CLAE" = clae6,"Empresas"=empresas) %>% 
-  datatable(caption=glue("Ramas seleccionadas y valores de{ format(as.Date(max(puestos$fecha)),'%B %Y')} (exepto empresas -{format(as.Date(fecha_empresas),'%B %Y')}-)"))
+  select(clae6,"Descripción" = clae6_desc,"Categoría" = cat.rct,"Puestos"=puestos) %>% 
+  left_join(puestos %>% filter(!is.na(empresas)) %>% filter(fecha == max(fecha)) %>% select(clae6,share_mujer,empresas),by="clae6") %>% 
+  mutate(share_mujer = ifelse(is.na(share_mujer),"-",format(round(100*share_mujer,1),decimal.mark=","))) %>% 
+  rename("CLAE" = clae6,"Empresas"=empresas,"% de mujeres"=share_mujer) %>% 
+  datatable(caption=glue("Ramas seleccionadas y valores de { format(as.Date(max(puestos$fecha)),'%B %Y')} (puestos) y {format(as.Date(fecha_empresas),'%B %Y')} (% de mujeres y empresas)"))
 ```
 

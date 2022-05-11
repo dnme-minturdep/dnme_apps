@@ -38,10 +38,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ### Cargo funciones de trabajo
 #source("0_funciones_de_trabajo.R", encoding = "UTF-8")
 
-# Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2022-02-01"
-mes <- "Febrero"
-anio <- 2022
+# Definir mes para títulos ####
+mes <- "Marzo"
 
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
@@ -73,6 +71,15 @@ theme_imet <- function() {
 etiquetas <- 
 data.frame(pais = c("bol","bra","chi","py","uy","eeuu_can","rest_am","euro","rest_mun"),
            etiqueta = c("Bolivia","Brasil","Chile","Paraguay","Uruguay","EE.UU.  y Canadá","Resto de América","Europa","Resto del mundo"))
+
+# Importo datos ####
+
+turismo_internacional_turistas <- vroom::vroom("/srv/DataDNMYE/turismo_internacional/turismo_internacional_pais.zip",locale = locale(encoding = "WINDOWS-1252",decimal_mark = ","))
+
+anio <- as.numeric(turismo_internacional_turistas[nrow(turismo_internacional_turistas), 1])
+mes_nro  <- as.numeric(as_tibble(turismo_internacional_turistas[nrow(turismo_internacional_turistas),2]))
+fecha <- str_c(anio, mes_nro, "01" , sep = "-")
+
 ```
 
 ### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste((tolower(mes)),
@@ -80,11 +87,6 @@ data.frame(pais = c("bol","bra","chi","py","uy","eeuu_can","rest_am","euro","res
 <br>
 
 ```{r} 
-# Importo datos ####
-
-turismo_internacional_turistas <- vroom::vroom("/srv/DataDNMYE/turismo_internacional/turismo_internacional_pais.zip",locale = locale(encoding = "WINDOWS-1252",decimal_mark = ","))
-
-
 #Incorporo los meses con 0 turistas
 turismo_internacional_turistas <-  complete(turismo_internacional_turistas, mes=1:12,nesting(anio,via,pais,pais_agrupado,destino_agrup, turismo_internac), fill = list(casos_ponderados = 0))
 
@@ -182,11 +184,6 @@ turistas_internacional <- turismo_internacional_ficha[c(5,6,1,2,7,8,3,4),] %>%
     source_note = md(
       "")
   ) %>%
-  tab_source_note(
-    source_note = md(
-      "**Nota**: El flujo de turismo internacional se ha visto afectado desde marzo de 2020 por el cierre de fronteras decretado el 16 de
-marzo de 2020 en virtud de la pandemia en relación con el COVID-19 (DNU 274/2020 y sus modificatorias).")
-  )  %>%
   tab_style(
     style = list(
       cell_text(color = "#EE3D8F"),
