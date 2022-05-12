@@ -21,11 +21,11 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2021-11-01"
-mes <- "noviembre"
+fecha <- "2021-12-01"
+mes <- "diciembre"
 anio <- "2021"
 
-parques <- c("el leoncito", "sierra de las quijadas")
+#parques <- c("el leoncito", "sierra de las quijadas")
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -134,7 +134,7 @@ tabla.1.acum <-  data_tabla_1 %>%
          periodo = paste0("Acum. ", anio)) 
 ```
 <br> 
-En el mes de `r mes` se registraron `r format(pull(tabla.1.mes[tabla.1.mes$period == fecha,"total"]),big.mark=".")` visitas a Parques Nacionales, con `r format(pull(tabla.1.mes[tabla.1.mes$period == fecha,"n_residentes"]),big.mark=".")` visitas de residentes y `r format(pull(tabla.1.mes[tabla.1.mes$period == fecha,"n_no_residentes"]),big.mark=".")` de no residentes.
+En el mes de `r mes` se registraron `r format(round(pull(tabla.1.mes[tabla.1.mes$period == fecha,"total"]),0),big.mark=".")` visitas a Parques Nacionales, con `r format(round(pull(tabla.1.mes[tabla.1.mes$period == fecha,"n_residentes"]),0),big.mark=".")` visitas de residentes y `r format(round(pull(tabla.1.mes[tabla.1.mes$period == fecha,"n_no_residentes"]),0),big.mark=".")` de no residentes.
 
 En el acumulado del año las visitas suman un total de `r format(pull(tabla.1.acum[tabla.1.mes$period == fecha,"total"]),big.mark=".")` (`r format(pull(tabla.1.acum[tabla.1.acum$period == fecha,"n_residentes"]),big.mark=".")` residentes y `r format(pull(tabla.1.acum[tabla.1.acum$period == fecha,"n_no_residentes"]),big.mark=".")` no residentes), lo que implica una variación de `r format(round(100*pull(tabla.1.acum[tabla.1.acum$period == fecha,"var.total"]),1),decimal.mark=",")`% con respecto al mismo período del año anterior.
 
@@ -361,8 +361,8 @@ data_tabla_2 <- tabla_parques %>%
          acumulado_2020_total  = acumulado_2020_residentes + acumulado_2020_no_residentes,
          acumulado_2019_total  = acumulado_2019_residentes + acumulado_2019_no_residentes,
          participacion = round(acumulado_2021_total / sum(acumulado_2021_total), 3)) %>%
-  mutate(across(where(is.numeric), ~ case_when(parque_nacional %in% parques ~ NA_real_,
-                                           TRUE ~ .))) %>% 
+  # mutate(across(where(is.numeric), ~ case_when(parque_nacional %in% parques ~ NA_real_,
+  #                                          TRUE ~ .))) %>% 
   arrange(-participacion) %>%
   mutate(var_ia_visitantes_2021_tot = visitantes_2021_total/visitantes_2020_total-1,
          var_ia_visitantes_res = visitantes_2021_residentes/visitantes_2020_residentes-1,
