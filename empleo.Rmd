@@ -884,6 +884,6 @@ ramas %>%
   left_join(puestos %>% filter(!is.na(empresas)) %>% filter(fecha == max(fecha)) %>% select(clae6,share_mujer,empresas),by="clae6") %>% 
   mutate(share_mujer = ifelse(is.na(share_mujer),"-",format(round(100*share_mujer,1),decimal.mark=","))) %>% 
   rename("CLAE" = clae6,"Empresas"=empresas,"% de mujeres"=share_mujer) %>% 
-  datatable(caption=glue("Ramas seleccionadas y valores de { format(as.Date(max(puestos$fecha)),'%B %Y')} (puestos) y {format(as.Date(fecha_empresas),'%B %Y')} (% de mujeres y empresas)"))
+  datatable(caption=glue("Ramas seleccionadas y valores de { format(as.Date(max(puestos$fecha)),'%B %Y')} (puestos y % de mujeres) y {format(as.Date(fecha_empresas),'%B %Y')} (empresas)"))
 ```
 
