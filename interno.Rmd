@@ -544,7 +544,7 @@ perfil_origen <- evyth %>%
 
 perfil_sexo <- evyth %>%
   filter(anio >= Anio-1, trimestre == trim_actual) %>%
-  mutate(categorias = as_factor(j_sexo)) %>%
+  mutate(categorias = as_factor(p005)) %>%
   group_by(anio,categorias) %>%
   summarise(n = sum(pondera)) %>%
   ungroup() %>% 
