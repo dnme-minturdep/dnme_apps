@@ -94,7 +94,8 @@ indice.empleo <- puestos %>%
   group_by(rct) %>% 
   mutate(indice = puestos/first(puestos),
          var.i.a. = puestos/lag(puestos,12)-1,
-         var.a.2.anios = puestos/lag(puestos,24)-1)
+         #var.a.2.anios = puestos/lag(puestos,24)-1,
+         var.a.3.anios = puestos/lag(puestos,36)-1)
 ult.datos.empleo <- puestos %>% 
   filter(fecha == max(fecha))
 
@@ -174,7 +175,7 @@ ramas.treemap
 
 
 En el mes de **`r format(as.Date(max(puestos$fecha)),"%B %Y")`** se registraron `r indice.empleo %>% filter(fecha == max(fecha) & rct == "RCT") %>% pull(puestos) %>% format(.,big.mark=".")` puestos de trabajo formales en ramas turísticas, presentando una variación de `r format(round(100*indice.empleo[indice.empleo$fecha == max(indice.empleo$fecha) & indice.empleo$rct == "RCT","var.i.a."],1),decimal.mark=",") `% con respecto a  `r format(as.Date(max(puestos$fecha))-years(1),"%B %Y")`. El resto de los sectores presentó una variación de `r format(round(100*indice.empleo[indice.empleo$fecha == max(indice.empleo$fecha) & indice.empleo$rct == "NO RCT","var.i.a."],1),decimal.mark=",") `%.
-En la comparación con `r format(as.Date(max(puestos$fecha))-years(2),"%B %Y")`, la variación en ramas turísticas fue de `r format(round(100*indice.empleo[indice.empleo$fecha == max(indice.empleo$fecha) & indice.empleo$rct == "RCT","var.a.2.anios"],1),decimal.mark=",") `%, mientras que en el resto de las ramas fue de `r format(round(100*indice.empleo[indice.empleo$fecha == max(indice.empleo$fecha) & indice.empleo$rct == "NO RCT","var.a.2.anios"],1),decimal.mark=",") `%
+En la comparación con `r format(as.Date(max(puestos$fecha))-years(3),"%B %Y")`, la variación en ramas turísticas fue de `r format(round(100*indice.empleo[indice.empleo$fecha == max(indice.empleo$fecha) & indice.empleo$rct == "RCT","var.a.3.anios"],1),decimal.mark=",") `%, mientras que en el resto de las ramas fue de `r format(round(100*indice.empleo[indice.empleo$fecha == max(indice.empleo$fecha) & indice.empleo$rct == "NO RCT","var.a.3.anios"],1),decimal.mark=",") `%
 
 
 ```{r}
@@ -238,7 +239,8 @@ indice.cat.rct <- puestos %>%
   group_by(cat.rct) %>% 
   mutate(indice = puestos/first(puestos),
          var.i.a. = puestos/lag(puestos,12)-1,
-         var.a.2.anios = puestos/lag(puestos,24)-1)
+         #var.a.2.anios = puestos/lag(puestos,24)-1,
+         var.a.3.anios = puestos/lag(puestos,36)-1)
 ```
 ### CATEGORÍAS
 
@@ -254,7 +256,7 @@ grafico_empleo_cat_rct <- ggplot(data_grafico_empleo_cat_rct,aes(x=reorder(cat.r
             hjust=-.1)+
   geom_label(aes(label=paste0(format(round(100*var.i.a.,1),decimal.mark = ","),"%"),y=max(puestos)*1.25),
              color="#f7a1c9")+
-  geom_label(aes(label=paste0(format(round(100*var.a.2.anios,1),decimal.mark = ","),"%"),y=max(puestos)*1.45),
+  geom_label(aes(label=paste0(format(round(100*var.a.3.anios,1),decimal.mark = ","),"%"),y=max(puestos)*1.45),
              color = "#F7941E")+
   geom_hline(yintercept = 0, size = 0.1) +
   #scale_fill_manual(values = cols_arg2[2])+
@@ -274,7 +276,7 @@ grafico_empleo_cat_rct <- ggplot(data_grafico_empleo_cat_rct,aes(x=reorder(cat.r
     strip.placement = "outside") +
   coord_flip(clip = "off")+
   labs(x="",y="",title= "Empleo en Ramas Características del Turismo",
-       subtitle = glue("Miles de puestos. {format(max(as.Date(puestos$fecha)),'%B')} {format(max(as.Date(puestos$fecha)),'%Y')} <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2020</span>"), caption="**Fuente:** DNMyE en base a MDP")
+       subtitle = glue("Miles de puestos. {format(max(as.Date(puestos$fecha)),'%B')} {format(max(as.Date(puestos$fecha)),'%Y')} <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a MDP")
 grafico_empleo_cat_rct
 ```
 
@@ -337,7 +339,8 @@ indice_empleo_todas <- puestos %>%
    group_by(clae6,cat.rct) %>% 
   mutate(indice = 100*round(puestos/first(puestos),2), 
          var.i.a. = puestos/lag(puestos,12)-1,
-         var.a.2.anios = puestos/lag(puestos,24)-1)
+         #var.a.2.anios = puestos/lag(puestos,24)-1,
+         var.a.3.anios = puestos/lag(puestos,36)-1)
 ```
 
 ```{r}
@@ -638,6 +641,7 @@ indice.empresas <- puestos %>%
   mutate(indice = empresas/first(empresas),
          var.i.a. = empresas/lag(empresas,12)-1,
          var.a.2.anios = empresas/lag(empresas,24)-1)
+         #var.a.3.anios = empresas/lag(empresas,36)-1)
 ```
 
 
@@ -709,6 +713,7 @@ indice.empresas.cat.rct <- puestos %>%
   mutate(indice = empresas/first(empresas),
          var.i.a. = empresas/lag(empresas,12)-1,
          var.a.2.anios = empresas/lag(empresas,24)-1)
+         #var.a.3.anios = empresas/lag(empresas,36)-1)
 ```
 
 A continuación se detalla la información de empleadores en ramas turísticas agrupados en categorías:
@@ -743,7 +748,7 @@ grafico_empresas_cat_rct <- ggplot(data_grafico_empresas_cat_rct,aes(x=reorder(c
     strip.placement = "outside") +
   coord_flip(clip = "off")+
   labs(x="",y="",title= "Empleadores en Ramas Características del Turismo",
-       subtitle = glue("Miles de empresas. {format(as.Date(fecha_empresas),'%B')} {format(as.Date(fecha_empresas),'%Y')} <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a MDP")
+       subtitle = glue("Miles de empresas. {format(as.Date(fecha_empresas),'%B')} {format(as.Date(fecha_empresas),'%Y')} <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2020</span>"), caption="**Fuente:** DNMyE en base a MDP")
 grafico_empresas_cat_rct
 ```
 
@@ -809,6 +814,7 @@ indice_empresas_todas <- puestos %>%
   mutate(indice = 100*round(empresas/first(empresas),2), 
          var.i.a. = empresas/lag(empresas,12)-1,
          var.a.2.anios = empresas/lag(empresas,24)-1)
+         #var.a.3.anios = empresas/lag(empresas,36)-1)
 ```
 
 ```{r}
