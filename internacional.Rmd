@@ -13,8 +13,6 @@ output: distill::distill_article
 #     mode: selfcontained
 knitr::opts_chunk$set(echo = F, message = F, warning = F, 
                       fig.align = 'left', fig.width = 10,fig.height = 6)
-
-
 library(googlesheets4) # Access Google Sheets using the Sheets API V4, CRAN v0.2.0
 library(gt) # Easily Create Presentation-Ready Display Tables, CRAN v0.2.2
 library(kableExtra) # Construct Complex Table with 'kable' and Pipe Syntax, CRAN v1.1.0
@@ -37,19 +35,15 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ```{r}
 ### Cargo funciones de trabajo
 #source("0_funciones_de_trabajo.R", encoding = "UTF-8")
-
 # Definir mes para títulos ####
-mes <- "Mayo"
-
+mes <- "Junio"
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
-
 #Secundarios
 cols_arg2 <- c("#EE3D8F", # "ROJO"
                "#50B8B1", # "VERDE"
                "#F7941E","#FFD100","#D7DF23", "#9283BE")
-
 #Fuente
 #familia_fuente <- fonttable() %>% 
 #  as_tibble() %>% 
@@ -57,29 +51,21 @@ cols_arg2 <- c("#EE3D8F", # "ROJO"
 #         Bold == TRUE) %>% 
 #  pull(FamilyName) %>% 
 #  first()
-
-
 familia_fuente <- "Encode Sans Normal"
-
 # Estilo de graficos
 theme_imet <- function() {
   theme(legend.position = "none",
         text = element_text(family = familia_fuente))
 }
-
 #Etiquetas de los países
 etiquetas <- 
 data.frame(pais = c("bol","bra","chi","py","uy","eeuu_can","rest_am","euro","rest_mun"),
            etiqueta = c("Bolivia","Brasil","Chile","Paraguay","Uruguay","EE.UU.  y Canadá","Resto de América","Europa","Resto del mundo"))
-
 # Importo datos ####
-
 turismo_internacional_turistas <- vroom::vroom("/srv/DataDNMYE/turismo_internacional/turismo_internacional_pais.zip",locale = locale(encoding = "WINDOWS-1252",decimal_mark = ","))
-
 anio <- as.numeric(turismo_internacional_turistas[nrow(turismo_internacional_turistas), 1])
 mes_nro  <- as.numeric(as_tibble(turismo_internacional_turistas[nrow(turismo_internacional_turistas),2]))
 fecha <- str_c(anio, mes_nro, "01" , sep = "-")
-
 ```
 
 ### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste((tolower(mes)),
@@ -89,7 +75,6 @@ fecha <- str_c(anio, mes_nro, "01" , sep = "-")
 ```{r} 
 #Incorporo los meses con 0 turistas
 turismo_internacional_turistas <-  complete(turismo_internacional_turistas, mes=1:12,nesting(anio,via,pais,pais_agrupado,destino_agrup, turismo_internac), fill = list(casos_ponderados = 0))
-
 #turismo_internacional_turistas <- bind_rows(turismo_internacional_turistas,data.table(anio = rep(2020,18),mes = #rep(c(4:6),each = 6), via = rep(c("Aérea","Fluvial/Marítima","Terrestre"),6), turismo_internac= #rep(c("Receptivo","Emisivo"),9)))
 #turismo_internacional_turistas[is.na(turismo_internacional_turistas)] <- 0
 ```
@@ -98,17 +83,14 @@ turismo_internacional_turistas <-  complete(turismo_internacional_turistas, mes=
 turistas_vias<- data.table(turismo_internacional_turistas)[,.(n = sum(casos_ponderados)),by=c("anio","mes","via","turismo_internac")]
 # Calculo TOTALES por mes para unir
 TOTALES <- turistas_vias[,.(n = sum(n)),by=c("anio","mes","turismo_internac")][,`:=`(via = "TOTAL")]
-
 turistas_vias <- bind_rows(turistas_vias,TOTALES)[order(anio,mes,turismo_internac)][,`:=`(n.acum = cumsum(n)), by = c("anio","via","turismo_internac")][,`:=`(tvar.i.a = n/shift(n,12)-1,
                                                                                                                                                                                                                                  tvar.i.a.acum = n.acum/shift(n.acum,12)-1) , by = c("via","turismo_internac")][,dcast(.SD,formula = anio + mes + via ~ turismo_internac,value.var = c("n","tvar.i.a","n.acum","tvar.i.a.acum"))][,`:=`(balanza = n_Receptivo - n_Emisivo,balanza.acum = n.acum_Receptivo - n.acum_Emisivo )][,`:=`(balanza_var_abs_ia = balanza - shift(balanza,12),balanza.acum_var_abs_ia = balanza.acum - shift(balanza.acum,12)), by = via]
 #########################################################################3
 #Tomo el mes actual
 turistas_vias_actual <- turistas_vias[anio == .GlobalEnv$anio & mes == month(.GlobalEnv$fecha),]
-
 tmes <- turistas_vias_actual[,c("anio","mes","via","n_Receptivo","n_Emisivo","tvar.i.a_Receptivo","tvar.i.a_Emisivo","balanza","balanza_var_abs_ia")][,`:=`(periodo = paste0(.GlobalEnv$mes," ",.GlobalEnv$anio))][,index := seq(1,nrow(.SD)*2,by = 2)]
 tacum <- turistas_vias_actual[,c("anio","mes","via","n.acum_Receptivo","n.acum_Emisivo","tvar.i.a.acum_Receptivo","tvar.i.a.acum_Emisivo","balanza.acum","balanza.acum_var_abs_ia")][,`:=`(periodo = paste0("Acumulado ",.GlobalEnv$anio))][,index := seq(2,nrow(.SD)*2,by = 2)]
 setnames(tacum,names(tmes))
-
 tabla_vias <- rbind(tmes,tacum)[order(index)]
 # Modifico los nombres para que queden igual que en la ficha original
 turismo_internacional_ficha <- tabla_vias %>% rename(medio_transporte = via,
@@ -116,7 +98,6 @@ turismo_internacional_ficha <- tabla_vias %>% rename(medio_transporte = via,
                                                         "receptivo__var.%_ia" = tvar.i.a_Receptivo,
                                                         emisivo_turistas = n_Emisivo,
                                                         "emisivo_var.%_ia" = tvar.i.a_Emisivo) %>% select(medio_transporte,periodo,receptivo_turistas,"receptivo__var.%_ia",emisivo_turistas,"emisivo_var.%_ia","balanza" , "balanza_var_abs_ia" )
-
 #CAMBIO EL "Inf" por el símbolo NA para abril
 turismo_internacional_ficha <- as.data.table(sapply(turismo_internacional_ficha,function(x) ifelse(x=="Inf",NA,x)))
 ```
@@ -135,12 +116,8 @@ En el acumulado del año, suman un total de `r format(turismo_internacional_fich
 
 ```{r}
 #
-
 ### 1) TURISMO INTERNACIONAL ####
-
-
 # tabla_1 - Turistas internacional ####
-
 turistas_internacional <- turismo_internacional_ficha[c(5,6,1,2,7,8,3,4),] %>%
   #filter(periodo != "Acumulado 2021") %>% #Sólo para enero
   janitor::clean_names()  %>% 
@@ -303,21 +280,15 @@ paises.agrup <- unique(data.table(turismo_internacional_turistas)[pais_agrupado 
 turistas_emisivo <- data.table(complete(turismo_internacional_turistas,mes=1:12,nesting(anio,destino_agrup,turismo_internac),fill = list(casos_ponderados=0)))[turismo_internac == "Emisivo" & destino_agrup != 0,.(n=sum(casos_ponderados)), by = c("anio","mes","destino_agrup","turismo_internac")]
 turistas_receptivo <- data.table(complete(turismo_internacional_turistas,mes=1:12,nesting(anio,destino_agrup,turismo_internac),fill = list(casos_ponderados=0)))[turismo_internac == "Receptivo" & pais_agrupado != 0,.(n=sum(casos_ponderados)), by = c("anio","mes","pais_agrupado","turismo_internac")]
 setnames(turistas_emisivo,names(turistas_receptivo))
-
 paises <- rbind(turistas_emisivo,turistas_receptivo)[order(anio,mes)][,`:=`(n.acum = cumsum(n)), by = c("anio","pais_agrupado","turismo_internac")][,`:=`(tvar.i.a = n/shift(n,12)-1,
                                                                                                                                                                                                                                  tvar.i.a.acum = n.acum/shift(n.acum,12)-1) , by = c("pais_agrupado","turismo_internac")][,dcast(.SD,formula = anio + mes + pais_agrupado ~ turismo_internac,value.var = c("n","tvar.i.a","n.acum","tvar.i.a.acum"))][,`:=`(balanza = n_Receptivo - n_Emisivo,balanza.acum = n.acum_Receptivo - n.acum_Emisivo )][,`:=`(balanza_var_abs_ia = balanza - shift(balanza,12),balanza.acum_var_abs_ia = balanza.acum - shift(balanza.acum,12)), by = pais_agrupado][,`:=`(part.emisivo = n_Emisivo/sum(n_Emisivo),part.receptivo = n_Receptivo/sum(n_Receptivo),part.acum.emis = n.acum_Emisivo/sum(n.acum_Emisivo),part.acum.rec = n.acum_Receptivo/sum(n.acum_Receptivo)),by=c("anio","mes")]
-
-
 #Tomo el mes actual
 paises_actual<- paises[anio == .GlobalEnv$anio & mes == month(.GlobalEnv$fecha),]
-
 tmes <- paises_actual[,c("anio","mes","pais_agrupado","n_Receptivo","n_Emisivo","tvar.i.a_Receptivo","tvar.i.a_Emisivo","part.receptivo","part.emisivo","balanza","balanza_var_abs_ia")][,`:=`(periodo = paste0(.GlobalEnv$mes," ",.GlobalEnv$anio))][,index := seq(1,nrow(.SD)*2,by = 2)]
 tacum <- paises_actual[,c("anio","mes","pais_agrupado","n.acum_Receptivo","n.acum_Emisivo","tvar.i.a.acum_Receptivo","tvar.i.a.acum_Emisivo","part.acum.rec","part.acum.emis","balanza.acum","balanza.acum_var_abs_ia")][,`:=`(periodo = paste0("Acumulado ",.GlobalEnv$anio))][,index := seq(2,nrow(.SD)*2,by = 2)]
 setnames(tacum,names(tmes))
-
 tabla_paises <- rbind(tmes,tacum)[order(index)][,`:=`(limitrofe = case_when(pais_agrupado %in% c("Bolivia","Brasil","Chile","Paraguay","Uruguay") ~ 1,
                                                                                                                                                                                                                          TRUE ~ 2))][order(limitrofe)]
-
 ##################################################
 # Creo la tabla "total paises limitrofes para pegarla a la anterior"
 limitrofes <- paises[pais_agrupado %in% c("Bolivia","Brasil","Chile","Paraguay","Uruguay"),c("anio","mes","n_Receptivo","n_Emisivo")][,.(n_Receptivo = sum(n_Receptivo),
@@ -326,17 +297,12 @@ limitrofes <- paises[pais_agrupado %in% c("Bolivia","Brasil","Chile","Paraguay",
                                                                                                                                                                                                                                  tvar.i.a_Emisivo = n_Emisivo/shift(n_Emisivo,12)-1)][,`:=`(n.acum_Receptivo = cumsum(n_Receptivo),
                                                                                                                                                                                                                                                                                           n.acum_Emisivo = cumsum(n_Emisivo)), by = c("anio")][,`:=`(tvar.i.a.acum_Emisivo = n.acum_Emisivo/shift(n.acum_Emisivo,12)-1,
                                                                                                                                                                                                                                                                                                                                                tvar.i.a.acum_Receptivo = n.acum_Receptivo/shift(n.acum_Receptivo,12)-1)][,`:=`(balanza = n_Receptivo - n_Emisivo,balanza.acum = n.acum_Receptivo - n.acum_Emisivo )][,`:=`(balanza_var_abs_ia = balanza - shift(balanza,12),balanza.acum_var_abs_ia = balanza.acum - shift(balanza.acum,12))]
-
 limitrofes_total <- rbind(limitrofes[,c("anio","mes","pais_agrupado","n_Receptivo","n_Emisivo","n.acum_Receptivo","n.acum_Emisivo")],paises[!(pais_agrupado %in% c("Bolivia","Brasil","Chile","Paraguay","Uruguay")),c("anio","mes","pais_agrupado","n_Receptivo","n_Emisivo","n.acum_Receptivo","n.acum_Emisivo")])[,`:=`(part.emisivo = n_Emisivo/sum(n_Emisivo),part.receptivo = n_Receptivo/sum(n_Receptivo),part.acum.emis = n.acum_Emisivo/sum(n.acum_Emisivo),part.acum.rec = n.acum_Receptivo/sum(n.acum_Receptivo)), by = c("anio","mes")][pais_agrupado == "Total Países Limítrofes",] %>% left_join(.,limitrofes)
-
 #Tomo el mes actual
 lim_actual<- limitrofes_total[anio == .GlobalEnv$anio & mes == month(.GlobalEnv$fecha),]
-
 tmes.lim <- lim_actual[,c("anio","mes","pais_agrupado","n_Receptivo","n_Emisivo","tvar.i.a_Receptivo","tvar.i.a_Emisivo","part.receptivo","part.emisivo","balanza","balanza_var_abs_ia")][,`:=`(periodo = paste0(.GlobalEnv$mes," ",.GlobalEnv$anio))][,index := seq(1,nrow(.SD)*2,by = 2)]
-
 tacum.lim <- lim_actual[,c("anio","mes","pais_agrupado","n.acum_Receptivo","n.acum_Emisivo","tvar.i.a.acum_Receptivo","tvar.i.a.acum_Emisivo","part.acum.rec","part.acum.emis","balanza.acum","balanza.acum_var_abs_ia")][,`:=`(periodo = paste0("Acumulado ",.GlobalEnv$anio))][,index := seq(2,nrow(.SD)*2,by = 2)]
 setnames(tacum.lim,names(tmes.lim))
-
 tabla_paises_limitrofes <- rbind(tmes.lim,tacum.lim)[order(index)]
 ```
 <br>
@@ -344,8 +310,6 @@ tabla_paises_limitrofes <- rbind(tmes.lim,tacum.lim)[order(index)]
 #CAMBIO EL "Inf" por el símbolo NA para abril
 tabla_paises_limitrofes <- as.data.table(sapply(tabla_paises_limitrofes,function(x) ifelse(x=="Inf",NA,x)))
 tabla_paises <- as.data.table(sapply(tabla_paises,function(x) ifelse(x=="Inf",NA,x)))
-
-
 tabla2 <- tabla_paises_limitrofes %>% bind_rows(tabla_paises  %>% select(-limitrofe)) %>% select(periodo, pais_agrupado,n_receptivo = n_Receptivo, n_emisivo = n_Emisivo,tvar.i.a_receptivo=tvar.i.a_Receptivo,tvar.i.a_emisivo = tvar.i.a_Emisivo,balanza_n = balanza,var.balanza = balanza_var_abs_ia, part._emisivo = part.emisivo,part._receptivo = part.receptivo) %>% cbind(.,orden=c(1:14,17,18,15,16,19,20)) %>% arrange(.,orden) %>% select(-orden) %>%
   mutate(across(.cols=3:10,as.numeric),
          pais_agrupado=ifelse(pais_agrupado %in% c("Total Países Limítrofes","EE.UU. y Canadá","Resto de América","Europa","Resto del mundo"),toupper(pais_agrupado),pais_agrupado)) %>% 
@@ -459,8 +423,6 @@ información de la Dirección Nacional de Migraciones y la Encuesta de Turismo I
    ) %>%
   tab_style(style = list(cell_text(indent = pct(5))),
             locations = cells_stub(rows = 3:12))
-
-
 tabla2
 ```
 
@@ -473,5 +435,3 @@ tabla2
 [**Datos Abiertos**](http://datos.yvera.gob.ar/dataset?groups=turismo-internacional)
 
 [**Informes**](https://www.yvera.tur.ar/estadistica/informe/info/turismo-internacional)
-
-
