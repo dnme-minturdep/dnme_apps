@@ -77,9 +77,12 @@ theme_imet <- function() {
 <br>
 ```{r}
 # DATOS
-
-evyth <- read_sav("/srv/DataDNMYE/evyth/EVyTH_Ondas22012a202205_USU4_VIAJES-PERSONAS_(VISITANTES-COMPLETA).sav") %>% 
-  filter(tipo_visitante == 1, arg_o_ext == 1)
+ruta <- list.files("/srv/DataDNMYE/evyth/", pattern = "EVyTH_Ondas*", full.names = T)
+temporal <- tempfile()
+unzip(ruta,exdir = temporal)
+evyth <- read_sav(list.files(temporal, pattern = ".sav", full.names = T)[[1]]) %>% 
+  filter(tipo_visitante == 1 & arg_o_ext == 1 & lubridate::yq(paste(anio, trimestre, "-")) <= yq(paste(Anio, trim_actual, "-"))) %>% 
+rename_with(.cols = starts_with("GastoViajeTotal_perCapita_Pesos"), .fn = ~ str_remove(.x, "[^GastoViajeTotal_perCapita_Pesos$].*"))
 
 ```
 
@@ -91,7 +94,7 @@ turismo_interno2 <- evyth %>%
             pernoctaciones = sum(pondera * px07, na.rm = T),
             estadia = pernoctaciones/turistas,
             gasto.promedio.nom = gasto_total/turistas,
-            gasto_total_real = sum(pondera * GastoViajeTotal_perCapita_Pesos2022.MAY, na.rm = T),
+            gasto_total_real = sum(pondera * GastoViajeTotal_perCapita_Pesos, na.rm = T),
             gasto.promedio.real = gasto_total_real/turistas) %>%
   ungroup() %>% 
   group_by(trimestre) %>% 
@@ -118,7 +121,7 @@ turismo_interno_acum <- evyth %>%
             pernoctaciones = sum(pondera * px07, na.rm = T),
             estadia = pernoctaciones/turistas,
             gasto.promedio.nom = gasto_total/turistas,
-            gasto_total_real = sum(pondera * GastoViajeTotal_perCapita_Pesos2022.MAY, na.rm = T),
+            gasto_total_real = sum(pondera * GastoViajeTotal_perCapita_Pesos, na.rm = T),
             gasto.promedio.real = gasto_total_real/turistas) %>%
   ungroup() %>% 
   mutate(var.turistas = turistas/lag(turistas,1)-1,
