@@ -1031,11 +1031,11 @@ tabla4_A_ficha <- tabla4_A %>% arrange(region_de_destino) %>%
               table.width = 700,
               table.font.size = 12, 
               row_group.font.weight = "bold") %>% 
-  fmt_missing(
+  sub_missing(
       columns = 3:8,
       missing_text = "///"
     ) %>% #AD HOC
-  fmt_missing(
+  sub_missing(
     columns = 3:8,
       rows = localidad_de_destino %in% localidades_insuficiencia,
       missing_text = "..."
@@ -1217,11 +1217,11 @@ tabla4_B_ficha <- tabla4_B %>% arrange(region_de_destino) %>%
               table.font.size = 12, 
                table.width = 700,
               row_group.font.weight = "bold") %>% 
-  fmt_missing(
+  sub_missing(
       columns = 3:8,
       missing_text = "///"
     ) %>% #AD HOC
-  fmt_missing(
+  sub_missing(
     columns = 3:8,
       rows = localidad_de_destino %in% localidades_insuficiencia,
       missing_text = "..."
