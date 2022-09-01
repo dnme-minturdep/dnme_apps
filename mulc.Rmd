@@ -183,15 +183,23 @@ tabla1 <- ss_mensual %>% filter(year(fecha) >= 2017,
                             !is.na(cobros)) %>% 
                          group_by(fecha) %>% 
                          summarise(cobros = sum(cobros),
-                                   pagos = sum(pagos),
-                                   balanza = sum(balanza)) %>% 
+                                   pagos = sum(pagos))
+
+#TABLA PARA BALANZA
+tabla1_bis <- ss_mensual %>% filter(year(fecha) >= 2017, 
+                            rubro %in% c("viajes_y_otros_pagos_con_tarjeta", 
+                            "servicios_de_transporte_de_pasajeros"), 
+                            !is.na(cobros)) %>%
+                            group_by(fecha) %>% 
+                            summarise(balanza =sum(balanza)) %>% 
                          mutate(color_bza=case_when(balanza >= 0 ~ "superávit",
                                                    TRUE ~ "déficit"))
+  
 ```
 
 + En el mes de `r mes`, los egresos de divisas por turismo, por el mercado oficial de cambios, alcanzaron un total de US\$`r tail(tabla1$pagos, n=1) %>% round(1)` millones, con una variación respecto al mismo mes del año `r as.character(anio_datos-1)` del `r ((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-12]-1)*100) %>% round(1)`%, y del `r ((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-36]-1)*100) %>% round(1)`% con respecto al mismo mes del año `r as.character(anio_datos-3)`. Por su parte, los ingresos fueron de US\$`r tail(tabla1$cobros, n=1) %>% round(1)` millones, con una variación interanual del `r ((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-12]-1)*100) %>% round(1)`% y del `r ((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-36]-1)*100) %>% round(1)`% con respecto a `r as.character(anio_datos-3)`.
 
-+ Continuando con la tendencia de los últimos años, la balanza de divisas en el mercado oficial, por turismo, es deficitaria. En el mes de `r mes` de `r as.character(anio_datos)`, se registró una balanza deficitaria en US\$`r ((-1)*tail(tabla1$balanza, n=1)) %>% round(1)` millones, mientras que en el mismo mes de `r as.character(anio_datos-1)` había sido también deficitaria en US\$`r ((-1)*(tabla1$balanza[length(tabla1$balanza)-12])) %>% round(1)` millones.
++ Continuando con la tendencia de los últimos años, la balanza de divisas en el mercado oficial, por turismo, es deficitaria. En el mes de `r mes` de `r as.character(anio_datos)`, se registró una balanza deficitaria en US\$`r ((-1)*tail(tabla1_bis$balanza, n=1)) %>% round(1)` millones, mientras que en el mismo mes de `r as.character(anio_datos-1)` había sido también deficitaria en US\$`r ((-1)*(tabla1_bis$balanza[length(tabla1_bis$balanza)-12])) %>% round(1)` millones.
 
 ```{r}
 ing_acum <- filter(tabla1, year(fecha) == anio_datos) %>% select(cobros) %>% sum()
@@ -251,11 +259,11 @@ g1 <- tabla1 %>%
              size = 1.5) +
   scale_color_manual(values = c("cobros" = cols_arg,
                                 "pagos" = cols_arg2[6]))+
- geom_col(aes(fecha, balanza, fill = color_bza,text = paste0('fecha: ', format(fecha,"%b-%y"),
+ geom_col(data=tabla1_bis, aes(fecha, balanza, fill = color_bza,text = paste0('fecha: ', format(fecha,"%b-%y"),
                                              '<br> balanza: USD ',format(round(balanza,1),big.mark=".",decimal.mark=",")," M"))) +
   scale_fill_manual(values = c("déficit" = cols_arg2[1],
                                "superávit" = cols_arg2[2]))+
-  scale_x_date(limits = c(min(as.Date(tabla1$fecha, origin = "1970-01-01"))-months(1),max(as.Date(tabla1$fecha, origin = "1970-01-01"))+months(1)),
+  scale_x_date(limits = c(min(as.Date(tabla1$fecha, origin = "1970-01-01"))-months(0),max(as.Date(tabla1$fecha, origin = "1970-01-01"))+months(1)),
                date_breaks = "2 months", 
                date_labels = "%b%y", 
                expand = c(0,0))+
@@ -332,7 +340,7 @@ g2 <- tabla2 %>%
   geom_bar(stat="identity", position = "dodge")+
   scale_fill_manual(values = c(cols_arg,cols_arg2[6]), labels= c("Ingresos", "Egresos")) +
   scale_x_date(
-    limits = c(min(tabla2$fecha)-months(1),max(tabla2$fecha)+months(1)),
+    limits = c(min(tabla2$fecha)-months(0),max(tabla2$fecha)+months(1)),
                date_breaks = "2 months", 
                date_labels = "%b%y", 
                expand = c(0,0))+
