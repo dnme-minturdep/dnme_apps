@@ -36,7 +36,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ### Cargo funciones de trabajo
 #source("0_funciones_de_trabajo.R", encoding = "UTF-8")
 # Definir mes para títulos ####
-mes <- "Junio"
+mes <- "Julio"
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
