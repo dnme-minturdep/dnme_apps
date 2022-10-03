@@ -28,6 +28,8 @@ library(webshot)
 library(data.table)
 library(plotly)
 library(haven)
+library(d4t4tur)
+
 Sys.setlocale(locale = "es_AR.UTF-8")
 ```
 
@@ -39,11 +41,11 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 # Definir mes / trimestre / año de referencia para títulos ####
 #fecha <- "2022-07-04"
 #mes <- "Marzo"
-trimestre <- "1er"
+trimestre <- "2do"
 anio <- "2022"
 Anio <- 2022
-trim_actual <- 1
-trim_anterior <- 4
+trim_actual <- 2
+trim_anterior <- 1
 anio_anterior <- 2021
 
 
@@ -77,12 +79,16 @@ theme_imet <- function() {
 <br>
 ```{r}
 # DATOS
-ruta <- list.files("/srv/DataDNMYE/evyth/", pattern = "EVyTH_Ondas*", full.names = T)
-temporal <- tempfile()
-unzip(ruta,exdir = temporal)
-evyth <- read_sav(list.files(temporal, pattern = ".sav", full.names = T)[[1]]) %>% 
-  filter(tipo_visitante == 1 & arg_o_ext == 1 & lubridate::yq(paste(anio, trimestre, "-")) <= yq(paste(Anio, trim_actual, "-"))) %>% 
-rename_with(.cols = starts_with("GastoViajeTotal_perCapita_Pesos"), .fn = ~ str_remove(.x, "[^GastoViajeTotal_perCapita_Pesos$].*"))
+# ruta <- list.files("/srv/DataDNMYE/evyth/", pattern = "EVyTH_Ondas*", full.names = T)
+# temporal <- tempfile()
+# unzip(ruta,exdir = temporal)
+# evyth <- read_sav(list.files(temporal, pattern = ".sav", full.names = T)[[1]]) %>% 
+#   filter(tipo_visitante == 1 & arg_o_ext == 1 & lubridate::yq(paste(anio, trimestre, "-")) <= yq(paste(Anio, trim_actual, "-"))) %>% 
+# rename_with(.cols = starts_with("GastoViajeTotal_perCapita_Pesos"), .fn = ~ str_remove(.x, "[^GastoViajeTotal_perCapita_Pesos$].*"))
+
+evyth <- arrow::read_parquet("/srv/DataDNMYE/evyth/base_trabajo/evyth_base_de_trabajo.parquet") %>% 
+   filter(tipo_visitante == 1 & arg_o_ext == 1 & lubridate::yq(paste(anio, trimestre, "-")) <= yq(paste(Anio, trim_actual, "-"))) %>% 
+  evyth::crear_etiqueta(c("px09_t","px10_1","px08_agrup","region_destino","region_origen","p005","p006_agrup"))
 
 ```
 
@@ -94,7 +100,7 @@ turismo_interno2 <- evyth %>%
             pernoctaciones = sum(pondera * px07, na.rm = T),
             estadia = pernoctaciones/turistas,
             gasto.promedio.nom = gasto_total/turistas,
-            gasto_total_real = sum(pondera * GastoViajeTotal_perCapita_Pesos, na.rm = T),
+            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2022_8, na.rm = T),
             gasto.promedio.real = gasto_total_real/turistas) %>%
   ungroup() %>% 
   group_by(trimestre) %>% 
@@ -121,7 +127,7 @@ turismo_interno_acum <- evyth %>%
             pernoctaciones = sum(pondera * px07, na.rm = T),
             estadia = pernoctaciones/turistas,
             gasto.promedio.nom = gasto_total/turistas,
-            gasto_total_real = sum(pondera * GastoViajeTotal_perCapita_Pesos, na.rm = T),
+            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2022_8, na.rm = T),
             gasto.promedio.real = gasto_total_real/turistas) %>%
   ungroup() %>% 
   mutate(var.turistas = turistas/lag(turistas,1)-1,
@@ -142,7 +148,7 @@ En este periodo los viajes tuvieron una estadía promedio de `r format(pull(roun
 turismo_interno_tabla <- turismo_interno2 %>%
   filter(trimestre == trim_actual, anio == Anio) %>% 
   mutate(periodo = paste0(trimestre,"° trimestre. ",anio)) %>% 
- #bind_rows(turismo_interno_acum) %>% 
+ bind_rows(turismo_interno_acum) %>% 
   mutate(across(-periodo, .fns = as.numeric),
          turistas_millones = turistas/1000000,
          gasto_total_millones = gasto_total/1000000,
@@ -339,7 +345,7 @@ grafico <- data_grafico %>%
            aes(fill = variacion_color, text=paste('período: ',trimestre,'° trimestre. ',anio,
                                                   '<br>variación: ',format(round(n,2),decimal.mark=",",big.mark="."), "%")))+
   geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-1", xend ="2021-4",y = 100, yend = 120), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
-  # geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-3", xend ="2021-4",y = 55, yend = 90), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
+  geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2022-1", xend ="2022-3",y = 110, yend = 120), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
   # geom_segment(data=filter(data_grafico,indicador=="variacion_tur"),aes(x = "2021-4", xend ="2022-1",y = 55, yend = 90), size = 1, color = "white", alpha = 1)+# Acá agrego "sensación" de corte
   scale_fill_manual(values = c("negativa" = cols_arg2[1], 
                                "positiva" = cols_arg2[2],
@@ -378,7 +384,10 @@ ggplotly(grafico,tooltip="text")
 ```{r}
 perfil_transporte <- evyth %>%
   filter(anio >= Anio-1, trimestre == trim_actual) %>%
-  mutate(categorias = as_factor(px09_t)) %>%
+  mutate(categorias = case_when(px09_t == 1 ~ "Automóvil",
+                                     px09_t == 2 ~ "Ómnibus",
+                                     px09_t == 3 ~ "Avión",
+                                     px09_t == 4 ~ "Resto")) %>%
   group_by(anio,categorias) %>%
   summarise(n = sum(pondera)) %>%
   ungroup() %>% 
@@ -389,11 +398,15 @@ perfil_transporte <- evyth %>%
   mutate(variacion = (participacion-lag(participacion,1))*100,
     indicador = "Tipo de transporte") %>% 
   select(-n) %>% 
-  filter(anio == Anio)
+  filter(anio == Anio) %>% 
+  arrange(desc(participacion))
 
 perfil_motivo <- evyth %>%
   filter(anio >= Anio-1, trimestre == trim_actual) %>%
-  mutate(categorias = as_factor(px10_1_t)) %>%
+  mutate(categorias = case_when(px10_1 %in% c("Trabajo, negocios, motivos profesionales",
+                                           "Visitas a familiares o amigos",
+                                           "Esparcimiento, ocio, recreacion") ~ px10_1,
+                            TRUE ~ "Resto")) %>% 
   group_by(anio,categorias) %>%
   summarise(n = sum(pondera)) %>%
   ungroup() %>% 
@@ -404,7 +417,8 @@ perfil_motivo <- evyth %>%
   mutate(variacion = (participacion-lag(participacion,1))*100,
          indicador = "Motivo de viaje") %>%
   select(-n) %>% 
-  filter(anio == Anio)
+  filter(anio == Anio) %>% 
+  arrange(desc(participacion))
 
 
 perfil_alojamiento <- evyth %>%
@@ -425,12 +439,12 @@ perfil_alojamiento <- evyth %>%
 
 perfil_region <- evyth %>%
   filter(anio >= Anio-1, trimestre == trim_actual) %>%
-  mutate(categorias = fct_collapse(as_factor(region_destino),
+  mutate(categorias = fct_collapse(as_factor(region_destino) ,
                                           "Prov. de Buenos Aires" = "Provincia de Buenos Aires - Partidos del GBA",
                                    "Prov. de Buenos Aires" =             "Provincia de Buenos Aires - Resto",
                                    "CABA" = "Ciudad de Buenos Aires"
          )
-  ) %>% 
+  ) %>%
   group_by(anio,categorias) %>%
   summarise(n = sum(pondera)) %>%
   ungroup() %>% 
@@ -491,7 +505,8 @@ caracteristicas_viaje <- viaje_interno %>%
     locations = cells_body(
       columns = vars(variacion),
       rows = variacion > 0)
-  )
+  ) %>% 
+  tab_options(row_group.font.weight = "bold")
 
 caracteristicas_viaje
 
@@ -574,7 +589,12 @@ perfil_edad <- evyth %>%
   mutate(variacion = (participacion-lag(participacion,1))*100,
          indicador = "Edad") %>%
   select(-n) %>% 
-  filter(anio == Anio)
+  filter(anio == Anio) %>% 
+  arrange(match(categorias, c("Menos de 14 años",
+                              "14 a 29 años",
+                              "30 a 44 años",
+                              "45 a 59 años",
+                              "60 años o más")))
 
 # tabla_29 - cacaracteristicas_visitante ####
 visitante_interno <- rbind(perfil_quintil, perfil_edad, perfil_origen, perfil_sexo)
@@ -622,7 +642,8 @@ visitante_interno %>%
     ),
     locations = cells_body(
       columns = vars(variacion),
-      rows = variacion > 0))
+      rows = variacion > 0)) %>% 
+  tab_options(row_group.font.weight = "bold")
  # ) -> caracteristicas_visitante
 
 #caracteristicas_visitante
@@ -641,4 +662,8 @@ visitante_interno %>%
 [**Informes**](https://www.yvera.tur.ar/estadistica/informe/info/encuesta-de-viajes-y-turismo-de-los-hogares-evyth)
 
 
+::: {.infobox}
 
+Para recibir las novedades del SINTA escribíle al bot de Telegram de la DNMyE [**SintIA**](https://bitacora.yvera.tur.ar/posts/2022-09-08-sintia/): @RDatinaBot 🤖
+
+:::
