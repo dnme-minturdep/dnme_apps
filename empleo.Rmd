@@ -1,6 +1,6 @@
 ---
 title: "Empleo en Turismo"
-description: "Puestos de trabajo registrados, empleo por género y empresas en ramas turísticas a partir de datos abiertos publicados por el Ministerio de Desarrollo Productivo en base al SIPA"
+description: "Puestos de trabajo registrados, empleo por género y empresas en ramas turísticas a partir de datos abiertos publicados por el Centro de Estudios para la Producción (CEP XXI) en base al SIPA"
 output: distill::distill_article
 ---
 
@@ -116,9 +116,9 @@ ramas <- puestos %>%
 
 
 <br>
-A continuación se presenta información sobre empleo registrado en Ramas Características del Turismo, con datos abiertos publicados por el [Ministerio de Desarrollo Productivo (MDP)](https://datos.produccion.gob.ar/), al mes de `r format(as.Date(max(puestos$fecha)),"%B %Y")`.
+A continuación se presenta información sobre empleo registrado en Ramas Características del Turismo, con datos abiertos publicados por el [Centro de Estudios para la Producción (CEP XXI)](https://datos.produccion.gob.ar/), al mes de `r format(as.Date(max(puestos$fecha)),"%B %Y")`.
 
-La metodología de las series elaboradas por el MDP se encuentra [aquí](https://datos.produccion.gob.ar/dataset/15211f62-04dc-42ed-acdd-ff2bbcaf4779/resource/0ee975c9-8241-4d29-9013-7e190644faad/download/metodologia-da.pdf).
+La metodología de las series elaboradas por el CEP XXI se encuentra [aquí](https://datos.produccion.gob.ar/dataset/15211f62-04dc-42ed-acdd-ff2bbcaf4779/resource/0ee975c9-8241-4d29-9013-7e190644faad/download/metodologia-da.pdf).
 
 Se seleccionaron `r length(ramas_turismo_6d)` ramas de actividad a 6 dígitos de CLAE (ver Anexo), agrupándolas en 5 categorías:
 
@@ -201,7 +201,7 @@ grafico_empleo_series <- ggplot(indice.empleo,aes(x=as.Date(fecha),y=indice,colo
   scale_color_manual(values=cols_arg2)+
   theme_minimal()+
   labs(title="Evolución de los puestos de trabajo registrados. Índice ene-2007 = 100",x="",y="",
-       caption="DNMyE en base a MDP")+
+       caption="DNMyE en base a CEP XXI")+
   theme(
     text = element_text(family = "Encode Sans Normal"), 
     plot.title    = element_markdown(size = 12),
@@ -276,7 +276,7 @@ grafico_empleo_cat_rct <- ggplot(data_grafico_empleo_cat_rct,aes(x=reorder(cat.r
     strip.placement = "outside") +
   coord_flip(clip = "off")+
   labs(x="",y="",title= "Empleo en Ramas Características del Turismo",
-       subtitle = glue("Miles de puestos. {format(max(as.Date(puestos$fecha)),'%B')} {format(max(as.Date(puestos$fecha)),'%Y')} <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a MDP")
+       subtitle = glue("Miles de puestos. {format(max(as.Date(puestos$fecha)),'%B')} {format(max(as.Date(puestos$fecha)),'%Y')} <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a CEP XXI")
 grafico_empleo_cat_rct
 ```
 
@@ -303,7 +303,7 @@ grafico_empleo_cat_series <- ggplot(indice.cat.rct,aes(x=as.Date(fecha),y=indice
   scale_color_manual(values=cols_arg2)+
   theme_minimal()+
   labs(title="Evolución de los puestos de trabajo registrados. Índice ene-2007 = 100",x="",y="",
-       caption="DNMyE en base a MDP")+
+       caption="DNMyE en base a CEP XXI")+
   theme(
     text = element_text(family = "Encode Sans Normal"), 
     plot.title    = element_markdown(size = 12),
@@ -388,7 +388,7 @@ grafico_empleo_series_2 <- ggplot(data_grafico_empleo_todas)+
   theme_minimal()+
   labs(title="Evolución del empleo en ramas turísticas",subtitle = "Indice ene 2007=100. El grosor de la línea depende del peso de cada rama en el empleo",
     x="",y="",
-       caption="DNMyE en base a MDP")+
+       caption="DNMyE en base a CEP XXI")+
   theme(
     text = element_text(family = "Encode Sans Normal"), 
     plot.title    = element_markdown(size = 10),
@@ -467,7 +467,7 @@ grafico_genero_series <- ggplot(genero.rct.vs.no.rct,aes(x=as.Date(fecha),y=shar
   scale_color_manual(values=cols_arg2)+
   theme_minimal()+
   labs(title="Evolución del porcentaje de mujeres sobre el total de puestos de trabajo",x="",y="",
-       caption="DNMyE en base a MDP")+
+       caption="DNMyE en base a CEP XXI")+
   theme(
     text = element_text(family = "Encode Sans Normal"), 
     plot.title    = element_markdown(size = 12),
@@ -535,7 +535,7 @@ grafico_genero_categorias <- ggplot(genero.categorias,aes(x=as.Date(fecha),y=sha
   scale_color_manual(values=cols_arg2)+
   theme_minimal()+
   labs(title="Evolución del porcentaje de mujeres sobre el total de puestos de trabajo",x="",y="",
-       caption="DNMyE en base a MDP")+
+       caption="DNMyE en base a CEP XXI")+
   theme(
     text = element_text(family = "Encode Sans Normal"), 
     plot.title    = element_markdown(size = 12),
@@ -602,7 +602,7 @@ grafico_genero_series_2 <- ggplot(data_grafico_genero_todas)+
   theme_minimal()+
   labs(title="Evolución del porcentaje de mujeres en puestos de trabajo",subtitle = " grosor de la línea depende del peso de cada rama en el empleo",
     x="",y="",
-       caption="DNMyE en base a MDP")+
+       caption="DNMyE en base a CEP XXI")+
   theme(
     text = element_text(family = "Encode Sans Normal"), 
     plot.title    = element_markdown(size = 10),
@@ -671,7 +671,7 @@ grafico_empresas_series <- ggplot(indice.empresas,aes(x=as.Date(fecha),y=indice,
   scale_color_manual(values=cols_arg2)+
   theme_minimal()+
   labs(title="Evolución de los empleadores. Índice ene-2007 = 100",x="",y="",
-       caption="DNMyE en base a MDP")+
+       caption="DNMyE en base a CEP XXI")+
   theme(
     text = element_text(family = "Encode Sans Normal"), 
     plot.title    = element_markdown(size = 12),
@@ -748,7 +748,7 @@ grafico_empresas_cat_rct <- ggplot(data_grafico_empresas_cat_rct,aes(x=reorder(c
     strip.placement = "outside") +
   coord_flip(clip = "off")+
   labs(x="",y="",title= "Empleadores en Ramas Características del Turismo",
-       subtitle = glue("Miles de empresas. {format(as.Date(fecha_empresas),'%B')} {format(as.Date(fecha_empresas),'%Y')} <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a MDP")
+       subtitle = glue("Miles de empresas. {format(as.Date(fecha_empresas),'%B')} {format(as.Date(fecha_empresas),'%Y')} <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a CEP XXI")
 grafico_empresas_cat_rct
 ```
 
@@ -775,7 +775,7 @@ grafico_empresas_cat_series <- ggplot(indice.empresas.cat.rct,aes(x=as.Date(fech
   scale_color_manual(values=cols_arg2)+
   theme_minimal()+
   labs(title="Evolución de los empleadores en ramas turísticas. Índice ene-2007 = 100",x="",y="",
-       caption="DNMyE en base a MDP")+
+       caption="DNMyE en base a CEP XXI")+
   theme(
     text = element_text(family = "Encode Sans Normal"), 
     plot.title    = element_markdown(size = 12),
@@ -854,7 +854,7 @@ grafico_empresas_series_2 <- ggplot(data_grafico_empresas_todas)+
   theme_minimal()+
   labs(title="Evolución de las empresas en ramas turísticas",subtitle = "Indice ene 2007=100. El grosor de la línea depende del peso de cada rama en el número de empresas",
     x="",y="",
-       caption="DNMyE en base a MDP")+
+       caption="DNMyE en base a CEP XXI")+
   theme(
     text = element_text(family = "Encode Sans Normal"), 
     plot.title    = element_markdown(size = 10),
