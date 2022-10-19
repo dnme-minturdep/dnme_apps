@@ -1,0 +1,1474 @@
+---
+title: "Conectividad"
+description: "Resumen de conectividad aérea de la Argentina, en base a los registros de la Administración Nacional de Aviación Civil (ANAC)"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, message = F, warning = F, 
+                      fig.align = 'left', fig.width = 10,fig.height = 6)
+
+library(tidyverse)
+library(readxl)
+library(data.table)
+library(comunicacion)
+library(lubridate)
+library(gt)
+options(scipen = 999)
+
+Sys.setlocale(locale = "es_AR.UTF-8")
+
+```
+
+```{r}
+# Cargamos la base.
+base_total <- fread(file = "/srv/DataDNMYE/aerocomercial/anac/tabla_final.txt",
+                    header = FALSE, 
+                    sep = ";", 
+                    dec = ",",
+                    stringsAsFactors = T,
+                    encoding = "Latin-1",
+                    na.strings = c("N/A", ""),
+                    select = c("V5", "V6", "V10", "V11", "V14", "V15", "V18", "V19", "V20", "V23", "V24", "V26","V37", "V38", "V39", "V40", "V41", "V43", "V45")) %>% 
+  # Renombramos las variables
+  rename(Año_Local = V5,
+         Mes_Local = V6,
+         OrigenOACI = V10,
+         OrigenIATA = V11,
+         DestinoOACI = V14,
+         DestinoIATA = V15,
+         CityPair = V18,
+         ClasificaciónVuelo = V19,
+         AD_OACI = V20,
+         TipodeMovimiento = V23,
+         ClasedeVuelo = V24,
+         AerolineaNombre = V26,
+         ExclusivoCarga = V37,
+         AerolineaAsientos = V38,
+         Asientos_Pax = V39,
+         Movimientos = V40,
+         Vuelos = V41,
+         Pax = V43,
+         Pasajeros = V45) %>%
+  # Identificamos los movimientos sin pasajeros.
+  mutate(mov_sin_pax = case_when(Pax == 0 ~ 1,
+                                 TRUE ~ 0)) %>%
+  # Y nos quedamos con el universo de análisis de interés.
+  #                                                     + Vuelos regulares con pasajeros (>0).
+  #                                                     + Vuelos no regulares con pasajeros (>0).
+  #                                                     + Vuelos mixtos con pasajeros (>0).
+  filter((ClasedeVuelo == "Regular" | ClasedeVuelo == "No Regular") & ExclusivoCarga == "Mixto" & mov_sin_pax == 0 & Año_Local %in% c(2021, 2022) & Mes_Local == 9) %>% 
+  mutate(across(.cols = everything(), ~ na_if(., "N/A")),
+         OrigenOACI = case_when(OrigenOACI == "HAAA" & AerolineaNombre == "Ethiopian Airlines" ~ "HAAB",
+                                OrigenOACI == "LFGP" & AerolineaNombre == "Air France" ~ "LFPG",
+                                T ~ as.character(OrigenOACI)),
+         DestinoOACI = case_when(DestinoOACI == "LFGP" & AerolineaNombre == "Air France" ~ "LFPG",
+                                 T ~ as.character(DestinoOACI)))
+```
+
+```{r}
+##### Información aerolíneas ######
+aerolineas <- read_xlsx("/srv/DataDNMYE/aerocomercial/libros_de_codigos/ANAC/empresas.xlsx") %>% 
+  select(empresa_anac,
+         empresa_agrup_def)
+
+# Unimos.
+base_total <- base_total %>%
+  left_join(aerolineas, by = c("AerolineaNombre" = "empresa_anac")) %>%
+  mutate(AerolineaNombre = case_when(is.na(AerolineaNombre) ~ "Otras empresas",
+                                     T ~ AerolineaNombre),
+         empresa_agrup_def = case_when(AerolineaNombre == "Otras empresas" ~ "Otras empresas",
+                                       TRUE ~ empresa_agrup_def))
+
+```
+
+```{r}
+##### Información aeropuertos #####
+
+# Cargamos la base de aeropuertos.
+aeropuertos <- read_xlsx("/srv/DataDNMYE/aerocomercial/libros_de_codigos/ANAC/aeropuertos_nuevos.xlsx", col_types = "text") %>% 
+  mutate(aeropuerto_etiqueta_anac = case_when(is.na(aeropuerto_etiqueta_anac) ~ nombre_ingles,
+                                              T ~ aeropuerto_etiqueta_anac),
+         localidad_etiqueta_indec = case_when(is.na(localidad_etiqueta_indec) ~ localidad_ingles,
+                                              T ~ localidad_etiqueta_indec)) %>% 
+  select(codigo_oaci,
+         aeropuerto_codigo_IATA,
+         aeropuerto_etiqueta_anac,
+         localidad_etiqueta_indec,
+         localidad_etiqueta_indec_bsas_agrup,
+         provincia_etiqueta_indec = provincia,
+         pais_etiqueta_indec,
+         continente_etiqueta_indec,
+         continente_etiqueta_migraciones)
+
+# Unimos la información de viajes con la de aeropuertos.
+# Aeropuerto - ORIGEN
+base_total <- base_total %>%
+  left_join(aeropuertos, by = c("OrigenOACI" = "codigo_oaci")) %>% 
+  rename(origen_aeropuerto_etiqueta = aeropuerto_etiqueta_anac,
+         origen_localidad_etiqueta = localidad_etiqueta_indec, 
+         origen_localidad_etiqueta_bsas_agrup = localidad_etiqueta_indec_bsas_agrup, 
+         origen_provincia_etiqueta = provincia_etiqueta_indec,
+         origen_pais_etiqueta = pais_etiqueta_indec,
+         inicio_continente_etiqueta_indec = continente_etiqueta_indec,
+         origen_continente_etiqueta_migraciones = continente_etiqueta_migraciones)
+
+# Aeropuerto - DESTINO
+# unimos ambos datasets.
+base_total <- base_total %>%
+  left_join(aeropuertos, by = c("DestinoOACI" = "codigo_oaci")) %>% 
+  rename(destino_aeropuerto_etiqueta = aeropuerto_etiqueta_anac,
+         destino_localidad_etiqueta = localidad_etiqueta_indec, 
+         destino_localidad_etiqueta_bsas_agrup = localidad_etiqueta_indec_bsas_agrup, 
+         destino_provincia_etiqueta = provincia_etiqueta_indec,
+         destino_pais_etiqueta = pais_etiqueta_indec,
+         destino_continente_etiqueta_indec = continente_etiqueta_indec,
+         destino_continente_etiqueta_migraciones = continente_etiqueta_migraciones)
+
+# Unimos las etiquetas.
+base_total <- base_total  %>% 
+  mutate(ruta_nombre = paste0(origen_localidad_etiqueta, "_", destino_localidad_etiqueta),
+         ruta_nombre = case_when(ruta_nombre == "Córdoba_Buenos Aires" ~ "Buenos Aires_Córdoba",
+                                 TRUE ~ ruta_nombre))
+```
+
+```{r}
+# Realizamos algunas recodificaciones
+base_total <- base_total  %>%
+  mutate(empresa_agrup_def = case_when(empresa_agrup_def == "Iberia Airlines" & ruta_nombre == "Buenos Aires_Barcelona" ~ "Level",
+                                       empresa_agrup_def == "Amaszonas" & ruta_nombre == "Buenos Aires_Asunción" ~ "Paranair",
+                                       empresa_agrup_def == "Amaszonas" & ruta_nombre == "Salta_Asunción" ~ "Paranair",
+                                       TRUE ~ empresa_agrup_def))
+
+# Ahora, generamos diversas variables que den cuenta de los destinos de determinados vuelos.
+base_total <- base_total  %>%
+  mutate(destino_final_aeropuerto = case_when(empresa_agrup_def == "Emirates Airline" ~ "Dubai International Airport",
+                                              empresa_agrup_def == "Qatar Airways" & origen_pais_etiqueta == "Argentina" ~ "Hamad International Airport",
+                                              empresa_agrup_def == "Turkish Airlines" & origen_pais_etiqueta == "Argentina" ~ "Istanbul International Airport",
+                                              empresa_agrup_def == "Air Europa" & destino_localidad_etiqueta == "Asunción" ~ "Adolfo Suárez Madrid–Barajas Airport",
+                                              empresa_agrup_def == "Air Europa" & destino_localidad_etiqueta == "Montevideo" ~ "Adolfo Suárez Madrid–Barajas Airport",
+                                              empresa_agrup_def == "Swiss International Air Lines" & origen_pais_etiqueta == "Argentina" ~ "Zürich International Airport",
+                                              empresa_agrup_def == "Ethiopian Airlines" & origen_pais_etiqueta == "Argentina" ~ "Addis Ababa Bole International Airport",
+                                              empresa_agrup_def == "KLM" & origen_localidad_etiqueta %in% c("Santiago", "Ezeiza") ~ "Amsterdam Airport Schiphol",
+                                              empresa_agrup_def == "Conviasa" & origen_localidad_etiqueta == "Ezeiza" ~ "Aeropuerto Internacional de Maiquetía Simón Bolívar",
+                                              TRUE ~ destino_aeropuerto_etiqueta),
+         destino_final_localidad = case_when(empresa_agrup_def == "Emirates Airline" ~ "Dubai",
+                                             empresa_agrup_def == "Qatar Airways" & origen_pais_etiqueta == "Argentina" ~ "Doha",
+                                             empresa_agrup_def == "Turkish Airlines" & origen_pais_etiqueta == "Argentina" ~ "Estambul",
+                                             empresa_agrup_def == "Air Europa" & destino_localidad_etiqueta == "Asunción" ~ "Madrid",
+                                             empresa_agrup_def == "Air Europa" & destino_localidad_etiqueta == "Montevideo" ~ "Madrid",
+                                             empresa_agrup_def == "Swiss International Air Lines" & origen_pais_etiqueta == "Argentina" ~ "Zürich",
+                                             empresa_agrup_def == "Ethiopian Airlines" & origen_pais_etiqueta == "Argentina" ~ "Addis Ababa",
+                                             empresa_agrup_def == "KLM" & origen_localidad_etiqueta %in% c("Santiago", "Ezeiza") ~ "Amsterdam",
+                                             empresa_agrup_def == "Conviasa" & origen_localidad_etiqueta == "Ezeiza" ~ "Caracas",
+                                             TRUE ~ destino_localidad_etiqueta_bsas_agrup),
+         destino_final_pais = case_when(empresa_agrup_def == "Emirates Airline" ~ "Emiratos Árabes Unidos",
+                                        empresa_agrup_def == "Qatar Airways" & origen_pais_etiqueta == "Argentina" ~ "Qatar",
+                                        empresa_agrup_def == "Turkish Airlines" & origen_pais_etiqueta == "Argentina" ~ "Turquía",
+                                        empresa_agrup_def == "Air Europa" & destino_localidad_etiqueta == "Asunción" ~ "España",
+                                        empresa_agrup_def == "Air Europa" & destino_localidad_etiqueta == "Montevideo" ~ "España",
+                                        empresa_agrup_def == "Swiss International Air Lines" & origen_pais_etiqueta == "Argentina" ~ "Suiza",
+                                        empresa_agrup_def == "Ethiopian Airlines" & origen_pais_etiqueta == "Argentina" ~ "Etiopía",
+                                        empresa_agrup_def == "KLM" & origen_localidad_etiqueta %in% c("Santiago", "Ezeiza") ~ "Países Bajos",
+                                        empresa_agrup_def == "Conviasa" & origen_localidad_etiqueta == "Ezeiza" ~ "Venezuela",
+                                        TRUE ~ destino_pais_etiqueta),
+         destino_final_continente_etiqueta_indec = case_when(empresa_agrup_def == "Emirates Airline" ~ "Asia",
+                                                             empresa_agrup_def == "Qatar Airways" & origen_pais_etiqueta == "Argentina" ~ "Asia",
+                                                             empresa_agrup_def == "Turkish Airlines" & origen_pais_etiqueta == "Argentina" ~ "Europa",
+                                                             empresa_agrup_def == "Air Europa" & destino_localidad_etiqueta_bsas_agrup == "Asunción" ~ "Europa",
+                                                             empresa_agrup_def == "Air Europa" & destino_localidad_etiqueta_bsas_agrup == "Montevideo" ~ "Europa",
+                                                             empresa_agrup_def == "Swiss International Air Lines" & origen_pais_etiqueta == "Argentina" ~ "Europa",
+                                                             empresa_agrup_def == "Ethiopian Airlines" & origen_pais_etiqueta == "Argentina" ~ "África",
+                                                             empresa_agrup_def == "KLM" & origen_localidad_etiqueta %in% c("Santiago", "Ezeiza") ~ "Europa",
+                                                             empresa_agrup_def == "Conviasa" & origen_localidad_etiqueta == "Ezeiza" ~ "América",
+                                                             TRUE ~ destino_continente_etiqueta_indec),
+         destino_final_continente_desagrup = case_when(empresa_agrup_def == "Emirates Airline" ~ "Asia",
+                                                       empresa_agrup_def == "Qatar Airways" & origen_pais_etiqueta == "Argentina" ~ "Asia",
+                                                       empresa_agrup_def == "Turkish Airlines" & origen_pais_etiqueta == "Argentina" ~ "Europa",
+                                                       empresa_agrup_def == "Air Europa" & destino_localidad_etiqueta_bsas_agrup == "Asunción" ~ "Europa",
+                                                       empresa_agrup_def == "Air Europa" & destino_localidad_etiqueta_bsas_agrup == "Montevideo" ~ "Europa",
+                                                       empresa_agrup_def == "Swiss International Air Lines" & origen_pais_etiqueta == "Argentina" ~ "Europa",
+                                                       empresa_agrup_def == "Ethiopian Airlines" & origen_pais_etiqueta == "Argentina" ~ "África",
+                                                       empresa_agrup_def == "KLM" & origen_localidad_etiqueta %in% c("Santiago", "Ezeiza") ~ "Europa",
+                                                       empresa_agrup_def == "Conviasa" & origen_localidad_etiqueta == "Ezeiza" ~ "América del Sur",
+                                                       TRUE ~ destino_continente_etiqueta_migraciones))
+
+# De manera similar, generamos diversas variables que den cuenta de los orígenes
+# de determinados vuelos.
+base_total <- base_total  %>%
+  mutate(inicio_aeropuerto = case_when(empresa_agrup_def == "Emirates Airline" ~ "Dubai International Airport",
+                                       empresa_agrup_def == "Qatar Airways" & origen_pais_etiqueta == "Brasil" ~ "Hamad International Airport",
+                                       empresa_agrup_def == "Turkish Airlines" & origen_pais_etiqueta == "Brasil" ~ "Istanbul International Airport",
+                                       empresa_agrup_def == "Air Europa" & origen_localidad_etiqueta_bsas_agrup == "Asunción" ~ "Adolfo Suárez Madrid–Barajas Airport",
+                                       empresa_agrup_def == "Air Europa" & origen_localidad_etiqueta_bsas_agrup == "Montevideo" ~ "Adolfo Suárez Madrid–Barajas Airport",
+                                       empresa_agrup_def == "Swiss International Air Lines" & origen_pais_etiqueta == "Brasil" ~ "Zürich International Airport",
+                                       empresa_agrup_def == "Ethiopian Airlines" & destino_pais_etiqueta == "Argentina" ~ "Addis Ababa Bole International Airport",
+                                       empresa_agrup_def == "KLM" & destino_localidad_etiqueta %in% c("Santiago", "Ezeiza") ~ "Amsterdam Airport Schiphol",
+                                       empresa_agrup_def == "Conviasa" & destino_localidad_etiqueta == "Ezeiza" ~ "Aeropuerto Internacional de Maiquetía Simón Bolívar",
+                                       TRUE ~ origen_aeropuerto_etiqueta),
+         inicio_localidad = case_when(empresa_agrup_def == "Emirates Airline" ~ "Dubai",
+                                      empresa_agrup_def == "Qatar Airways" & origen_pais_etiqueta == "Brasil" ~ "Doha",
+                                      empresa_agrup_def == "Turkish Airlines" & origen_pais_etiqueta == "Brasil" ~ "Estambul",
+                                      empresa_agrup_def == "Air Europa" & origen_localidad_etiqueta_bsas_agrup == "Asunción" ~ "Madrid",
+                                      empresa_agrup_def == "Air Europa" & origen_localidad_etiqueta_bsas_agrup == "Montevideo" ~ "Madrid",
+                                      empresa_agrup_def == "Swiss International Air Lines" & origen_pais_etiqueta == "Brasil" ~ "Zürich",
+                                      empresa_agrup_def == "Ethiopian Airlines" & destino_pais_etiqueta == "Argentina" ~ "Addis Ababa",
+                                      empresa_agrup_def == "KLM" & destino_localidad_etiqueta %in% c("Santiago", "Ezeiza") ~ "Amsterdam",
+                                      empresa_agrup_def == "Conviasa" & destino_localidad_etiqueta == "Ezeiza" ~ "Caracas",
+                                      TRUE ~ origen_localidad_etiqueta_bsas_agrup),
+         inicio_pais = case_when(empresa_agrup_def == "Emirates Airline" ~ "Emiratos Árabes Unidos",
+                                 empresa_agrup_def == "Qatar Airways" & origen_pais_etiqueta == "Brasil" ~ "Qatar",
+                                 empresa_agrup_def == "Turkish Airlines" & origen_pais_etiqueta == "Brasil" ~ "Turquía",
+                                 empresa_agrup_def == "Air Europa" & origen_localidad_etiqueta_bsas_agrup == "Asunción" ~ "España",
+                                 empresa_agrup_def == "Air Europa" & origen_localidad_etiqueta_bsas_agrup == "Montevideo" ~ "España",
+                                 empresa_agrup_def == "Swiss International Air Lines" & origen_pais_etiqueta == "Brasil" ~ "Suiza",
+                                 empresa_agrup_def == "Ethiopian Airlines" & destino_pais_etiqueta == "Argentina" ~ "Etiopía",
+                                 empresa_agrup_def == "KLM" & destino_localidad_etiqueta %in% c("Santiago", "Ezeiza") ~ "Países Bajos",
+                                 empresa_agrup_def == "Conviasa" & destino_localidad_etiqueta == "Ezeiza" ~ "Venezuela",
+                                 TRUE ~ origen_pais_etiqueta),
+         inicio_continente_etiqueta_indec = case_when(empresa_agrup_def == "Emirates Airline" ~ "Asia",
+                                                      empresa_agrup_def == "Qatar Airways" & origen_pais_etiqueta == "Brasil" ~ "Asia",
+                                                      empresa_agrup_def == "Turkish Airlines" & origen_pais_etiqueta == "Brasil" ~ "Europa",
+                                                      empresa_agrup_def == "Air Europa" & origen_localidad_etiqueta_bsas_agrup == "Asunción" ~ "Europa",
+                                                      empresa_agrup_def == "Air Europa" & origen_localidad_etiqueta_bsas_agrup == "Montevideo" ~ "Europa",
+                                                      empresa_agrup_def == "Swiss International Air Lines" & origen_pais_etiqueta == "Brasil" ~ "Europa",
+                                                      empresa_agrup_def == "Ethiopian Airlines" & destino_pais_etiqueta == "Argentina" ~ "África",
+                                                      empresa_agrup_def == "KLM" & destino_localidad_etiqueta %in% c("Santiago", "Ezeiza") ~ "Europa",
+                                                      empresa_agrup_def == "Conviasa" & destino_localidad_etiqueta == "Ezeiza" ~ "América",
+                                                      TRUE ~ inicio_continente_etiqueta_indec),
+         inicio_continente_desagrup = case_when(empresa_agrup_def == "Emirates Airline" ~ "Asia",
+                                                empresa_agrup_def == "Qatar Airways" & origen_pais_etiqueta == "Brasil" ~ "Asia",
+                                                empresa_agrup_def == "Turkish Airlines" & origen_pais_etiqueta == "Brasil" ~ "Europa",
+                                                empresa_agrup_def == "Air Europa" & origen_localidad_etiqueta_bsas_agrup == "Asunción" ~ "Europa",
+                                                empresa_agrup_def == "Air Europa" & origen_localidad_etiqueta_bsas_agrup == "Montevideo" ~ "Europa",
+                                                empresa_agrup_def == "Swiss International Air Lines" & origen_pais_etiqueta == "Brasil" ~ "Europa",
+                                                empresa_agrup_def == "Ethiopian Airlines" & destino_pais_etiqueta == "Argentina" ~ "África",
+                                                empresa_agrup_def == "KLM" & destino_localidad_etiqueta %in% c("Santiago", "Ezeiza") ~ "Europa",
+                                                empresa_agrup_def == "Conviasa" & destino_localidad_etiqueta == "Ezeiza" ~ "América del Sur",
+                                                TRUE ~ origen_continente_etiqueta_migraciones))
+
+```
+
+
+
+# **CABOTAJE**
+
+<br>
+
+```{r}
+###############################
+
+# Debates sobre regiones
+# CABA Y BS AS, Cómo las computamos? Creamos una región nueva AMBA? # Recategorizar.
+
+# Servicios de transporte aereo
+# Cabotaje
+cabotaje <- base_total %>% 
+  filter(ClasificaciónVuelo == "Cabotaje" & TipodeMovimiento == "Aterrizaje") %>% 
+  mutate(region_destino = case_when(destino_provincia_etiqueta == "Buenos Aires" ~ "Buenos Aires",
+                                    destino_provincia_etiqueta == "Ciudad Autónoma de Buenos Aires" ~ "AMBA",
+                                    destino_provincia_etiqueta == "Córdoba" ~ "Córdoba",
+                                    destino_provincia_etiqueta == "Tierra del Fuego, Antártida e Islas del Atlántico Sur" ~ "Patagonia",
+                                    destino_provincia_etiqueta == "Santa Cruz" ~ "Patagonia",
+                                    destino_provincia_etiqueta == "Chubut" ~ "Patagonia",
+                                    destino_provincia_etiqueta == "Neuquén" ~ "Patagonia",
+                                    destino_provincia_etiqueta == "Río Negro" ~ "Patagonia",
+                                    destino_provincia_etiqueta == "La Pampa" ~ "Patagonia",
+                                    destino_provincia_etiqueta == "Mendoza" ~ "Cuyo",
+                                    destino_provincia_etiqueta == "San Juan" ~ "Cuyo",
+                                    destino_provincia_etiqueta == "San Luis" ~ "Cuyo",
+                                    destino_provincia_etiqueta == "La Rioja" ~ "Norte",
+                                    destino_provincia_etiqueta == "Catamarca" ~ "Norte",
+                                    destino_provincia_etiqueta == "Salta" ~ "Norte",
+                                    destino_provincia_etiqueta == "Jujuy" ~ "Norte",
+                                    destino_provincia_etiqueta == "Santiago del Estero" ~ "Norte",
+                                    destino_provincia_etiqueta == "Tucumán" ~ "Norte",
+                                    destino_provincia_etiqueta == "Santa Fe" ~ "Litoral",
+                                    destino_provincia_etiqueta == "Chaco" ~ "Litoral",
+                                    destino_provincia_etiqueta == "Formosa" ~ "Litoral",
+                                    destino_provincia_etiqueta == "Misiones" ~ "Litoral",
+                                    destino_provincia_etiqueta == "Corrientes" ~ "Litoral",
+                                    destino_provincia_etiqueta == "Entre Ríos" ~ "Litoral",
+                                    T ~ "No hay info"),
+         region_destino = case_when(destino_aeropuerto_etiqueta %in% c("Aeropuerto Int. Ministro Pistarini", "Aeropuerto Int. de San Fernando", "Aeropuerto El Palomar") ~ "AMBA",
+                                    T ~ region_destino))
+
+#Filtramos de momento los casos sin info.
+cabotaje <- cabotaje %>% 
+  filter(region_destino != "No hay info") # Que hacemos con los casos que van a malvinas?
+```
+
+```{r}
+# 1- Frecuencias aéreas de vuelos de cabotaje por región de destino (año actual vs pasado).
+#   cats:  Total CABA Patagonia Litoral Norte Cuyo Córdoba Buenos Aires. Grafico de barras.
+cabotaje %>% 
+  group_by(Año_Local, region_destino) %>% 
+  summarise(frecuencias = sum(Movimientos)) %>% 
+  ggplot(aes(x = reorder(region_destino, -frecuencias), y = frecuencias, fill = as.factor(Año_Local))) +
+  geom_bar(position = position_dodge(), stat = "identity") +
+  geom_text(aes(label = frecuencias),  position = position_dodge(width = 1),
+            vjust = -0.5,)+ 
+  scale_fill_dnmye(palette = "c2_contraste")+
+  labs(title = "Frecuencias aéreas de vuelos de cabotaje por región de destino",
+       subtitle = "Septiembre",
+       y = "Frecuencias aéreas totales",
+       x = "",
+       fill = "",
+       caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+<br>
+
+```{r}
+# 2- Frecuencias aéreas de vuelos de cabotaje por región de destino según mes. Año 2015
+# cats: mismas categorías. Cuadro de doble entrada.
+frq_reg_dest_22 <- cabotaje %>% 
+  filter(Año_Local == 2022) %>% 
+  group_by(Mes_Local, region_destino) %>% 
+  summarise(frecuencias = sum(Movimientos)) %>% 
+  mutate(Mes_Local = month(Mes_Local, label = T, abbr = F)) %>% 
+  pivot_wider(names_from = region_destino, values_from = frecuencias)
+
+frq_reg_dest_21 <- cabotaje %>% 
+  filter(Año_Local == 2021) %>% 
+  group_by(Mes_Local, region_destino) %>% 
+  summarise(frecuencias = sum(Movimientos)) %>% 
+  mutate(Mes_Local = month(Mes_Local, label = T, abbr = F)) %>% 
+  pivot_wider(names_from = region_destino, values_from = frecuencias)
+
+frq_reg_dest_22 <- frq_reg_dest_22 %>% 
+  left_join(frq_reg_dest_21, by = "Mes_Local") %>% 
+  janitor::clean_names() %>%
+  mutate(across(.cols = c(2:14), ~ as.numeric(.)),
+         var_inter_bsas = round((buenos_aires_x/buenos_aires_y)-1, 1),
+         var_inter_patagonia = round((patagonia_x/patagonia_y)-1, 1),
+         var_inter_amba = round((amba_x/amba_y)-1, 1),
+         var_inter_cordoba = round((cordoba_x/cordoba_y)-1, 1),
+         var_inter_norte = round((norte_x/norte_y)-1, 1),
+         var_inter_cuyo = round((cuyo_x/cuyo_y)-1, 1),
+         var_inter_litoral = round((litoral_x/litoral_y)-1, 1)) %>%
+  select(-contains("_y"))
+
+col_order <- c(1, 2, 11, 3, 9, 4, 12, 5, 14, 6, 15, 7, 13, 8, 10)
+
+frq_reg_dest_22 <- frq_reg_dest_22[, col_order]
+
+frq_reg_dest_22 %>%
+  ungroup() %>% 
+  gt() %>% 
+  tab_header(
+    title = md("__FRECUENCIAS AÉREAS DE VUELOS DE CABOTAJE POR REGIÓN DE DESTINO__"),
+    subtitle = "2022") %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    mes_local = md("**Mes**"),
+    amba_x = md("**AMBA**"),
+    var_inter_amba = md("**Variación interanual (%)**"),
+    buenos_aires_x = md("**Buenos Aires**"),
+    var_inter_bsas = md("**Variación interanual (%)**"),
+    cordoba_x = md("**Córdoba**"),
+    var_inter_cordoba = md("**Variación interanual (%)**"),
+    litoral_x = md("**Litoral**"),
+    var_inter_litoral = md("**Variación interanual (%)**"),
+    cuyo_x = md("**Cuyo**"),
+    var_inter_cuyo = md("**Variación interanual (%)**"),
+    norte_x = md("**Norte**"),
+    var_inter_norte = md("**Variación interanual (%)**"),
+    patagonia_x = md("**Patagonia**"),
+    var_inter_patagonia = md("**Variación interanual (%)**")) %>% 
+  cols_align(
+    align = "center",
+    columns = everything())  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_percent(columns = c(3, 5, 7, 9, 11, 13, 15), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  tab_style(style = cell_fill(color = dnmye_colores("gris claro")),
+            locations = cells_body(columns = c(3, 5, 7, 9, 11, 13, 15)))
+
+```
+
+<br>
+
+```{r}
+# 3 - Frecuencias aéreas de vuelos de cabotaje, distribución porcentual por región de destino. Años 2014 - 2015
+# - Grafico de tortas. 
+cabotaje %>% 
+  group_by(Año_Local, region_destino) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(pct = round(frecuencias/frecuencias_totales*100, 1)) %>% 
+  ggplot(aes(x = reorder(region_destino, -frecuencias), y = pct)) +
+  geom_bar(aes(fill = region_destino), stat = "identity", show.legend = F) +
+  geom_text(aes(label = paste0(pct, "%"), vjust = -.5)) +
+  facet_grid(~ Año_Local) +
+  scale_y_continuous(limits = c(0, 50),
+                     labels = function(x) paste0(x, "%")) +
+  scale_x_discrete(labels = function(empresa_agrup_def) str_wrap(empresa_agrup_def, width = 10))+
+  scale_fill_dnmye(palette = "c10_todos")+
+  labs(title = "Frecuencias aéreas de vuelos de cabotaje por región de destino.",
+       subtitle = "Septiembre",
+       y = "Distribución porcentual",
+       x = "",
+       fill = "",
+       caption = "Fuente: MINTUR en base a información de ANAC.") +
+  theme_minimal()
+```
+
+<br>
+
+```{r}
+# 4- Frecuencias aéreas mensuales de vuelos de cabotaje por región, provincia y ciudad de destino. Año 2015
+#  Cuadro de doble entrada con cats agrupadas
+freq_reg_prov_loc <- cabotaje %>% 
+  filter(Año_Local == 2022) %>% 
+  mutate(region_destino = paste("Región", region_destino)) %>% 
+  group_by(region_destino, destino_provincia_etiqueta, destino_localidad_etiqueta) %>% 
+  summarise(frecuencias = sum(Movimientos)) %>% 
+  arrange(region_destino, -frecuencias) %>% 
+  janitor::adorn_totals()
+
+freq_reg_prov_loc %>% 
+  gt() %>% 
+  tab_header(
+    title = md("__FRECUENCIAS AÉREAS MENSUALES DE VUELOS DE CABOTAJE POR REGIÓN, PROVINCIA Y CIUDAD DE DESTINO__"),
+    subtitle = "Septiembre 2022") %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    region_destino = md("**Región**"),
+    destino_provincia_etiqueta = md("**Provincia**"),
+    destino_localidad_etiqueta = md("**Localidad**"),
+    frecuencias = md("**Frecuencias**")) %>% 
+  cols_align(
+    align = "center",
+    columns = everything())  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans")))
+```
+
+<br>
+
+```{r}
+# 5- Ranking de frecuencias aéreas de vuelos de cabotaje por ciudad de destino. Año 2014-2015
+# Cuadro de doble entrada
+freq_ciudad_dest_22 <- cabotaje %>% 
+  filter(Año_Local == 2022) %>% 
+  group_by(destino_localidad_etiqueta) %>% 
+  summarise(frecuencias_22 = sum(Movimientos)) %>% 
+  ungroup() %>% 
+  arrange(desc(frecuencias_22)) %>% 
+  mutate(posicion_22 = 1:n(),
+         participacion_22 = round(frecuencias_22/sum(frecuencias_22), 2))
+
+freq_ciudad_dest_21 <- cabotaje %>% 
+  filter(Año_Local == 2021) %>% 
+  group_by(destino_localidad_etiqueta) %>%   
+  summarise(frecuencias_21 = sum(Movimientos)) %>% 
+  ungroup() %>% 
+  arrange(desc(frecuencias_21)) %>% 
+  mutate(posicion_21 = 1:n())
+
+freq_ciudad_dest_22 <- freq_ciudad_dest_22 %>% 
+  full_join(freq_ciudad_dest_21, by = "destino_localidad_etiqueta") %>% 
+  filter(!is.na(posicion_22) & !is.na(posicion_21)) %>% 
+  mutate(variacion = round((frecuencias_22-frecuencias_21)/frecuencias_21, 2),
+         destino_localidad_etiqueta = case_when(posicion_22 >= 20 ~ "Resto",
+                                                T ~ destino_localidad_etiqueta)) %>%
+  group_by(destino_localidad_etiqueta) %>% 
+  summarise(frecuencias_22 = sum(frecuencias_22),
+            frecuencias_21 = sum(frecuencias_21),
+            posicion_22 = first(posicion_22),
+            posicion_21 = first(posicion_21)) %>% 
+  mutate(variacion = round((frecuencias_22-frecuencias_21)/frecuencias_21, 2),
+         participacion_22 = round(frecuencias_22/sum(frecuencias_22), 3),
+         posicion_22 = case_when(destino_localidad_etiqueta == "Resto" ~ "-",
+                                             T ~ as.character(posicion_22)),
+         posicion_21 = case_when(destino_localidad_etiqueta == "Resto" ~ "-",
+                                             T ~ as.character(posicion_21))) %>%
+  arrange(-frecuencias_22) %>% 
+  mutate(orden = 1:n(),
+         orden = if_else(destino_localidad_etiqueta == "Resto",
+                         Inf,
+                         as.numeric(orden))) %>% 
+  arrange(orden) %>% 
+  select(-orden)
+  
+  
+col_order <- c("destino_localidad_etiqueta",
+               "posicion_22",
+               "posicion_21",
+               "frecuencias_22",
+               "frecuencias_21",
+               "variacion",
+               "participacion_22")
+
+freq_ciudad_dest_22 <- freq_ciudad_dest_22[, col_order]
+
+freq_ciudad_dest_22 %>%
+  gt() %>% 
+  tab_header(
+    title = md("__RANKING DE FRECUENCIAS AÉREAS DE VUELOS DE CABOTAJE POR CIUDAD DE DESTINO__"),
+    subtitle = "Septiembre") %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    destino_localidad_etiqueta = md("**Ciudad**"),
+    posicion_22 = md("**Posición 2021**"),
+    posicion_21 = md("**Posición 2021**"),
+    frecuencias_22 = md("**Frecuencias 2022**"),
+    frecuencias_21 = md("**Frecuencias 2021**"),
+    variacion = md("**Variación interanual**"),
+    participacion_22 = md("**Participación 2022 (%)**")) %>% 
+  cols_align(
+    align = "center",
+    columns = everything())  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_percent(columns = c(6, 7), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "lighter")),
+    locations = cells_body(
+      rows = seq(2, 20, 2))) %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")),
+    locations = cells_body(
+      rows = seq(1, 20, 2)))
+```
+
+<br>
+
+```{r}
+# 6 - Frecuencias aéreas de vuelos de cabotaje, distribución porcentual por compañía aérea. Año 2014-2015
+# Grafico de tortas
+cabotaje %>% 
+  mutate(empresa_agrup_def = if_else(!empresa_agrup_def %in% c("Aerolíneas Argentinas",
+                                                                "Flybondi",
+                                                                "JetSMART Airlines"),
+                                     "Otras aerolíneas",
+                                     empresa_agrup_def)) %>% 
+  group_by(Año_Local, empresa_agrup_def) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(pct = round(frecuencias/frecuencias_totales*100, 1)) %>% 
+  ggplot(aes(x = reorder(empresa_agrup_def, -frecuencias), y = pct)) +
+  geom_bar(aes(fill = empresa_agrup_def), stat = "identity", show.legend = F) +
+  geom_text(aes(label = paste0(pct, "%"), vjust = -.5)) +
+  facet_grid(~ Año_Local) +
+  scale_y_continuous(limits = c(0, 100),
+                     labels = function(x) paste0(x, "%")) +
+  scale_x_discrete(labels = function(empresa_agrup_def) str_wrap(empresa_agrup_def, width = 10))+
+  scale_fill_dnmye(palette = "c10_todos")+
+  labs(title = "Frecuencias aéreas de vuelos de cabotaje por región de destino.",
+       subtitle = "Septiembre",
+       y = "Distribución porcentual",
+       x = "",
+       fill = "",
+       caption = "Fuente: MINTUR en base a información de ANAC.") +
+  theme_minimal()
+
+```
+
+<br>
+
+```{r}
+# 7 - Frecuencias aéreas de vuelos de cabotaje por compañía aérea, según ciudad de destino. Año 2015
+# cuadro de doble entrada
+frq_linea_ciudad <- cabotaje %>% 
+  filter(Año_Local == 2022) %>% 
+  mutate(empresa_agrup_def = if_else(! empresa_agrup_def %in% c("Aerolíneas Argentinas",
+                                                                "Flybondi",
+                                                                "JetSMART Airlines"),
+                                     "Otras aerolíneas",
+                                     empresa_agrup_def)) %>% 
+  group_by(empresa_agrup_def, destino_localidad_etiqueta) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  pivot_wider(names_from = empresa_agrup_def, values_from = frecuencias) %>% 
+  mutate(across(.cols = c(2:5), ~ replace_na(., replace = 0))) %>% 
+  janitor::adorn_totals(where = "col") %>% 
+  arrange(-Total)
+
+frq_linea_ciudad %>%
+  gt() %>% 
+  tab_header(
+    title = md("__RANKING DE FRECUENCIAS AÉREAS DE VUELOS DE CABOTAJE POR CIUDAD DE DESTINO__"),
+    subtitle = md("__SEPTIEMBRE 2022__") ) %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    destino_localidad_etiqueta = md("**Ciudad**"),
+    `Aerolíneas Argentinas` = md("**Aerolíneas Argentinas**"),
+    Flybondi = md("**Flybondi**"),
+    `JetSMART Airlines` = md("**JetSMART Airlines**"),
+    `Otras aerolíneas` = md("**Otras aerolíneas**"),
+    Total = md("**Total**")) %>% 
+  cols_align(
+    align = "center",
+    columns = c(2:6))  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans")))
+
+```
+
+<br>
+
+```{r}
+cabotaje %>% 
+  filter(Año_Local %in% c(2021, 2022)) %>% 
+  group_by(Año_Local, region_destino) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(pct = frecuencias/frecuencias_totales) %>% 
+  ggplot(aes(x = reorder(Año_Local, desc(Año_Local)), y = pct, fill = region_destino)) +
+  geom_col(position = position_fill()) +
+  geom_text(aes(label = paste(round(pct*100, 1), "%", sep = "")), position = position_stack(vjust = 0.5)) +
+  scale_fill_dnmye(palette = "c10_todos")+
+  labs(title = "Proporción de frecuencias aéreas de vuelos de cabotaje por región de destino.",
+       subtitle = "Septiembre 2021/2022",
+       y = "",
+       x = "",
+       fill = "",
+       caption = "Fuente: MINTUR en base a información de ANAC.") +
+  theme_minimal() +
+  theme(axis.text.x=element_blank(),
+        legend.position = "bottom") +
+  coord_flip()
+```
+
+<br>
+
+```{r}
+# 10 - Índice de Herfindahl y participación porcentual de las frecuencias aéreas de vuelos de cabotaje por provincia de destino. Años 2013,2014 y 2015
+# cuadro de doble entrada
+herfintal_prov_22 <- cabotaje %>% 
+  filter(Año_Local == 2022) %>% 
+  group_by(Año_Local, destino_provincia_etiqueta) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(cuota_22 = round((frecuencias/frecuencias_totales), 3),
+         herfindal_22 = round((sum(cuota_22^2) - 1/24)/(1 - 1/24), 3)) %>% 
+  select(destino_provincia_etiqueta, cuota_22, herfindal_22)
+
+herfintal_prov_21 <- cabotaje %>% 
+  filter(Año_Local == 2021) %>% 
+  group_by(Año_Local, destino_provincia_etiqueta) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(cuota_21 = round((frecuencias/frecuencias_totales), 3),
+         herfindal_21 = round((sum(cuota_21^2) - 1/24)/(1 - 1/24), 3)) %>% 
+  select(destino_provincia_etiqueta, cuota_21, herfindal_21)
+
+herfindal_prov1 <- data.table("destino_provincia_etiqueta" = "Índice de Herfintal",
+                              "cuota_21" = herfintal_prov_21$herfindal_21[1], 
+                              "cuota_22" = herfintal_prov_22$herfindal_22[1])
+
+herfindal_prov2 <- herfintal_prov_22 %>% 
+  left_join(herfintal_prov_21, by = "destino_provincia_etiqueta") %>%
+  select(-contains("herfin")) %>% 
+  arrange(-cuota_21) %>% 
+  bind_rows(herfindal_prov1) %>% 
+  select(1, 3, 2)
+
+herfindal_prov2 %>% 
+  gt() %>% 
+  tab_header(
+    title = md("__ÍNDICE DE HERFINDAHL Y PARTICIPACIÓN PORCENTUAL DE LAS FRECUENCIAS AÉREAS DE VUELOS DE CABOTAJE POR PROVINCIA DE DESTINO__"),
+    subtitle = "Septiembre") %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    destino_provincia_etiqueta = md("**Ciudad**"),
+    cuota_21 = md("**2021**"),
+    cuota_22 = md("**2022**")) %>% 
+  cols_align(
+    align = "center",
+    columns = c(2:3))  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_percent(columns = c(2:3), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  tab_style(
+    style = list(
+      cell_fill(color = dnmye_colores("gris claro"))),
+      locations = cells_body(
+      rows = destino_provincia_etiqueta == "Índice de Herfintal")) %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")),
+    locations = cells_body(
+      rows = destino_provincia_etiqueta == "Índice de Herfintal"))
+
+```
+
+<br>
+
+```{r}
+# 11 - Índice de Herfindahl y participación porcentual de las frecuencias aéreas de vuelos de cabotaje por compañía aérea. Años 2014 y 2015 
+# cuadro de doble entrada.
+herfintal_aerolinea_22 <- cabotaje %>% 
+  filter(Año_Local == 2022) %>%
+  mutate(empresa_agrup_def = if_else(! empresa_agrup_def %in% c("Aerolíneas Argentinas",
+                                                                "Flybondi",
+                                                                "JetSMART Airlines"),
+                                     "Otras aerolíneas",
+                                     empresa_agrup_def)) %>% 
+  group_by(Año_Local, empresa_agrup_def) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(cuota_22 = round((frecuencias/frecuencias_totales), 3),
+         herfindal_22 = round(sum(cuota_22^2), 3)) %>% 
+  select(empresa_agrup_def, cuota_22, herfindal_22)
+
+herfintal_aerolinea_21 <- cabotaje %>% 
+  filter(TipodeMovimiento == "Aterrizaje" & Año_Local == 2021) %>%
+  mutate(empresa_agrup_def = if_else(! empresa_agrup_def %in% c("Aerolíneas Argentinas",
+                                                                "Flybondi",
+                                                                "JetSMART Airlines"),
+                                     "Otras aerolíneas",
+                                     empresa_agrup_def)) %>% 
+  group_by(Año_Local, empresa_agrup_def) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(cuota_21 = round((frecuencias/frecuencias_totales), 3),
+         herfindal_21 = round(sum(cuota_21^2), 3)) %>% 
+  select(empresa_agrup_def, cuota_21, herfindal_21)
+  
+herfintal_aerolinea<- data.table("empresa_agrup_def" = "Índice de Herfintal",
+                                 "cuota_22" = herfintal_aerolinea_22$herfindal_22[1],
+                                 "cuota_21" = herfintal_aerolinea_21$herfindal_21[1])
+
+herfintal_aerolinea2 <- herfintal_aerolinea_22 %>% 
+  left_join(herfintal_aerolinea_21, by = "empresa_agrup_def") %>%
+  select(-contains("herfin")) %>% 
+  arrange(empresa_agrup_def) %>% 
+  bind_rows(herfintal_aerolinea) %>% 
+  select(1, 3, 2)
+
+# ATENCIÓN: ESTE ÍNDICE NO SE PUEDE NORMALIZAR PORQUE EL NUMERO DE EMPRESAS ES INDEFINIDO. LA INFORMACIÓN QUE PROVEE ANAC SOBRE QUIEN PROVEE LOS VUELOS ES MUCHAS VECES INCOMPLETA.
+
+herfintal_aerolinea2 %>% 
+  gt() %>% 
+  tab_header(
+    title = md("__ÍNDICE DE HERFINDAHL Y PARTICIPACIÓN PORCENTUAL DE LAS FRECUENCIAS AÉREAS DE VUELOS DE CABOTAJE POR COMPAÑÍA AÉREA__"),
+    subtitle = "Septiembre") %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    empresa_agrup_def = md("**Ciudad**"),
+    cuota_22 = md("**2022**"),
+    cuota_21 = md("**2021**")) %>% 
+  cols_align(
+    align = "center",
+    columns = c(2:3))  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_percent(columns = c(2:3), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  tab_style(
+    style = list(
+      cell_fill(color = dnmye_colores("gris claro"))),
+    locations = cells_body(
+      rows = empresa_agrup_def == "Índice de Herfintal")) %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")),
+    locations = cells_body(
+      rows = empresa_agrup_def == "Índice de Herfintal"))
+```
+
+<br>
+
+# **INTERNACIONAL**
+
+<br>
+
+```{r}
+internacional <- base_total %>% 
+  filter(TipodeMovimiento == "Aterrizaje" & ClasificaciónVuelo == "Internacional") %>% 
+  filter(!is.na(origen_pais_etiqueta))
+```
+
+
+```{r}
+# 12 - Frecuencias aéreas de vuelos internacionales a argentina por continente de origen, según mes. Año 2015
+# cuadro de doble entrada
+freq_int_org_21 <- internacional %>% 
+  filter(Año_Local == 2021) %>% 
+  mutate(Mes_Local = month(Mes_Local, label = T, abbr = F)) %>% 
+  group_by(inicio_continente_etiqueta_indec, Mes_Local) %>% 
+  summarise(frecuencias_21 = sum(Movimientos, na.rm = T)) %>% 
+  mutate(inicio_continente_etiqueta_indec = paste0(inicio_continente_etiqueta_indec, "_21")) %>% 
+  pivot_wider(names_from = inicio_continente_etiqueta_indec, values_from = frecuencias_21)
+
+freq_int_org_22 <- internacional %>% 
+  filter(Año_Local == 2022) %>% 
+  filter(!is.na(inicio_continente_etiqueta_indec)) %>% 
+  mutate(Mes_Local = month(Mes_Local, label = T, abbr = F)) %>% 
+  group_by(inicio_continente_etiqueta_indec, Mes_Local) %>% 
+  summarise(frecuencias_22 = sum(Movimientos, na.rm = T)) %>%
+  mutate(inicio_continente_etiqueta_indec = paste0(inicio_continente_etiqueta_indec, "_22")) %>% 
+  pivot_wider(names_from = inicio_continente_etiqueta_indec, values_from = frecuencias_22)
+
+freq_int_org <- freq_int_org_22 %>% 
+  mutate(oceania_21 = 0,
+         asia_22 = 0,
+         asia_21 = 0) %>% 
+  left_join(freq_int_org_21, by = c("Mes_Local")) %>%
+  janitor::clean_names() %>%
+  mutate(across(.cols = c(2:9), ~ as.numeric(.)),
+         var_inter_africa = round((africa_22/africa_21)-1, 1),
+         var_inter_asia = round((asia_22/asia_21)-1, 1),
+         var_inter_america = round((america_22/america_21)-1, 1),
+         var_inter_europa = round((europa_22/europa_21)-1, 1),
+         var_inter_oceania = round((oceania_22/oceania_21)-1, 1),
+         var_inter_oceania = if_else(!is.finite(var_inter_oceania),
+                                  oceania_21,
+                                  var_inter_oceania),
+         var_inter_asia = if_else(!is.finite(var_inter_asia),
+                                  asia_21,
+                                  var_inter_asia)) %>% 
+  select(-contains("_21"),
+         -contains("NA"))
+
+col_order <- c(1, 2, 7, 3, 9, 6, 8, 4, 10, 5, 11)
+
+freq_int_org <- freq_int_org[, col_order]
+
+freq_int_org %>%
+  ungroup() %>% 
+  gt() %>% 
+  tab_header(
+    title = md("__FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES A ARGENTINA POR CONTINENTE DE ORIGEN__"),
+    subtitle = "2022") %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    mes_local = md("**Mes**"),
+    africa_22 = md("**África**"),
+    var_inter_africa = md("**Variación interanual (%)**"),
+    america_22 = md("**América**"),
+    var_inter_america = md("**Variación interanual (%)**"),
+    asia_22 = md("**Asia**"),
+    var_inter_asia = md("**Variación interanual (%)**"),
+    europa_22 = md("**Europa**"),
+    var_inter_europa = md("**Variación interanual (%)**"),
+    oceania_22 = md("**Oceanía**"),
+    var_inter_oceania = md("**Variación interanual (%)**")) %>% 
+  cols_align(
+    align = "center",
+    columns = c(2:11))  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_percent(columns = c(3, 5, 7, 9, 11), decimals = 1, dec_mark = ",", sep_mark = ".")
+
+```
+
+<br>
+
+```{r}
+# 13 - Frecuencias aéreas de vuelos internacionales a argentina por continente de origen, según mes. Año 2015
+# grafico de tortas
+internacional %>% 
+  group_by(Año_Local, inicio_continente_etiqueta_indec, .drop = F) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local, .drop = F) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(pct = round(frecuencias/frecuencias_totales*100, 1)) %>% 
+  filter(!is.na(inicio_continente_etiqueta_indec)) %>% 
+  ggplot(aes(x = reorder(inicio_continente_etiqueta_indec, -frecuencias), y = pct)) +
+  geom_bar(aes(fill = inicio_continente_etiqueta_indec), stat = "identity", show.legend = F) +
+  geom_text(aes(label = paste0(pct, "%"), vjust = -.5)) +
+  facet_grid(~ Año_Local) +
+  scale_y_continuous(limits = c(0, 100),
+                     labels = function(x) paste0(x, "%")) +
+  scale_fill_dnmye(palette = "c10_todos")+
+  labs(title = "Frecuencias aéreas de vuelos internacionales por continente de destino.",
+       subtitle = "Septiembre",
+       y = "Distribución porcentual",
+       x = "",
+       fill = "",
+       caption = "Fuente: MINTUR en base a información de ANAC.") +
+  theme_minimal()
+```
+
+```{r}
+# 14 - Frecuencias aéreas de vuelos internacionales por continente y país de origen. Años 2014-2015
+# Tabla de doble entrada
+freq_cont_pais_21 <- internacional %>% 
+  filter(Año_Local == 2021) %>%
+  group_by(inicio_continente_etiqueta_indec, inicio_pais, empresa_agrup_def) %>% 
+  summarise(frecuencias_21 = n())
+
+freq_cont_pais_22 <- internacional %>% 
+  filter(Año_Local == 2022) %>%
+  group_by(inicio_continente_etiqueta_indec, inicio_pais, empresa_agrup_def) %>% 
+  summarise(frecuencias_22 = n())
+
+freq_cont_pais <- freq_cont_pais_22 %>% 
+  left_join(freq_cont_pais_21, by = c("inicio_continente_etiqueta_indec", "inicio_pais", "empresa_agrup_def")) %>% 
+  drop_na(inicio_continente_etiqueta_indec, empresa_agrup_def) %>%
+  mutate(across(.cols = c(2,3), ~ as.numeric(.)),
+         var_anual = round((frecuencias_22/frecuencias_21)-1, 1),
+         var_anual = if_else(!is.finite(var_anual),
+                             frecuencias_22,
+                             var_anual),
+         frecuencias_21 = case_when(is.na(frecuencias_21) ~ "-",
+                                    T ~ as.character(frecuencias_21))) %>% 
+  select(1,2,3,5, 4, 6)
+
+freq_cont_pais %>% 
+  ungroup() %>% 
+  group_by(inicio_continente_etiqueta_indec) %>% 
+  arrange(inicio_continente_etiqueta_indec, inicio_pais, -frecuencias_22) %>% 
+  gt() %>% 
+  tab_header(
+    title = md("__FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES POR CONTINENTE Y PAÍS DE ORIGEN__"),
+    subtitle = md("__SEPTIEMBRE__")) %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    inicio_pais = md("**País**"),
+    empresa_agrup_def = md("**Companía Aérea**"),
+    frecuencias_22 = md("**2022**"),
+    frecuencias_21 = md("**2021**"),
+    var_anual = md("**Variación interanual (%)**")) %>% 
+  cols_align(
+    align = "center",
+    columns = c(4:6))  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_percent(columns = c(6), decimals = 1, dec_mark = ",", sep_mark = ".")
+```
+
+<br>
+
+```{r}
+# 15 - Frecuencias aéreas de vuelos internacionales a Argentina, distribución porcentual por ciudad de origen. Año 2015
+# grafico de tortas
+internacional %>% 
+  filter(Año_Local == 2022) %>%
+  group_by(inicio_localidad) %>% 
+  summarise(frecuencias = n()) %>% 
+  mutate(prop = frecuencias/sum(frecuencias, na.rm = T)) %>% 
+  arrange(-frecuencias) %>% 
+  mutate(inicio_localidad = case_when(prop <= 0.04 ~ "Resto",
+                                               T ~ inicio_localidad)) %>% 
+  group_by(inicio_localidad) %>% 
+  summarise(frecuencias = sum(frecuencias)) %>%
+  mutate(prop = round(frecuencias/sum(frecuencias, na.rm = T)*100, 1)) %>% 
+  ggplot(aes(x = reorder(inicio_localidad, -frecuencias), y = prop)) +
+  geom_bar(aes(fill = inicio_localidad), stat = "identity", show.legend = F) +
+  geom_text(aes(label = paste0(prop, "%"), vjust = -.5)) +
+  scale_y_continuous(limits = c(0, 50),
+                     labels = function(x) paste0(x, "%")) +
+  scale_x_discrete(limits = rev,
+                   labels = function(inicio_localidad) str_wrap(inicio_localidad, width = 10))+
+  scale_fill_dnmye(palette = "c10_todos")+
+  labs(title = "Frecuencias aéreas de vuelos internacionales por ciudad de origen",
+       subtitle = "Septiembre 2022",
+       y = "Distribución porcentual",
+       x = "",
+       fill = "",
+       caption = "Fuente: MINTUR en base a información de ANAC.") +
+  theme_minimal()
+
+```
+
+<br>
+
+```{r}
+# 16 - Ranking de frecuencias áreas de vuelos internacionales a Argentina por ciudad de origen. Años 2014-2015
+# Cuadro de doble entrada
+vuelos_int_21 <- internacional %>% 
+  filter(Año_Local == 2021) %>%
+  group_by(inicio_localidad) %>% 
+  summarise(frecuencias_21 = n()) %>% 
+  arrange(-frecuencias_21) %>% 
+  mutate(posicion_21 = 1:n(),
+         participacion_21 = round(frecuencias_21/sum(frecuencias_21), 2))
+
+vuelos_int_22 <- internacional %>% 
+  filter(Año_Local == 2022) %>%
+  group_by(inicio_localidad) %>% 
+  summarise(frecuencias_22 = n()) %>% 
+  arrange(-frecuencias_22) %>% 
+  mutate(posicion_22 = 1:n()) 
+
+vuelos_int <- vuelos_int_22 %>% 
+  full_join(vuelos_int_21, by = "inicio_localidad") %>% 
+  filter(!is.na(posicion_22)) %>% 
+  mutate(variacion = round((frecuencias_22-frecuencias_21)/frecuencias_21, 2),
+         inicio_localidad = case_when(posicion_22 >= 20 ~ "Resto",
+                                                T ~ inicio_localidad)) %>%
+  group_by(inicio_localidad) %>% 
+  summarise(frecuencias_22 = sum(frecuencias_22),
+            frecuencias_21 = sum(frecuencias_21),
+            posicion_22 = first(posicion_22),
+            posicion_21 = first(posicion_21)) %>% 
+  mutate(variacion = round((frecuencias_22-frecuencias_21)/frecuencias_21, 2),
+         participacion_22 = round(frecuencias_22/sum(frecuencias_22), 3),
+         posicion_22 = case_when(inicio_localidad == "Resto" ~ "-",
+                                 T ~ as.character(posicion_22)),
+         posicion_21 = case_when(inicio_localidad == "Resto" ~ "-",
+                                 T ~ as.character(posicion_21))) %>%
+  arrange(-frecuencias_22) %>% 
+  mutate(orden = 1:n(),
+         orden = if_else(inicio_localidad == "Resto",
+                         Inf,
+                         as.numeric(orden))) %>% 
+  arrange(orden) %>% 
+  select(-orden)
+
+
+col_order <- c("inicio_localidad",
+               "posicion_22",
+               "posicion_21",
+               "frecuencias_22",
+               "frecuencias_21",
+               "variacion",
+               "participacion_22")
+
+vuelos_int <- vuelos_int[, col_order]
+
+vuelos_int %>%
+  gt() %>% 
+  tab_header(
+    title = md("__RANKING DE FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES POR CIUDAD DE DESTINO__")) %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    inicio_localidad = md("**Ciudad**"),
+    posicion_22 = md("**Posición 2022**"),
+    posicion_21 = md("**Posición 2021**"),
+    frecuencias_22 = md("**Frecuencias 2022**"),
+    frecuencias_21 = md("**Frecuencias 2021**"),
+    variacion = md("**Variación interanual**"),
+    participacion_22 = md("**Participación 2022 (%)**")) %>% 
+  cols_align(
+    align = "center",
+    columns = everything())  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_percent(columns = c(6, 7), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "lighter")),
+    locations = cells_body(
+      rows = seq(2, 20, 2))) %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")),
+    locations = cells_body(
+      rows = seq(1, 20, 2)))
+```
+
+<br>
+
+```{r}
+# 17 - Frecuencias aéreas de vuelos internacionales por mes, según país y ciudad de origen. Año 2015
+# cuadro de doble entrada
+internacional %>% 
+  filter(Año_Local == 2022) %>%
+  mutate(inicio_localidad = case_when(inicio_localidad == "London" ~ "Londres",
+                                               inicio_localidad == "Moscow" ~ "Moscú",
+                                               T ~ inicio_localidad)) %>% 
+  group_by(inicio_pais, inicio_localidad) %>% 
+  summarise(frecuencias = n()) %>%
+  filter(sum(frecuencias) >= 6) %>% 
+  drop_na(inicio_pais) %>% 
+  ungroup() %>% 
+  group_by(inicio_pais) %>%
+  arrange(inicio_pais, -frecuencias) %>% 
+  gt() %>% 
+  tab_header(
+    title = md("__FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES SEGÚN PAÍS Y CIUDAD DE ORIGEN__"),
+    subtitle = md("__SEPTIEMBRE 2022__")) %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    inicio_pais = md("**País**"),
+    inicio_localidad = md("**Ciudad**"))
+  
+```
+
+<br>
+
+```{r}
+# 18 - Frecuencias áereas de vuelos internacionales a Argentina, distribución porcentual según compañía aérea. Año 2015
+# grafico de torta
+internacional %>% 
+  filter(Año_Local == 2022) %>% 
+  mutate(empresa_agrup_def = case_when(is.na(empresa_agrup_def) ~ "Otras empresas",
+                                     T ~ as.character(empresa_agrup_def))) %>%
+  group_by(empresa_agrup_def, .drop = F) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  mutate(pct = round(frecuencias/sum(frecuencias)*100, 1)) %>% 
+  arrange(-pct) %>% 
+  mutate(empresa_agrup_def = case_when(pct < 3 ~ "Otras empresas",
+                                     T ~ empresa_agrup_def)) %>% 
+  group_by(empresa_agrup_def) %>% 
+  summarise(frecuencias = sum(frecuencias)) %>% 
+  mutate(pct = round(frecuencias/sum(frecuencias)*100, 1)) %>% 
+  ggplot(aes(x = reorder(empresa_agrup_def, -frecuencias), y = pct)) +
+  geom_bar(aes(fill = empresa_agrup_def), stat = "identity", show.legend = F) +
+  geom_text(aes(label = paste0(pct, "%"), vjust = -.5)) +
+  scale_y_continuous(limits = c(0, 50),
+                     labels = function(x) paste0(x, "%")) +
+  scale_x_discrete(labels = function(empresa_agrup_def) str_wrap(empresa_agrup_def, width = 10))+
+  
+  scale_fill_dnmye(palette = "c10_todos")+
+  labs(title = "Frecuencias áereas de vuelos internacionales a Argentina según compañía aérea",
+       subtitle = "Septiembre 2022",
+       y = "Distribución porcentual",
+       x = "",
+       fill = "",
+       caption = "Fuente: MINTUR en base a información de ANAC.") +
+  theme_minimal()
+```
+
+<br>
+
+```{r}
+# 19 - Ranking de frecuencias áreas de vuelos internacionales a Argentina por compañía aérea. Años 2014-2015
+# cuadro de doble entrada
+aerolineas_int_21 <- internacional %>% 
+  filter(Año_Local == 2021) %>%
+  mutate(empresa_agrup_def = case_when(is.na(empresa_agrup_def) ~ "Otras empresas",
+                                     T ~ as.character(empresa_agrup_def))) %>%
+  group_by(empresa_agrup_def) %>% 
+  summarise(frecuencias_21 = n()) %>% 
+  ungroup() %>% 
+  arrange(desc(frecuencias_21)) %>% 
+  mutate(posicion_21 = 1:n(),
+         participacion_21 = round(frecuencias_21/sum(frecuencias_21), 2))
+
+
+aerolineas_int_22 <- internacional %>% 
+  filter(Año_Local == 2022) %>%
+  mutate(empresa_agrup_def = case_when(is.na(empresa_agrup_def) ~ "Otras empresas",
+                                     T ~ as.character(empresa_agrup_def))) %>%
+  group_by(empresa_agrup_def) %>% 
+  summarise(frecuencias_22 = n()) %>% 
+  arrange(-frecuencias_22) %>% 
+  mutate(posicion_22 = 1:n())
+
+aerolineas_int <- aerolineas_int_22 %>% 
+  full_join(aerolineas_int_21, by = "empresa_agrup_def") %>% 
+  filter(!is.na(posicion_22)) %>% 
+  mutate(variacion = round((frecuencias_22 - frecuencias_21)/frecuencias_21, 2),
+         empresa_agrup_def = case_when(posicion_22 >= 20 ~ "Otras empresas",
+                                                T ~ empresa_agrup_def)) %>%
+  group_by(empresa_agrup_def) %>% 
+  summarise(frecuencias_22 = sum(frecuencias_22),
+            frecuencias_21 = sum(frecuencias_21),
+            posicion_22 = first(posicion_22),
+            posicion_21 = first(posicion_21)) %>% 
+  mutate(variacion = round((frecuencias_22 - frecuencias_21)/frecuencias_21, 2),
+         participacion_22 = round(frecuencias_22/sum(frecuencias_22), 3),
+         posicion_22 = case_when(empresa_agrup_def == "Otras empresas" ~ "-",
+                                 T ~ as.character(posicion_22)),
+         posicion_21 = case_when(empresa_agrup_def == "Otras empresas" ~ "-",
+                                 T ~ as.character(posicion_21))) %>%
+  arrange(-frecuencias_22) %>% 
+  mutate(orden = 1:n(),
+         orden = if_else(empresa_agrup_def == "Otras empresas",
+                         Inf,
+                         as.numeric(orden))) %>% 
+  arrange(orden) %>% 
+  select(-orden)
+
+
+col_order <- c("empresa_agrup_def",
+               "posicion_22",
+               "posicion_21",
+               "frecuencias_22",
+               "frecuencias_21",
+               "variacion",
+               "participacion_22")
+
+aerolineas_int <- aerolineas_int[, col_order]
+
+aerolineas_int %>%
+  gt() %>% 
+  tab_header(
+    title = md("__RANKING DE FRECUENCIAS ÁREAS DE VUELOS INTERNACIONALES A ARGENTINA POR COMPAÑÍA AÉREA.__")) %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    empresa_agrup_def = md("**Compañía Aérea**"),
+    posicion_22 = md("**Posición 2022**"),
+    posicion_21 = md("**Posición 2021**"),
+    frecuencias_22 = md("**Frecuencias 2022**"),
+    frecuencias_21 = md("**Frecuencias 2021**"),
+    variacion = md("**Variación interanual**"),
+    participacion_22 = md("**Participación 2022 (%)**")) %>% 
+  cols_align(
+    align = "center",
+    columns = c(2:7))  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_percent(columns = c(6, 7), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "lighter")),
+    locations = cells_body(
+      rows = seq(2, 19, 2))) %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")),
+    locations = cells_body(
+      rows = seq(1, 19, 2)))
+
+```
+
+<br>
+
+```{r}
+internacional %>% 
+  filter(Año_Local == 2022) %>%
+  group_by(destino_aeropuerto_etiqueta) %>% 
+  summarise(frecuencias = n()) %>% 
+  mutate(pct = round(frecuencias/sum(frecuencias)*100, 1)) %>%
+  mutate(destino_aeropuerto_etiqueta = case_when(pct <= 1 ~ "Otros",
+                                               T ~ destino_aeropuerto_etiqueta)) %>% 
+  group_by(destino_aeropuerto_etiqueta) %>% 
+  summarise(frecuencias = sum(frecuencias)) %>%
+  mutate(pct = round(frecuencias/sum(frecuencias, na.rm = T)*100, 1)) %>% 
+  ggplot(aes(x = reorder(destino_aeropuerto_etiqueta, -frecuencias), y = pct)) +
+  geom_bar(aes(fill = destino_aeropuerto_etiqueta), stat = "identity", show.legend = F) +
+  geom_text(aes(label = paste0(pct, "%"), vjust = -.5)) +
+  scale_y_continuous(limits = c(0, 100),
+                     labels = function(x) paste0(x, "%")) +
+  scale_x_discrete(labels = function(destino_aeropuerto_etiqueta) str_wrap(destino_aeropuerto_etiqueta, width = 20))+
+  scale_fill_dnmye(palette = "c10_todos")+
+  labs(title = "Frecuencias aéreas de vuelos internacionales por aeropuerto de destino",
+       subtitle = "Septiembre 2022",
+       y = "Distribución porcentual",
+       x = "",
+       fill = "",
+       caption = "Fuente: MINTUR en base a información de ANAC.") +
+  theme_minimal()
+```
+
+<br>
+
+```{r}
+internacional %>% 
+  filter(Año_Local == 2021) %>%
+  group_by(destino_aeropuerto_etiqueta) %>% 
+  summarise(frecuencias = n()) %>% 
+  mutate(pct = round(frecuencias/sum(frecuencias)*100, 1)) %>%
+  mutate(destino_aeropuerto_etiqueta = case_when(pct <= 1 ~ "Otros",
+                                                 T ~ destino_aeropuerto_etiqueta)) %>% 
+  group_by(destino_aeropuerto_etiqueta) %>% 
+  summarise(frecuencias = sum(frecuencias)) %>%
+  mutate(pct = round(frecuencias/sum(frecuencias, na.rm = T)*100, 1)) %>% 
+  ggplot(aes(x = reorder(destino_aeropuerto_etiqueta, -frecuencias), y = pct)) +
+  geom_bar(aes(fill = destino_aeropuerto_etiqueta), stat = "identity", show.legend = F) +
+  geom_text(aes(label = paste0(pct, "%"), vjust = -.5)) +
+  scale_y_continuous(limits = c(0, 100),
+                     labels = function(x) paste0(x, "%")) +
+  scale_x_discrete(labels = function(destino_aeropuerto_etiqueta) str_wrap(destino_aeropuerto_etiqueta, width = 20))+
+  scale_fill_dnmye(palette = "c10_todos")+
+  labs(title = "Frecuencias aéreas de vuelos internacionales por aeropuerto de destino",
+       subtitle = "Septiembre 2021",
+       y = "Distribución porcentual",
+       x = "",
+       fill = "",
+       caption = "Fuente: MINTUR en base a información de ANAC.") +
+  theme_minimal()
+```
+
+<br>
+
+```{r}
+# 22 - Curva de concentración de las frecuencias aéreas de vuelos internacionales por continente de origen. Año 2015
+# serie de tiempo
+internacional %>% 
+  filter(!is.na(inicio_continente_etiqueta_indec)) %>% 
+  group_by(Año_Local, inicio_continente_etiqueta_indec) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(pct = frecuencias/frecuencias_totales) %>% 
+  ggplot(aes(x = reorder(Año_Local, desc(Año_Local)), y = pct, fill = inicio_continente_etiqueta_indec)) +
+  geom_col(position = position_fill()) +
+  geom_text(aes(label = paste(round(pct*100, 1), "%", sep = "")), position = position_stack(vjust = 0.5), check_overlap = T) +
+  scale_fill_dnmye(palette = "c10_todos")+
+  labs(title = "Proporción de frecuencias aéreas de vuelos internacionales por continente de destino.",
+       subtitle = "Septiembre 2021/2022",
+       y = "",
+       x = "",
+       fill = "",
+       caption = "Fuente: MINTUR en base a información de ANAC.") +
+  theme_minimal() +
+  theme(axis.text.x=element_blank(),
+        legend.position = "bottom") +
+  coord_flip()
+```
+
+<br>
+
+```{r}
+# 23 - Índice de Herfindahl y participación porcentual de las frecuencias aéreas de vuelos internacionales por país de orígen. Años 2012-2015
+# Cuadro de doble entrada
+herfintal_int_22 <- internacional %>% 
+  filter(Año_Local == 2022) %>% 
+  group_by(Año_Local, inicio_pais) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(cuota_22 = round((frecuencias/frecuencias_totales), 3),
+         herfindal_22 = round((sum(cuota_22^2) - 1/28)/(1 - 1/28), 3)) %>% 
+  select(inicio_pais, cuota_22, herfindal_22)
+
+herfintal_int_21 <- internacional %>% 
+  filter(TipodeMovimiento == "Aterrizaje" & Año_Local == 2021) %>% 
+  group_by(Año_Local, inicio_pais) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(cuota_21 = round((frecuencias/frecuencias_totales), 3),
+         herfindal_21 = round((sum(cuota_21^2) - 1/28)/(1 - 1/28), 3)) %>% 
+  select(inicio_pais, cuota_21, herfindal_21)
+
+herfintal_int_pais <- data.table("inicio_pais" = "Índice de Herfintal",
+                                 "cuota_22" = herfintal_int_22$herfindal_22[1],
+                                 "cuota_21" = herfintal_int_21$herfindal_21[1])
+
+herfintal_int_pais2 <- herfintal_int_22 %>% 
+  left_join(herfintal_int_21, by = "inicio_pais") %>%
+  select(-contains("herfin")) %>% 
+  arrange(-cuota_21) %>% 
+  bind_rows(herfintal_int_pais) %>% 
+  select(1,3,2)
+
+herfintal_int_pais2 %>% 
+  gt() %>% 
+  tab_header(
+    title = md("__ÍNDICE DE HERFINDAHL Y PARTICIPACIÓN PORCENTUAL DE LAS FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES POR PAÍS DE ORIGEN__"),
+    subtitle = md("__SEPTIEMBRE__")) %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    inicio_pais = md("**País**"),
+    cuota_22 = md("**2022**"),
+    cuota_21 = md("**2021**")) %>% 
+  cols_align(
+    align = "center",
+    columns = c(2:3))  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_percent(columns = c(2:3), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  tab_style(
+    style = list(
+      cell_fill(color = dnmye_colores("gris claro"))),
+    locations = cells_body(
+      rows = inicio_pais == "Índice de Herfintal")) %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")),
+    locations = cells_body(
+      rows = inicio_pais == "Índice de Herfintal"))
+```
+
+<br>
+
+```{r}
+# 24 - Índice de Herfindahl y participación porcentual de las frecuencias aéreas de vuelos internacionales por país de orígen. Años 2012-2015
+#  Cuadro de doble entrada
+herfintal_aero_int_22 <- internacional %>% 
+  filter(Año_Local == 2022) %>%
+group_by(Año_Local, empresa_agrup_def) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(cuota_22 = round((frecuencias/frecuencias_totales), 3),
+         herfindal_22 = round(sum(cuota_22^2), 3)) %>% 
+  select(empresa_agrup_def, cuota_22, herfindal_22)
+
+herfintal_aero_int_21 <- internacional %>% 
+  filter(Año_Local == 2021) %>%
+  group_by(Año_Local, empresa_agrup_def) %>% 
+  summarise(frecuencias = sum(Movimientos, na.rm = T)) %>% 
+  group_by(Año_Local) %>% 
+  mutate(frecuencias_totales = sum(frecuencias, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(cuota_21 = round((frecuencias/frecuencias_totales), 3),
+         herfindal_21 = round(sum(cuota_21^2), 3)) %>% 
+  select(empresa_agrup_def, cuota_21, herfindal_21)
+
+herfintal_aerolinea_int<- data.table("empresa_agrup_def" = "Índice de Herfintal",
+                                 "cuota_22" = herfintal_aero_int_22$herfindal_22[1],
+                                 "cuota_21" = herfintal_aero_int_21$herfindal_21[1])
+
+herfintal_aerolinea_int2 <- herfintal_aero_int_22 %>% 
+  left_join(herfintal_aero_int_21, by = "empresa_agrup_def") %>%
+  select(-contains("herfin")) %>% 
+  arrange(-cuota_22) %>% 
+  bind_rows(herfintal_aerolinea_int) %>% 
+  select(1, 3, 2)
+
+# ATENCIÓN: ESTE ÍNDICE NO SE PUEDE NORMALIZAR PORQUE EL NUMERO DE EMPRESAS ES INDEFINIDO. LA INFORMACIÓN QUE PROVEE ANAC SOBRE QUIEN PROVEE LOS VUELOS ES MUCHAS VECES INCOMPLETA.
+
+herfintal_aerolinea_int2 %>% 
+  drop_na() %>% 
+  gt() %>% 
+  tab_header(
+    title = md("__ÍNDICE DE HERFINDAHL Y PARTICIPACIÓN PORCENTUAL DE LAS FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES POR COMPAÑÍA AÉREA__")) %>% 
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    empresa_agrup_def = md("**Ciudad**"),
+    cuota_22 = md("**2022**"),
+    cuota_21 = md("**2021**")) %>% 
+  cols_align(
+    align = "center",
+    columns = c(2:3))  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_percent(columns = c(2:3), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  tab_style(
+    style = list(
+      cell_fill(color = dnmye_colores("gris claro"))),
+    locations = cells_body(
+      rows = empresa_agrup_def == "Índice de Herfintal")) %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")),
+    locations = cells_body(
+      rows = empresa_agrup_def == "Índice de Herfintal"))
+```
