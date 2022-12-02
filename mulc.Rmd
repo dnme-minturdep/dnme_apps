@@ -264,9 +264,9 @@ g1 <- tabla1 %>%
   scale_fill_manual(values = c("déficit" = cols_arg2[1],
                                "superávit" = cols_arg2[2]))+
   scale_x_date(limits = c(min(as.Date(tabla1$fecha, origin = "1970-01-01"))-months(2),max(as.Date(tabla1$fecha, origin = "1970-01-01"))+months(1)),
-               date_breaks = "2 months", 
+               date_breaks = "3 months", 
                date_labels = "%b%y", 
-               expand = c(0,0))+
+               expand = c(0,10))+
   guides(fill = F)+
   labs(title="",x="",y="",
        caption="DNMyE en base a BCRA")+
@@ -341,9 +341,9 @@ g2 <- tabla2 %>%
   scale_fill_manual(values = c(cols_arg,cols_arg2[6]), labels= c("Ingresos", "Egresos")) +
   scale_x_date(
     limits = c(min(tabla2$fecha)-months(2),max(tabla2$fecha)+months(1)),
-               date_breaks = "2 months", 
+               date_breaks = "3 months", 
                date_labels = "%b%y", 
-               expand = c(0,0))+
+               expand = c(0,10))+
   labs(title="",
        subtitle = "En %",x="",y="",
        caption="DNMyE en base a BCRA")+
@@ -790,8 +790,8 @@ g4 <- tabla4 %>%
   #             ,
   #             text = paste0('fecha: ', format(fecha,"%b-%y"),
   #                           '<br>rubro: ',rubro,
-  #                           '<br>monto: US$', 
-  #format(round(pagos,1),big.mark=".",decimal.mark=",")," M")
+  #                           '<br>monto: US$',
+  # format(round(pagos,1),big.mark=".",decimal.mark=",")," M")
              ))+
   geom_area()+
   scale_fill_manual(values = cols_arg2[2:4],label=c("Tarjetas", "Billetes - No Residentes", "Operadores turísticos")) +
