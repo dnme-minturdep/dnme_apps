@@ -755,9 +755,9 @@ g3 <- tabla3 %>%
   geom_area()+
   scale_fill_manual(values = cols_arg2[2:4]) +
   scale_x_date(#limits = c(min(tabla3$fecha),max(tabla3$fecha)),
-               date_breaks = "1 months", 
+               date_breaks = "3 months", 
                date_labels = "%b%y", 
-               expand = c(0,10))+
+               expand = c(0,30))+
   labs(#title="Ingresos de divisas por viajes y otros pagos con tarjeta. Apertura por rubros",
        #subtitle = "En millones de dólares",
        x="",y="",
@@ -796,9 +796,9 @@ g4 <- tabla4 %>%
   geom_area()+
   scale_fill_manual(values = cols_arg2[2:4],label=c("Tarjetas", "Billetes - No Residentes", "Operadores turísticos")) +
   scale_x_date(#limits = c(min(tabla4$fecha),max(tabla4$fecha)),
-               date_breaks = "1 months", 
+               date_breaks = "3 months", 
                date_labels = "%b%y", 
-               expand = c(0,10))+
+               expand = c(0,30))+
   labs(#title="Egresos de divisas por viajes y otros pagos con tarjeta. Apertura por rubros",
        #subtitle = "En millones de dólares",
        x="",y="",
