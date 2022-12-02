@@ -747,14 +747,14 @@ tabla4$rubro <- tabla4$rubro %>%  as.factor() %>% recode_factor(
 #### En millones de dólares
 ```{r}
 g3 <- tabla3 %>% 
-  ggplot(aes(x = fecha, y = cobros, fill = rubro
+  ggplot(aes(x = fecha, y = cobros,fill = rubro
 #             ,             text = paste0('fecha: ', format(fecha,"%b-%y"),
 #                           '<br>rubro: ',rubro,
 #                           '<br>monto: US$', #format(round(cobros,1),big.mark=".",decimal.mark=",")," M")
       )) +
   geom_area()+
   scale_fill_manual(values = cols_arg2[2:4]) +
-  scale_x_date(limits = c(min(tabla3$fecha),max(tabla3$fecha)),
+  scale_x_date(#limits = c(min(tabla3$fecha),max(tabla3$fecha)),
                date_breaks = "1 months", 
                date_labels = "%b%y", 
                expand = c(0,10))+
@@ -795,7 +795,7 @@ g4 <- tabla4 %>%
              ))+
   geom_area()+
   scale_fill_manual(values = cols_arg2[2:4],label=c("Tarjetas", "Billetes - No Residentes", "Operadores turísticos")) +
-  scale_x_date(limits = c(min(tabla4$fecha),max(tabla4$fecha)),
+  scale_x_date(#limits = c(min(tabla4$fecha),max(tabla4$fecha)),
                date_breaks = "1 months", 
                date_labels = "%b%y", 
                expand = c(0,10))+
