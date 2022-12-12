@@ -187,10 +187,10 @@ grafico_empleo_series <- ggplot(indice.empleo,aes(x=as.Date(fecha),y=indice,colo
   geom_line()+
   #geom_point()+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
-  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
-               date_breaks = "4 months",
+  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+months(1),as.Date(max(indice.empleo$fecha)),by="6 months"),
+               #date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,50))+
+               expand=c(0,0))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -289,10 +289,10 @@ grafico_empleo_cat_series <- ggplot(indice.cat.rct,aes(x=as.Date(fecha),y=indice
   geom_line()+
   #geom_point()+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
-  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
-               date_breaks = "4 months",
+  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+months(1),as.Date(max(indice.empleo$fecha)),by="6 months"),
+               #date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,50))+
+               expand=c(0,0))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -379,10 +379,10 @@ grafico_empleo_series_2 <- ggplot(data_grafico_empleo_todas)+
   #                                             glue('<br>puestos:'), format(empleo.cat,big.mark="."),
   #                                             '<br>indice:', indice)),size=.8)+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ","),limits = c(90,200))+
-  scale_x_date(#limits = c(as.Date("2019-01-01"),as.Date(mes.empleo)),
-               date_breaks = "4 months",
+ scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+months(1),as.Date(max(indice.empleo$fecha)),by="6 months"),
+               #date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,50))+
+               expand=c(0,0))+
   scale_color_manual(values=cols_arg2)+
    scale_size_continuous(range = c(.1,2))+
   theme_minimal()+
@@ -453,10 +453,10 @@ grafico_genero_series <- ggplot(genero.rct.vs.no.rct,aes(x=as.Date(fecha),y=shar
   geom_line()+
   #geom_point()+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
-  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
-               date_breaks = "4 months",
+  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+months(1),as.Date(max(indice.empleo$fecha)),by="6 months"),
+               #date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,50))+
+               expand=c(0,0))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -521,10 +521,10 @@ grafico_genero_categorias <- ggplot(genero.categorias,aes(x=as.Date(fecha),y=sha
   geom_line()+
   #geom_point()+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
-  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
-               date_breaks = "4 months",
+  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+ months(1),as.Date(max(indice.empleo$fecha)),by="6 months"),
+               #date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,50))+
+               expand=c(0,0))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -593,10 +593,10 @@ grafico_genero_series_2 <- ggplot(data_grafico_genero_todas)+
                 ),size=.1)+
   geom_line(aes(x=fecha,y=share.cat,color=cat.rct))+
   scale_y_continuous(labels=scales::percent_format(decimal.mark = ","),limits = c(0,.8))+
-  scale_x_date(#limits = c(as.Date("2019-01-01"),as.Date(mes.empleo)),
-               date_breaks = "4 months",
+  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+months(1),as.Date(max(indice.empleo$fecha)),by="6 months"),
+               #date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,50))+
+               expand=c(0,0))+
   scale_color_manual(values=cols_arg2)+
    scale_size_continuous(range = c(.1,2))+
   theme_minimal()+
@@ -657,10 +657,10 @@ grafico_empresas_series <- ggplot(indice.empresas,aes(x=as.Date(fecha),y=indice,
   geom_line()+
   #geom_point()+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
-  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
-               date_breaks = "4 months",
+ scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)),by="6 months"),
+               #date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,70))+
+               expand=c(0,0))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -761,10 +761,10 @@ grafico_empresas_cat_series <- ggplot(indice.empresas.cat.rct,aes(x=as.Date(fech
   geom_line()+
   #geom_point()+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
-  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
-               date_breaks = "4 months",
+  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)),by="6 months"),
+               #date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,70))+
+               expand=c(0,0))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -845,10 +845,10 @@ grafico_empresas_series_2 <- ggplot(data_grafico_empresas_todas)+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ","),
                      limits = c(90,200)
                      )+
-  scale_x_date(#limits = c(as.Date("2019-01-01"),as.Date(mes.empleo)),
-               date_breaks = "4 months",
+  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)),by="6 months"),
+               #date_breaks = "6 months",
                date_labels = "%b%y",
-               expand=c(0,70))+
+               expand=c(0,0))+
   scale_color_manual(values=cols_arg2)+
    scale_size_continuous(range = c(.1,2))+
   theme_minimal()+
