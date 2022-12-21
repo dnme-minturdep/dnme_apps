@@ -37,8 +37,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2022-09-01")
-mes <- "Septiembre"
+fecha <- as.Date("2022-10-01")
+mes <- "Octubre"
 #trimestre <- "2do"
 anio <- "2022"
 
@@ -254,7 +254,7 @@ name_cat2 <- tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[lengt
 
 + **Los `r case_when(name_cat2 == "Para Hoteles" ~ "establecimientos parahoteleros", name_cat2 == "3 estrellas/boutiques/aparts" ~ "establecimientos 3 estrellas, boutiques y aparts", name_cat2 == "4 y 5 estrellas" ~ "hoteles 4 y 5 estrellas", name_cat2=="1 y 2 estrellas"~"hoteles 1 y 2 estrellas")` concentraron la mayor cantidad de pernoctaciones (`r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"]), 1),decimal.mark = ",", big.mark = ".")` mil)**, con una tasa de ocupación de plazas de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-1], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`%; seguidos por los `r case_when(name_cat == "Para Hoteles" ~ "establecimientos parahoteleros", name_cat == "3 estrellas/boutiques/aparts" ~ "establecimientos de 3 estrellas, boutiques y aparts", name_cat == "4 y 5 estrellas" ~ "hoteles 4 y 5 estrellas", name_cat=="1 y 2 estrellas"~"hoteles 1 y 2 estrellas")`, con `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"]),1),decimal.mark = ",", big.mark = ".")` mil pernoctes y una ocupación de `r format(round(as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "pernoctes_total"])/as.numeric(tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[length(tabla2$pernoctes_total)-2], "plazas_disponibles"])*100,digits=1),decimal.mark = ",", big.mark = ".")`% de las plazas disponibles.
 
-+ En septiembre 2022, se registraron los mayores valores de pernoctaciones de **residentes** para todos los meses de septiembre desde que se realiza el relevamiento.
++ En octubre 2022, se registraron los mayores valores de **pernoctaciones totales y de residentes** y de **viajeros residentes** para todos los meses de octubre desde que se realiza el relevamiento.
 
 
 <br>
@@ -802,8 +802,8 @@ check <- nrow(tabla3_A[tabla3_A$estadia_total == sort(tabla3_A$estadia_total, na
 pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/pernoctes-viajeros-y-estadia-media-por-localidad.csv", encoding = "UTF-8")
 
 #Localidades que no corresponde mostrar datos (AD HOC,INDEC)
-localidades_sin_datos <- c("Puerto Iguazú","Rafaela","Calafate")
-localidades_insuficiencia <- c("Puerto Iguazú", "Calafate","Neuquén")
+localidades_sin_datos <- c("Posadas")
+localidades_insuficiencia <- c("Puerto Iguazú", "Neuquén","Rio Gallegos","Santa Rosa")
 
 #Tabla localidades
 tabla4 <- pernoctaciones_localidad %>% 
