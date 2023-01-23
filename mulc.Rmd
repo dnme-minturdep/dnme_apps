@@ -1021,3 +1021,10 @@ ggplotly(g10,tooltip = "text") %>%
 #### Para más información sobre qué es el turismo dentro del MULC:
 
 [**Bitácora**](https://bitacora.yvera.tur.ar/posts/2021-10-20-mulc/)
+
+::: {.infobox}
+
+Para recibir las novedades del SINTA escribíle al bot de Telegram de la DNMyE [*SintIA*](https://bitacora.yvera.tur.ar/posts/2022-09-08-sintia/): @RDatinaBot 🤖
+
+:::
+

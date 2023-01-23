@@ -433,3 +433,11 @@ tabla2
 [**Datos Abiertos**](http://datos.yvera.gob.ar/dataset?groups=turismo-internacional)
 
 [**Informes**](https://www.yvera.tur.ar/estadistica/informe/info/turismo-internacional)
+
+::: {.infobox}
+
+Para recibir las novedades del SINTA escribíle al bot de Telegram de la DNMyE [*SintIA*](https://bitacora.yvera.tur.ar/posts/2022-09-08-sintia/): @RDatinaBot 🤖
+
+:::
+
+
