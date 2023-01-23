@@ -893,3 +893,9 @@ ramas %>%
   datatable(caption=glue("Ramas seleccionadas y valores de { format(as.Date(max(puestos$fecha)),'%B %Y')} (puestos y % de mujeres) y {format(as.Date(fecha_empresas),'%B %Y')} (empresas)"))
 ```
 
+::: {.infobox}
+
+Para recibir las novedades del SINTA escribíle al bot de Telegram de la DNMyE [*SintIA*](https://bitacora.yvera.tur.ar/posts/2022-09-08-sintia/): @RDatinaBot 🤖
+
+:::
+
