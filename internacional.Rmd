@@ -436,7 +436,8 @@ tabla2
 
 ::: {.infobox}
 
-Para recibir las novedades del SINTA escribíle al bot de Telegram de la DNMyE [*SintIA*](https://bitacora.yvera.tur.ar/posts/2022-09-08-sintia/): @RDatinaBot 🤖
+Para recibir las novedades del SINTA escribíle al bot de Telegram de la DNMyE
+<a href='https://bitacora.yvera.tur.ar/posts/2022-09-08-sintia/' target='_blank'>*SintIA*</a>: <a href='https://t.me/RDatinaBot' target='_blank'>@RDatinaBot</a> :cara_de_robot:
 
 :::
 
