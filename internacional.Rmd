@@ -33,10 +33,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ```
 
 ```{r}
-### Cargo funciones de trabajo
-#source("0_funciones_de_trabajo.R", encoding = "UTF-8")
 # Definir mes para títulos ####
-mes <- "Noviembre"
+mes <- "Diciembre"
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -45,12 +43,7 @@ cols_arg2 <- c("#EE3D8F", # "ROJO"
                "#50B8B1", # "VERDE"
                "#F7941E","#FFD100","#D7DF23", "#9283BE")
 #Fuente
-#familia_fuente <- fonttable() %>% 
-#  as_tibble() %>% 
-#  filter(str_detect(FamilyName, "Encode Sans"), 
-#         Bold == TRUE) %>% 
-#  pull(FamilyName) %>% 
-#  first()
+
 familia_fuente <- "Encode Sans Normal"
 # Estilo de graficos
 theme_imet <- function() {
@@ -61,8 +54,11 @@ theme_imet <- function() {
 etiquetas <- 
 data.frame(pais = c("bol","bra","chi","py","uy","eeuu_can","rest_am","euro","rest_mun"),
            etiqueta = c("Bolivia","Brasil","Chile","Paraguay","Uruguay","EE.UU.  y Canadá","Resto de América","Europa","Resto del mundo"))
+
 # Importo datos ####
-turismo_internacional_turistas <- vroom::vroom("/srv/DataDNMYE/turismo_internacional/turismo_internacional_pais.zip",locale = locale(encoding = "WINDOWS-1252",decimal_mark = ","))
+turismo_internacional_turistas <- readRDS("/srv/DataDNMYE/turismo_internacional/bases_proceso/turismo_internacional_visitantes.rds") %>%
+  filter(tipo_visitante == "Turistas")
+
 anio <- as.numeric(turismo_internacional_turistas[nrow(turismo_internacional_turistas), 1])
 mes_nro  <- as.numeric(as_tibble(turismo_internacional_turistas[nrow(turismo_internacional_turistas),2]))
 fecha <- str_c(anio, mes_nro, "01" , sep = "-")
@@ -433,11 +429,3 @@ tabla2
 [**Datos Abiertos**](http://datos.yvera.gob.ar/dataset?groups=turismo-internacional)
 
 [**Informes**](https://www.yvera.tur.ar/estadistica/informe/info/turismo-internacional)
-
-::: {.infobox}
-
-Para recibir las novedades del SINTA escribíle al bot de Telegram de la DNMyE [*SintIA*](https://bitacora.yvera.tur.ar/posts/2022-09-08-sintia/): @RDatinaBot 🤖
-
-:::
-
-
