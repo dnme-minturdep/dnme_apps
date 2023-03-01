@@ -197,7 +197,7 @@ tabla1_bis <- ss_mensual %>% filter(year(fecha) >= 2017,
   
 ```
 
-+ En el mes de `r mes`, los egresos de divisas por turismo, por el mercado oficial de cambios, alcanzaron un total de US\$`r tail(tabla1$pagos, n=1) %>% round(1)` millones, con una variación respecto al mismo mes del año `r as.character(anio_datos-1)` del `r ((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-12]-1)*100) %>% round(1)`%, y del `r ((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-36]-1)*100) %>% round(1)`% con respecto al mismo mes del año `r as.character(anio_datos-3)`. Por su parte, los ingresos fueron de US\$`r tail(tabla1$cobros, n=1) %>% round(1)` millones, con una variación interanual del `r ((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-12]-1)*100) %>% round(1)`% y del `r ((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-36]-1)*100) %>% round(1)`% con respecto a `r as.character(anio_datos-3)`.
++ En el mes de `r mes`, los egresos de divisas por turismo, por el mercado oficial de cambios, alcanzaron un total de US\$`r tail(tabla1$pagos, n=1) %>% round(1)` millones, con una variación respecto al mismo mes del año `r as.character(anio_datos-1)` del `r ((tail(tabla1$pagos, n=1)/tabla1$pagos[length(tabla1$pagos)-12]-1)*100) %>% round(1)`%. Por su parte, los ingresos fueron de US\$`r tail(tabla1$cobros, n=1) %>% round(1)` millones, con una variación interanual del `r ((tail(tabla1$cobros,n=1)/tabla1$cobros[length(tabla1$cobros)-12]-1)*100) %>% round(1)`%.
 
 + Continuando con la tendencia de los últimos años, la balanza de divisas en el mercado oficial, por turismo, es deficitaria. En el mes de `r mes` de `r as.character(anio_datos)`, se registró una balanza deficitaria en US\$`r ((-1)*tail(tabla1_bis$balanza, n=1)) %>% round(1)` millones, mientras que en el mismo mes de `r as.character(anio_datos-1)` había sido también deficitaria en US\$`r ((-1)*(tabla1_bis$balanza[length(tabla1_bis$balanza)-12])) %>% round(1)` millones.
 
@@ -237,7 +237,7 @@ bza_acum <- ing_acum-eg_acum
 ```
 
 
-+ En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-3)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-3)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones. 
+<!-- + En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-3)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-3)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones.  -->
 
 <br>
 
@@ -266,7 +266,7 @@ g1 <- tabla1 %>%
   scale_x_date(limits = c(min(as.Date(tabla1$fecha, origin = "1970-01-01"))-months(0),max(as.Date(tabla1$fecha, origin = "1970-01-01"))+months(1)),
                date_breaks = "2 months", 
                date_labels = "%b%y", 
-               expand = c(0,10))+
+               expand = c(0,0))+
   guides(fill = F)+
   labs(title="",x="",y="",
        caption="DNMyE en base a BCRA")+
@@ -343,7 +343,7 @@ g2 <- tabla2 %>%
     limits = c(min(tabla2$fecha)-months(0),max(tabla2$fecha)+months(1)),
                date_breaks = "3 months", 
                date_labels = "%b%y", 
-               expand = c(0,10))+
+               expand = c(0,0))+
   labs(title="",
        subtitle = "En %",x="",y="",
        caption="DNMyE en base a BCRA")+
@@ -627,12 +627,12 @@ ggplotly(g6,tooltip = "text") %>% layout(legend = list(
 #ACUMULADO EN ENERO LO SACAMOSSSS
 
 ```
-### Acumulado 2022
+<!-- ### Acumulado 2022 -->
 
-+ Mientras tanto, en el acumulado enero - `r mes` de `r as.character(anio_datos)`, el turismo ocupó el `r tabla5_acum$orden[tabla5_acum$rubro == "Turismo"]`º lugar en cuanto a ingresos, pero el `r tabla6_acum$orden[tabla6_acum$rubro == "Turismo"]`º en cuanto a egresos.
+<!-- + Mientras tanto, en el acumulado enero - `r mes` de `r as.character(anio_datos)`, el turismo ocupó el `r tabla5_acum$orden[tabla5_acum$rubro == "Turismo"]`º lugar en cuanto a ingresos, pero el `r tabla6_acum$orden[tabla6_acum$rubro == "Turismo"]`º en cuanto a egresos. -->
 
-### Ingresos de divisas vía MULC. Apertura por sectores de servicios
-#### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares
+<!-- ### Ingresos de divisas vía MULC. Apertura por sectores de servicios -->
+<!-- #### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares -->
 ```{r}
 g5_acum <- tabla5_acum %>%
   ggplot(aes(x = cobros, y = reorder(rubro, -orden),
@@ -663,17 +663,17 @@ g5_acum <- tabla5_acum %>%
     legend.position = "none",
     strip.placement = "outside")
 
-ggplotly(g5_acum,tooltip = "text") %>% layout(legend = list(
-       orientation = "v",x=0.8
-     ))
+# ggplotly(g5_acum,tooltip = "text") %>% layout(legend = list(
+#        orientation = "v",x=0.8
+#      ))
 ```
 
 ```{r}
 #ACUMULADO ENERO LO SACAMOSSSSSS
 
 ```
-### Egresos de divisas vía MULC. Apertura por sectores de servicios
-#### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares
+<!-- ### Egresos de divisas vía MULC. Apertura por sectores de servicios -->
+<!-- #### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares -->
 
 ```{r}
 g6_acum <- tabla6_acum %>%
@@ -705,10 +705,10 @@ g6_acum <- tabla6_acum %>%
     legend.position = "none",
     strip.placement = "outside")
 
-ggplotly(g6_acum,tooltip = "text") %>% layout(legend = list(
-       orientation = "v",x=0.8
-     ))
-  
+# ggplotly(g6_acum,tooltip = "text") %>% layout(legend = list(
+#        orientation = "v",x=0.8
+#      ))
+#   
 ```
 ### Apertura del rubro "Viajes y otros pagos con tarjeta"
 
@@ -757,7 +757,7 @@ g3 <- tabla3 %>%
   scale_x_date(#limits = c(min(tabla3$fecha),max(tabla3$fecha)),
                date_breaks = "3 months", 
                date_labels = "%b%y", 
-               expand = c(0,30))+
+               expand = c(0,0))+
   labs(#title="Ingresos de divisas por viajes y otros pagos con tarjeta. Apertura por rubros",
        #subtitle = "En millones de dólares",
        x="",y="",
@@ -798,7 +798,7 @@ g4 <- tabla4 %>%
   scale_x_date(#limits = c(min(tabla4$fecha),max(tabla4$fecha)),
                date_breaks = "3 months", 
                date_labels = "%b%y", 
-               expand = c(0,30))+
+               expand = c(0,0))+
   labs(#title="Egresos de divisas por viajes y otros pagos con tarjeta. Apertura por rubros",
        #subtitle = "En millones de dólares",
        x="",y="",
