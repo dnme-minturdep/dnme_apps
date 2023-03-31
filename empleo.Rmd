@@ -18,6 +18,7 @@ library(DT)
 library(ggforce)
 library(ggthemes)
 library(treemapify)
+library(herramientas)
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -36,10 +37,10 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 ```{r}
 #INSUMOS
-empleo <- read_csv("/srv/DataDNMYE/empleo/puestos_6_digitos.csv")
-empleadores <- read_csv("/srv/DataDNMYE/empleo/empresas_6_digitos.csv")
+empleo <- read_file_srv("/empleo/puestos_6_digitos.csv",delim=",")
+empleadores <- read_file_srv("/empleo/empresas_6_digitos.csv",delim=",")
 fecha_empresas <- max(empleadores$fecha)
-puestos.genero <- read_csv("/srv/DataDNMYE/empleo/puestos_genero_6_digitos.csv")
+puestos.genero <- read_file_srv("/empleo/puestos_genero_6_digitos.csv",delim=",")
 fecha_genero  <- max(puestos.genero$fecha)
 ################################################################################
 #IPC PARA SALARIOS REALES
@@ -59,11 +60,11 @@ fecha_genero  <- max(puestos.genero$fecha)
 # 562091: Servicios de cantinas con atención exclusiva  a los empleados o estudiantes dentro de empresas o establecimientos educativos.
 # 
 # POR EL MOMENTO LAS SACAMOS
-ramas_turismo_6d <- openxlsx::read.xlsx("/srv/DataDNMYE/empleo/ramas turismo 6 D.xlsx") %>% 
+ramas_turismo_6d <- read_file_srv("/empleo/ramas turismo 6 D.xlsx") %>% 
   filter(!COD_ACTIVIDAD_F883 %in% c(473000,681098,681099,780000,562091)) %>% 
   pull(COD_ACTIVIDAD_F883)
 
-clae_diccionario <- read.csv("/srv/DataDNMYE/empleo/clae_diccionario.csv") %>% select(clae6,clae6_desc)
+clae_diccionario <- read_file_srv("/empleo/clae_diccionario.csv",delim=",") %>% select(clae6,clae6_desc)
 
 ```
 
