@@ -28,7 +28,7 @@ data.frame(
                    "Reporte de los últimos datos de Turismo Interno estimados por la Encuesta de Viajes y Turismo de los Hogares",
                    "Tablero para la consulta de datos desagregados de las estimaciones históricas de Turismo Internacional",
                    "Tablero para la consulta de estimaciones agregadas del Padrón Único Nacional de Alojamientos (PUNA)",
-                   "Reporte sobre transacciones en divisas relacionadas al turismo en el Mercado Único y Libre de Cambios (MULC)",
+                   "Reporte sobre transacciones en divisas relacionadas al turismo en el Mercado de Cambios (BCRA)",
                    "Reporte sobre empleo registrado en las ramas características del turismo",
                    "Tablero para la generación de mapas con información georeferenciada de Turismo",
                    "Tablero con información del Registro de Agencias de Viajes de la Dirección Nacional de Agencias de Viajes",
@@ -41,3 +41,4 @@ data.frame(
   mutate(orden = c(-1,1, 5, 4, 3, 2, 6, 7, 8, 9, 0,-2)) %>%   # OREDNO POR TEMA Y NO POR TIPO DE RECURSO
   arrange(orden)  %>%
   write_csv(here::here("content", "recursos.csv"))
+
