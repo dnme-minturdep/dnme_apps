@@ -264,8 +264,7 @@ g1 <- tabla1 %>%
                                              '<br> balanza: USD ',format(round(balanza,1),big.mark=".",decimal.mark=",")," M"))) +
   scale_fill_manual(values = c("déficit" = cols_arg2[1],
                                "superávit" = cols_arg2[2]))+
-  scale_x_date(limits = c(min(as.Date(tabla1$fecha, origin = "1970-01-01"))-months(0),max(as.Date(tabla1$fecha, origin = "1970-01-01"))+months(1)),
-               date_breaks = "2 months", 
+  scale_x_date(breaks = seq.Date(as.Date(min(tabla1$fecha))+months(month(max(tabla1$fecha))-7),as.Date(max(tabla1$fecha)),by="3 months"),
                date_labels = "%b%y", 
                expand = c(0,0))+
   guides(fill = F)+
@@ -341,8 +340,7 @@ g2 <- tabla2 %>%
   geom_bar(stat="identity", position = "dodge")+
   scale_fill_manual(values = c(cols_arg,cols_arg2[6]), labels= c("Ingresos", "Egresos")) +
   scale_x_date(
-    limits = c(min(tabla2$fecha)-months(1),max(tabla2$fecha)+months(1)),
-               date_breaks = "3 months", 
+    breaks = seq.Date(as.Date(min(tabla2$fecha))+months(month(max(tabla2$fecha))-7),as.Date(max(tabla2$fecha)),by="3 months"),
                date_labels = "%b%y", 
                expand = c(0,0))+
   labs(title="",
@@ -756,8 +754,7 @@ g3 <- tabla3 %>%
       )) +
   geom_area()+
   scale_fill_manual(values = cols_arg2[2:4]) +
-  scale_x_date(#limits = c(min(tabla3$fecha),max(tabla3$fecha)),
-               date_breaks = "3 months", 
+  scale_x_date(breaks = seq.Date(as.Date(min(tabla3$fecha))+months(month(max(tabla3$fecha))-7),as.Date(max(tabla3$fecha)),by="3 months"),
                date_labels = "%b%y", 
                expand = c(0,0))+
   labs(#title="Ingresos de divisas por viajes y otros pagos con tarjeta. Apertura por rubros",
@@ -797,8 +794,7 @@ g4 <- tabla4 %>%
              ))+
   geom_area()+
   scale_fill_manual(values = cols_arg2[2:4],label=c("Tarjetas", "Billetes - No Residentes", "Operadores turísticos")) +
-  scale_x_date(#limits = c(min(tabla4$fecha),max(tabla4$fecha)),
-               date_breaks = "3 months", 
+  scale_x_date(breaks = seq.Date(as.Date(min(tabla1$fecha))+months(month(max(tabla1$fecha))-7),as.Date(max(tabla1$fecha)),by="3 months"),
                date_labels = "%b%y", 
                expand = c(0,0))+
   labs(#title="Egresos de divisas por viajes y otros pagos con tarjeta. Apertura por rubros",
