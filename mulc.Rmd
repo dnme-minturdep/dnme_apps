@@ -238,7 +238,7 @@ bza_acum <- ing_acum-eg_acum
 ```
 
 
-<!-- + En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-3)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-3)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones.  -->
++ En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-3)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-3)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones.
 
 <br>
 
@@ -663,9 +663,9 @@ g5_acum <- tabla5_acum %>%
     legend.position = "none",
     strip.placement = "outside")
 
-# ggplotly(g5_acum,tooltip = "text") %>% layout(legend = list(
-#        orientation = "v",x=0.8
-#      ))
+ggplotly(g5_acum,tooltip = "text") %>% layout(legend = list(
+       orientation = "v",x=0.8
+     ))
 ```
 
 ```{r}
@@ -705,10 +705,10 @@ g6_acum <- tabla6_acum %>%
     legend.position = "none",
     strip.placement = "outside")
 
-# ggplotly(g6_acum,tooltip = "text") %>% layout(legend = list(
-#        orientation = "v",x=0.8
-#      ))
-#   
+ggplotly(g6_acum,tooltip = "text") %>% layout(legend = list(
+       orientation = "v",x=0.8
+     ))
+
 ```
 ### Apertura del rubro "Viajes y otros pagos con tarjeta"
 
