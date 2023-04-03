@@ -399,7 +399,7 @@ tabla5$rubro <- tabla5$rubro %>%  as.factor() %>% recode_factor(
   fletes="Fletes",
   servicios_de_comunicaciones="Comunicaciones",
   #servicios_de_gobierno="Gobierno", 
-  #servicios_relacionados_con_el_comercio="Relacionados con comercio",
+  servicios_relacionados_con_el_comercio="Relacionados con comercio",
   turismo="Turismo",
   cargos_por_el_uso_de_la_propiedad_intelectual="Propiedad Intelectual", 
   servicios_de_seguros_y_siniestros="Seguros y siniestros",
@@ -438,10 +438,11 @@ tabla6$rubro <- tabla6$rubro %>%  as.factor() %>% recode_factor(
   servicios_empresariales_profesionales_y_tecnicos="Empresariales, profesionales y técnicos",
   servicios_de_informacion_e_informatica="Información e informática", 
   #servicios_personales_culturales_y_recreativos="Personales, culturales y recreativos", 
-  #otros_servicios_de_transporte="Otros ss de transporte", fletes="Fletes",
+  #otros_servicios_de_transporte="Otros ss de transporte",
+  fletes="Fletes",
   servicios_de_comunicaciones="Comunicaciones",
   #servicios_de_gobierno="Gobierno", 
-  #servicios_relacionados_con_el_comercio="Relacionados con comercio",
+  servicios_relacionados_con_el_comercio="Relacionados con comercio",
   turismo="Turismo",
   cargos_por_el_uso_de_la_propiedad_intelectual="Propiedad Intelectual", 
   servicios_de_seguros_y_siniestros="Seguros y siniestros",
@@ -472,12 +473,15 @@ tabla5_acum <- tabla5_acum %>% add_row(cobros = turismo$turismo,
                                       "viajes_y_otros_pagos_con_tarjeta")) %>% 
                      arrange(desc(cobros))
 
-otros_agrup <- tabla5_acum %>% summarise(otros_agrup = sum(cobros[10:15]))                       
+agrup_10p_cobros <- sum(tabla5_acum$cobros) * .01
+
+otros_agrup <- tabla5_acum %>% summarise(otros_agrup = sum(cobros[tabla5_acum$cobros<agrup_10p_cobros | tabla5_acum$rubro == "otros"]))                       
 
 tabla5_acum <- tabla5_acum %>% add_row(cobros = otros_agrup$otros_agrup,
-                             rubro = "otros_agrup")
+                             rubro = "otros_agrup") %>% 
+                     filter(cobros>agrup_10p_cobros & rubro != "otros")
 
-tabla5_acum <-tabla5_acum[c(1:9,16),]
+#tabla5_acum <-tabla5_acum[c(1:9,16),]
 
 tabla5_acum$rubro <- tabla5_acum$rubro %>%  as.factor() %>% recode_factor(
   servicios_empresariales_profesionales_y_tecnicos="Empresariales, profesionales y técnicos",
@@ -485,8 +489,8 @@ tabla5_acum$rubro <- tabla5_acum$rubro %>%  as.factor() %>% recode_factor(
   servicios_personales_culturales_y_recreativos="Personales, culturales y recreativos", 
   otros_servicios_de_transporte="Otros ss de transporte", fletes="Fletes",
   servicios_de_comunicaciones="Comunicaciones",
-  #servicios_de_gobierno="Gobierno", 
-  #servicios_relacionados_con_el_comercio="Relacionados con comercio",
+  servicios_de_gobierno="Gobierno", 
+  servicios_relacionados_con_el_comercio="Relacionados con comercio",
   turismo="Turismo",
   cargos_por_el_uso_de_la_propiedad_intelectual="Propiedad Intelectual", 
   servicios_de_seguros_y_siniestros="Seguros y Siniestros",
@@ -516,25 +520,25 @@ tabla6_acum <- tabla6_acum %>% add_row(pagos = turismo$turismo,
                      filter(!rubro %in% c("servicios_de_transporte_de_pasajeros",
                                       "viajes_y_otros_pagos_con_tarjeta")) %>% 
                      arrange(desc(pagos))
+agrup_10p_pagos <- sum(tabla6_acum$pagos) * .01
 
-otros_agrup <- tabla6_acum %>% summarise(otros_agrup = sum(pagos[10:15]))                       
+otros_agrup <- tabla6_acum %>% summarise(otros_agrup = sum(pagos[tabla6_acum$pagos<agrup_10p_pagos | tabla6_acum$rubro == "otros"]))                       
 
 tabla6_acum <- tabla6_acum %>% add_row(pagos = otros_agrup$otros_agrup,
-                             rubro = "otros_agrup")
-
-tabla6_acum <-tabla6_acum[c(1:9,16),]
+                             rubro = "otros_agrup") %>% 
+                     filter(pagos>agrup_10p_pagos & rubro != "otros")
 
 tabla6_acum$rubro <- tabla6_acum$rubro %>%  as.factor() %>% recode_factor(
   servicios_empresariales_profesionales_y_tecnicos="Empresariales, profesionales y técnicos",
   servicios_de_informacion_e_informatica="Información e informática", 
   servicios_personales_culturales_y_recreativos="Personales, culturales y recreativos", 
-  #otros_servicios_de_transporte="Otros ss de transporte", fletes="Fletes",
-  servicios_de_comunicaciones_telecomunicaciones="Comunicaciones  y telecomunicaciones",
+  otros_servicios_de_transporte="Otros ss de transporte", fletes="Fletes",
+  servicios_de_comunicaciones="Comunicaciones",
   servicios_de_gobierno="Gobierno", 
-  #servicios_relacionados_con_el_comercio="Relacionados con comercio",
+  servicios_relacionados_con_el_comercio="Relacionados con comercio",
   turismo="Turismo",
   cargos_por_el_uso_de_la_propiedad_intelectual="Propiedad Intelectual", 
-  servicios_de_seguros="Seguros",
+  servicios_de_seguros_y_siniestros="Seguros y siniestros",
   servicios_arrendamiento_operativo="Arrendamiento operativo",
   otros_agrup="Otros")
 
@@ -995,7 +999,7 @@ g10 <- tabla10 %>% ggplot(aes(fecha, prop_mulc_bp,
     strip.placement = "outside")
 ```
 
-+ En cuanto a los egresos, en el tercer trimestre de 2022, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1)` millones de egresos totales asociados al turismo, según la BP. Por su lado, el Mercado de Cambios registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1)` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1)`% de los egresos registrados por la BP.
++ En cuanto a los egresos, en el cuarto trimestre de 2022, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1)` millones de egresos totales asociados al turismo, según la BP. Por su lado, el Mercado de Cambios registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1)` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1)`% de los egresos registrados por la BP.
 
 *NOTA: En el caso de los egresos, también se debe cumplir la misma condición (egresos por turismo a través del mercado oficial de cambios-MULC-siempre deberían ser menores, o al menos iguales, al total de egresos por turismo de la Argentina según la Balanza de Pagos), sin embargo, nuevamente existen períodos en donde esto no se cumple, como son los trimestres 2, 3 y 4 del año 2020, los trimestres 1, 2, 3 y 4 del año 2021 y 2, 3 del año 2022. Se debe a que, además de las diferencias metodológicas de ambas fuentes -registro de transacciones vs. estimación a partir de encuestas de demanda-, sucede que el componente turístico del MULC incluye pagos con tarjeta realizados por residentes en Argentina a residentes en el exterior y que pueden no ser gastos turísticos. Ejemplos de esto podrían ser los pagos de servicios de streaming. Por lo tanto, en los casos en que el ratio MULC/BP es mayor al 100% se evidencia que los gastos con tarjeta por motivos no turísticos aumentaron la componente "viajes y otros gastos con tarjeta" del MULC por encima de los gastos del turismo emisivo registrado por la BP. En los trimestres comprendidos en la pandemia por COVID-19, esta situación se refleja aún más debido a la reducción cercana al 100% i.a. del turismo emisivo.*
 
