@@ -41,11 +41,11 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 # Definir mes / trimestre / año de referencia para títulos ####
 #fecha <- "2022-07-04"
 #mes <- "Marzo"
-trimestre <- "3er"
+trimestre <- "4to"
 anio <- "2022"
 Anio <- 2022
-trim_actual <- 3
-trim_anterior <- 2
+trim_actual <- 4
+trim_anterior <- 3
 anio_anterior <- 2021
 
 
@@ -100,7 +100,7 @@ turismo_interno2 <- evyth %>%
             pernoctaciones = sum(pondera * px07, na.rm = T),
             estadia = pernoctaciones/turistas,
             gasto.promedio.nom = gasto_total/turistas,
-            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2022_11, na.rm = T),
+            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2023_1, na.rm = T),
             gasto.promedio.real = gasto_total_real/turistas) %>%
   ungroup() %>% 
   group_by(trimestre) %>% 
@@ -127,7 +127,7 @@ turismo_interno_acum <- evyth %>%
             pernoctaciones = sum(pondera * px07, na.rm = T),
             estadia = pernoctaciones/turistas,
             gasto.promedio.nom = gasto_total/turistas,
-            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2022_11, na.rm = T),
+            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2023_1, na.rm = T),
             gasto.promedio.real = gasto_total_real/turistas) %>%
   ungroup() %>% 
   mutate(var.turistas = turistas/lag(turistas,1)-1,
