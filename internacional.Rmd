@@ -362,7 +362,7 @@ tabla2 <- tabla_paises_limitrofes %>% bind_rows(tabla_paises  %>% select(-limitr
   #     "**///**: Dato que no corresponde presentar debido a la naturaleza de las cosas.")
   # ) %>%
   tab_header(
-    subtitle = md(glue("**Total país. {mes} {anio} y acumulado anual y acumulado anual**")), 
+    subtitle = md(glue("**Total país. {mes} {anio} y acumulado anual**")), 
     title = "VIAJES DE TURISTAS NO RESIDENTES SEGÚN PAÍS DE RESIDENCIA Y DE TURISTAS RESIDENTES SEGÚN DESTINO PRINCIPAL VISITADO EN EL EXTERIOR") %>%
   tab_source_note(
     source_note = md(
