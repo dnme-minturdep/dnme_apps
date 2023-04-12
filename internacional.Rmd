@@ -34,7 +34,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 ```{r}
 # Definir mes para títulos ####
-mes <- "Enero"
+mes <- "Febrero"
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -44,7 +44,7 @@ cols_arg2 <- c("#EE3D8F", # "ROJO"
                "#F7941E","#FFD100","#D7DF23", "#9283BE")
 #Fuente
 
-familia_fuente <- "Encode Sans Normal"
+familia_fuente <- google_font(name = "Encode Sans")
 # Estilo de graficos
 theme_imet <- function() {
   theme(legend.position = "none",
@@ -62,6 +62,10 @@ turismo_internacional_turistas <- readRDS("/srv/DataDNMYE/turismo_internacional/
 anio <- as.numeric(turismo_internacional_turistas[nrow(turismo_internacional_turistas), 1])
 mes_nro  <- as.numeric(as_tibble(turismo_internacional_turistas[nrow(turismo_internacional_turistas),2]))
 fecha <- str_c(anio, mes_nro, "01" , sep = "-")
+
+# Cuadro visitantes
+indec_vis <- herramientas::read_file_srv(glue("turismo_internacional/informe_mensual/tabla_indec_{anio}_{mes}.xlsx"), sheet = "visitantes")
+
 ```
 
 ### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste((tolower(mes)),
@@ -103,9 +107,13 @@ turismo_internacional_ficha <- as.data.table(sapply(turismo_internacional_ficha,
 # (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`%)
 ```
 
-En el mes de `r tolower(mes)` de `r tolower(anio)` se estimaron `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(as.numeric(receptivo_turistas),0)],big.mark = ".",decimal.mark = ",")` viajes de turistas no residentes en el país (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(100*as.numeric(.SD),1),.SDcols=4],decimal.mark = ",")`% interanual), mientras que se estimaron `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(as.numeric(emisivo_turistas),0)],big.mark = ".",decimal.mark=",")` viajes al exterior de turistas residentes  (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`% interanual).
+En el mes de `r tolower(mes)` de `r tolower(anio)` se estimaron `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(as.numeric(receptivo_turistas),0)],big.mark = ".",decimal.mark = ",")` viajes de turistas no residentes en el país (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(100*as.numeric(.SD),1),.SDcols=4],decimal.mark = ",")`% interanual), mientras que se estimaron `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(as.numeric(emisivo_turistas),0)],big.mark = ".",decimal.mark=",")` viajes al exterior de turistas residentes  (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`% interanual). 
 
-<!--En el acumulado del año, suman un total de `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(receptivo_turistas),0)],big.mark=".",decimal.mark=",")` viajes de turistas extranjeros en el país (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=4],decimal.mark=",")`% en relación al año anterior) y `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(emisivo_turistas),0)],big.mark=".",decimal.mark=",")` viajes de turistas argentinos en el exterior (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`% en relación al año anterior). -->
+Los `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0(mes," ",anio),round(as.numeric(receptivo_turistas),0)],big.mark = ".",decimal.mark = ",")` viajes de turistas no residentes fueron realizados por `r format(round(indec_vis$Total_TOTAL[indec_vis$tipo == "Turistas no residentes"],1), big.mark = ".",decimal.mark = ",")` turistas, con un crecimiento interanual de `r format(round(indec_vis$var.ia_TOTAL[indec_vis$tipo == "Turistas no residentes"],1), big.mark = ".",decimal.mark = ",")`% [^1].
+
+[^1]: A partir del reporte del mes de septiembre de 2022, hemos renombrado la unidad de análisis que contabilizamos mensualmente. En pos de definir mejor la terminología utilizada según las definiciones internacionales de turismo, lo que antes llamábamos “turistas”, ahora lo renombramos como “viajes de turistas” tanto para el turismo receptivo como el emisivo. Si bien la serie de datos publicada puede presentar rectificaciones, debido a una mejor operacionalización de los criterios utilizados, se mantiene la misma metodología de estimación. El **viaje realizado por un turista no residente** se registra desde el momento que llega a la Argentina hasta que sale. Un **turista no residente** puede salir de Argentina para efectuar visitas a otros países y volver a ingresar en un corto período de tiempo, antes de regresar a su país de residencia habitual. Por ello, la cantidad de **viajes de turistas receptivos** puede ser mayor que la cantidad de **turistas receptivos**. En tanto, el **viaje realizado por un visitante residente** en Argentina (turismo emisivo) se registra desde el momento en que sale del país hasta que retorna, independientemente de la cantidad de países visitados. Por ello, la cantidad de **viajes emisivos** coincide con la cantidad de **visitantes emisivos**.
+
+En el acumulado del año, suman un total de `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(receptivo_turistas),0)],big.mark=".",decimal.mark=",")` viajes de turistas extranjeros en el país (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=4],decimal.mark=",")`% en relación al año anterior) y `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(emisivo_turistas),0)],big.mark=".",decimal.mark=",")` viajes de turistas argentinos en el exterior (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`% en relación al año anterior). 
 
 ```{r}
 #
@@ -139,7 +147,7 @@ turistas_internacional <- turismo_internacional_ficha[c(5,6,1,2,7,8,3,4),] %>%
     )
   ) %>%
   tab_header(
-    subtitle = md(glue("**Total país. {mes} {anio}**")), #  y acumulado anual (sacado en enero)
+    subtitle = md(glue("**Total país. {mes} {anio} y acumulado anual**")),
     title = "TURISMO RECEPTIVO, EMISIVO Y BALANZA TURÍSTICA"
   ) %>%
   # tab_source_note(
@@ -253,7 +261,7 @@ grafico_1 <- ggplot(data_grafico)  +
                      labels = scales::number_format(big.mark = ".", decimal.mark = ",")) +
   theme_minimal() + theme_imet() +
   theme(
-    plot.title = element_text(),
+    plot.title = element_markdown(family = familia_fuente), 
     plot.subtitle  = element_markdown(family = familia_fuente), 
     axis.text.x = element_text(size = 6, angle = 90),
     axis.text.y = element_text(size = 6),
@@ -354,7 +362,7 @@ tabla2 <- tabla_paises_limitrofes %>% bind_rows(tabla_paises  %>% select(-limitr
   #     "**///**: Dato que no corresponde presentar debido a la naturaleza de las cosas.")
   # ) %>%
   tab_header(
-    subtitle = md(glue("**Total país. {mes} {anio} y acumulado anual**")), #  y acumulado anual (sacado en enero)
+    subtitle = md(glue("**Total país. {mes} {anio} y acumulado anual**")), 
     title = "VIAJES DE TURISTAS NO RESIDENTES SEGÚN PAÍS DE RESIDENCIA Y DE TURISTAS RESIDENTES SEGÚN DESTINO PRINCIPAL VISITADO EN EL EXTERIOR") %>%
   tab_source_note(
     source_note = md(
