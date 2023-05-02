@@ -18,6 +18,7 @@ library(googlesheets4)
 library(plotly)
 library(herramientas)
 
+
 # Opciones globales
 options(scipen = 999, # sin notación científica
         OutDec= ",")# coma para los decimales
@@ -54,19 +55,20 @@ familia_fuente <- "Encode Sans"
 ```
 
 ```{r}
-ss_cobros_mensual <- read.xlsx("/srv/DataDNMYE/mulc/MULC.xlsx",
+ss_cobros_mensual <- read_file_srv("/srv/DataDNMYE/mulc/MULC.xlsx",
                               sheet = "Servicios Cobros USD - mensual",
-                              startRow = 7,
-                              cols = c(1,2,4:23),
-                              na.strings = "s/d") %>% 
-                     clean_names()
-
-ss_pagos_mensual <- read.xlsx("/srv/DataDNMYE/mulc/MULC.xlsx",
+                              range = cell_limits(c(7,1), c(NA,23)),
+                              na = "s/d") %>%
+                     clean_names() %>%
+                     select(-fecha)
+  
+ 
+ss_pagos_mensual <- read_file_srv("/srv/DataDNMYE/mulc/MULC.xlsx",
                              sheet = "Servicios Pagos USD - mensual",
-                             startRow = 7,
-                             cols = c(1,2,4:23),
-                             na.strings = "s/d") %>% 
+                             range = cell_limits(c(7,1), c(NA,23)),
+                             na = "s/d") %>% 
                     clean_names() %>% 
+                    select(-fecha) %>% 
                     mutate(
                     entidades_y_otros_por_cancelacion_de_tarjetas = -1 * entidades_y_otros_por_cancelacion_de_tarjetas,
                     operadores_turisticos_y_otras_transferencias = -1 * operadores_turisticos_y_otras_transferencias,
@@ -208,7 +210,7 @@ ing_acum <- filter(tabla1, year(fecha) == anio_datos) %>% select(cobros) %>% sum
 ing_acum_ia <- filter(tabla1, year(fecha) == anio_datos-1 & month(fecha) <= month(last(tabla1$fecha))) %>% select(cobros) %>% sum()
 
 #El valor de esta variable corresponde a  prepandemia (2019)
-ing_acum_ia_2 <- filter(tabla1, year(fecha) == anio_datos-3 & month(fecha) <= month(last(tabla1$fecha))) %>% select(cobros) %>% sum()
+ing_acum_ia_2 <- filter(tabla1, year(fecha) == anio_datos-4 & month(fecha) <= month(last(tabla1$fecha))) %>% select(cobros) %>% sum()
 
 var_ing_acum_ia <- (ing_acum/ing_acum_ia-1)*100
 
@@ -220,7 +222,7 @@ eg_acum <- filter(tabla1, year(fecha) == anio_datos) %>% select(pagos) %>% sum()
 eg_acum_ia <- filter(tabla1, year(fecha) == anio_datos-1 & month(fecha) <= month(last(tabla1$fecha))) %>% select(pagos) %>% sum()
 
 #El valor de esta variable corresponde a  prepandemia (2019)
-eg_acum_ia_2 <- filter(tabla1, year(fecha) == anio_datos-3 & month(fecha) <= month(last(tabla1$fecha))) %>% select(pagos) %>% sum()
+eg_acum_ia_2 <- filter(tabla1, year(fecha) == anio_datos-4 & month(fecha) <= month(last(tabla1$fecha))) %>% select(pagos) %>% sum()
 
 var_eg_acum_ia <- (eg_acum/eg_acum_ia-1)*100
 
@@ -238,7 +240,7 @@ bza_acum <- ing_acum-eg_acum
 ```
 
 
-+ En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-3)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-3)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones.
++ En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-4)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-4)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones.
 
 <br>
 
