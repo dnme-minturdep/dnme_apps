@@ -37,8 +37,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2023-02-01")
-mes <- "Febrero"
+fecha <- as.Date("2023-03-01")
+mes <- "Marzo"
 #trimestre <- "2do"
 anio <- "2023"
 
@@ -800,8 +800,8 @@ check <- nrow(tabla3_A[tabla3_A$estadia_total == sort(tabla3_A$estadia_total, na
 pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/pernoctes-viajeros-y-estadia-media-por-localidad.csv", encoding = "UTF-8")
 
 #Localidades que no corresponde mostrar datos (AD HOC,INDEC)
-localidades_sin_datos <- c("Puerto Iguazú","Posadas","El Calafate")
-localidades_insuficiencia <- c("Corrientes","Valle de Uco","Las Grutas")
+localidades_sin_datos <- c("Puerto Iguazú","Posadas","El Calafate","Santa Rosa")
+localidades_insuficiencia <- c("Corrientes","Puerto Iguazú","Las Grutas","Neuquén")
 
 #Tabla localidades
 tabla4 <- pernoctaciones_localidad %>% 
