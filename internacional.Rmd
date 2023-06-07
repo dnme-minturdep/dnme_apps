@@ -34,7 +34,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 ```{r}
 # Definir mes para títulos ####
-mes <- "Marzo"
+mes <- "Abril"
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -119,33 +119,29 @@ En el acumulado del año, suman un total de `r format(turismo_internacional_fich
 #
 ### 1) TURISMO INTERNACIONAL ####
 # tabla_1 - Turistas internacional ####
-turistas_internacional <- turismo_internacional_ficha[c(5,6,1,2,7,8,3,4),] %>%
+turistas_internacional_tabla <- turismo_internacional_ficha[c(5,6,1,2,7,8,3,4),] %>%
   #filter(periodo != "Acumulado 2021") %>% #Sólo para enero
   janitor::clean_names()  %>% 
   mutate(across(-c(medio_transporte, periodo), .fns = as.numeric)) %>%
-  group_by(medio_transporte) %>% 
-  gt(rowname_col = "periodo") %>% 
+  group_by(medio_transporte) 
+
+  turistas_internacional <- turistas_internacional_tabla %>% 
+    gt(rowname_col = "periodo") %>% 
   cols_label(
     receptivo_turistas = md("Viajes de turistas") ,             
     receptivo_var_percent_ia = md("Var % i.a.") ,             
     emisivo_turistas = md("Viajes de turistas") ,                  
     emisivo_var_percent_ia = md("Var % i.a.") ,             
     balanza = md("Viajes de turistas") ,                  
-    balanza_var_abs_ia = md("Var absoluta i.a.") 
-  ) %>% 
+    balanza_var_abs_ia = md("Var absoluta i.a.")) %>% 
   fmt_number(columns = c(3, 5, 7, 8), decimals = 0, sep_mark = ".", dec_mark = ",") %>% 
-  fmt_percent(columns = c(2,4,6), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  fmt_percent(columns = c(4,6), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
   cols_align(
     align = "center",
     columns = vars(receptivo_turistas,      
                    receptivo_var_percent_ia, emisivo_turistas,         emisivo_var_percent_ia,  
-                   balanza,                  balanza_var_abs_ia      
-    ))  %>% 
-  opt_table_font(
-    font = list(
-      google_font(name = "Encode Sans")
-    )
-  ) %>%
+                   balanza,                  balanza_var_abs_ia      ))  %>% 
+  opt_table_font(font = list(google_font(name = "Encode Sans"))  ) %>%
   tab_header(
     subtitle = md(glue("**Total país. {mes} {anio} y acumulado anual**")),
     title = "TURISMO RECEPTIVO, EMISIVO Y BALANZA TURÍSTICA"
