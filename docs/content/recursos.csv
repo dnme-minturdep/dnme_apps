@@ -1,4 +1,7 @@
 recurso,src,url,description,tags,Todos,Tablero,Reporte,orden
+CRUCERISMO,img/crucerismo.png,https://tableros.yvera.tur.ar/crucerismo,Tablero interactivo con información sobre el crucerismo en Argentina,Tablero,1,1,0,-4
+SIG,img/visor.png,https://tableros.yvera.tur.ar/inversiones,Visor de Información Geográfica de Turismo para Plataforma de Inversiones,Tablero,1,1,0,-3
+Conectividad Aérea Reporte,img/conectividad_aerea.png,https://tableros.yvera.tur.ar/conectividad.html,Reporte mensual sobre los últimos datos del sector aerocomercial a partir de la información de la Administración Nacional de Aviación Civil,Reporte,1,0,1,-2
 Conectividad Aérea,img/conectividad.png,https://tableros.yvera.tur.ar/conectividad/,Tablero interactivo con información aerocomercial para el turismo,Tablero,1,1,0,-1
 Agencias,img/agencias.png,https://tableros.yvera.tur.ar/agencias,Tablero con información del Registro de Agencias de Viajes de la Dirección Nacional de Agencias de Viajes,Tablero,1,1,0,0
 Turismo Internacional,img/ti.png,https://tableros.yvera.tur.ar/internacional.html,"El reporte presenta la última información de turismo receptivo, emisivo y balanza turística
@@ -8,6 +11,6 @@ EVYTH,img/evyth.png,https://tableros.yvera.tur.ar/interno.html,Reporte de los ú
 Naturaleza,img/parques.png,https://tableros.yvera.tur.ar/parques_nacionales.html,Información de visitas a Parques Nacionales,Reporte,1,0,1,4
 Ocupación Hotelera,img/eoh.png,https://tableros.yvera.tur.ar/eoh.html,Presenta los últimos datos disponibles de la Encuesta de Ocupación Hotelera (EOH),Reporte,1,0,1,5
 PUNA,img/puna.png,https://tableros.yvera.tur.ar/puna/,Tablero para la consulta de estimaciones agregadas del Padrón Único Nacional de Alojamientos (PUNA),Tablero,1,1,0,6
-MULC,img/mulc.png,https://tableros.yvera.tur.ar/mulc.html,Reporte sobre transacciones en divisas relacionadas al turismo en el Mercado Único y Libre de Cambios (MULC),Reporte,1,0,1,7
+MULC,img/mulc.png,https://tableros.yvera.tur.ar/mulc.html,Reporte sobre transacciones en divisas relacionadas al turismo en el Mercado de Cambios (BCRA),Reporte,1,0,1,7
 Empleo,img/empleo.png,https://tableros.yvera.tur.ar/empleo.html,Reporte sobre empleo registrado en las ramas características del turismo,Reporte,1,0,1,8
 mapeAr,img/mapeAr.png,https://tableros.yvera.tur.ar/mapeAr,Tablero para la generación de mapas con información georeferenciada de Turismo,Tablero,1,1,0,9
