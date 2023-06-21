@@ -18,7 +18,6 @@ library(DT)
 library(ggforce)
 library(ggthemes)
 library(treemapify)
-library(herramientas)
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -33,14 +32,14 @@ familia_fuente <-"Encode Sans Normal"
 Sys.setlocale(locale = "es_AR.UTF-8")
 ```
 
-### (Publicado en `r format(Sys.Date(),'%B')` `r format(Sys.Date(),'%Y')` con datos actualizados a febrero 2023)
+### (Publicado en `r format(Sys.Date(),'%B')` `r format(Sys.Date(),'%Y')` con datos actualizados a julio 2022)
 
 ```{r}
 #INSUMOS
-empleo <- read_file_srv("/empleo/puestos_6_digitos.csv",delim=",")
-empleadores <- read_file_srv("/empleo/empresas_6_digitos.csv",delim=",")
+empleo <- read_csv("/srv/DataDNMYE/empleo/puestos_6_digitos.csv")
+empleadores <- read_csv("/srv/DataDNMYE/empleo/empresas_6_digitos.csv")
 fecha_empresas <- max(empleadores$fecha)
-puestos.genero <- read_file_srv("/empleo/puestos_genero_6_digitos.csv",delim=",")
+puestos.genero <- read_csv("/srv/DataDNMYE/empleo/puestos_genero_6_digitos.csv")
 fecha_genero  <- max(puestos.genero$fecha)
 ################################################################################
 #IPC PARA SALARIOS REALES
@@ -60,11 +59,11 @@ fecha_genero  <- max(puestos.genero$fecha)
 # 562091: Servicios de cantinas con atención exclusiva  a los empleados o estudiantes dentro de empresas o establecimientos educativos.
 # 
 # POR EL MOMENTO LAS SACAMOS
-ramas_turismo_6d <- read_file_srv("/empleo/ramas turismo 6 D.xlsx") %>% 
+ramas_turismo_6d <- openxlsx::read.xlsx("/srv/DataDNMYE/empleo/ramas turismo 6 D.xlsx") %>% 
   filter(!COD_ACTIVIDAD_F883 %in% c(473000,681098,681099,780000,562091)) %>% 
   pull(COD_ACTIVIDAD_F883)
 
-clae_diccionario <- read_file_srv("/empleo/clae_diccionario.csv",delim=",") %>% select(clae6,clae6_desc)
+clae_diccionario <- read.csv("/srv/DataDNMYE/empleo/clae_diccionario.csv") %>% select(clae6,clae6_desc)
 
 ```
 
@@ -188,10 +187,10 @@ grafico_empleo_series <- ggplot(indice.empleo,aes(x=as.Date(fecha),y=indice,colo
   geom_line()+
   #geom_point()+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
-  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+months(month(max(indice.empleo$fecha))-7),as.Date(max(indice.empleo$fecha)),by="6 months"),
-               #date_breaks = "6 months",
+  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
+               date_breaks = "4 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,50))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -277,7 +276,7 @@ grafico_empleo_cat_rct <- ggplot(data_grafico_empleo_cat_rct,aes(x=reorder(cat.r
     strip.placement = "outside") +
   coord_flip(clip = "off")+
   labs(x="",y="",title= "Empleo en Ramas Características del Turismo",
-       subtitle = glue("Miles de puestos. {format(max(as.Date(puestos$fecha)),'%B')} {format(max(as.Date(puestos$fecha)),'%Y')} <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2020</span>"), caption="**Fuente:** DNMyE en base a CEP XXI")
+       subtitle = glue("Miles de puestos. {format(max(as.Date(puestos$fecha)),'%B')} {format(max(as.Date(puestos$fecha)),'%Y')} <span style='color:#f7a1c9'>Variación i.a.</span> y <span style='color:#F7941E'>Var. mismo período 2019</span>"), caption="**Fuente:** DNMyE en base a CEP XXI")
 grafico_empleo_cat_rct
 ```
 
@@ -290,10 +289,10 @@ grafico_empleo_cat_series <- ggplot(indice.cat.rct,aes(x=as.Date(fecha),y=indice
   geom_line()+
   #geom_point()+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
-  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+months(month(max(indice.empleo$fecha))-7),as.Date(max(indice.empleo$fecha)),by="6 months"),
-               #date_breaks = "6 months",
+  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
+               date_breaks = "4 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,50))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -380,10 +379,10 @@ grafico_empleo_series_2 <- ggplot(data_grafico_empleo_todas)+
   #                                             glue('<br>puestos:'), format(empleo.cat,big.mark="."),
   #                                             '<br>indice:', indice)),size=.8)+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ","),limits = c(90,200))+
- scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+months(month(max(indice.empleo$fecha))-1),as.Date(max(indice.empleo$fecha)),by="12 months"),
-               #date_breaks = "6 months",
+  scale_x_date(#limits = c(as.Date("2019-01-01"),as.Date(mes.empleo)),
+               date_breaks = "4 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,50))+
   scale_color_manual(values=cols_arg2)+
    scale_size_continuous(range = c(.1,2))+
   theme_minimal()+
@@ -454,10 +453,10 @@ grafico_genero_series <- ggplot(genero.rct.vs.no.rct,aes(x=as.Date(fecha),y=shar
   geom_line()+
   #geom_point()+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
-  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+months(month(max(indice.empleo$fecha))-7),as.Date(max(indice.empleo$fecha)),by="6 months"),
-               #date_breaks = "6 months",
+  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
+               date_breaks = "4 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,50))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -522,10 +521,10 @@ grafico_genero_categorias <- ggplot(genero.categorias,aes(x=as.Date(fecha),y=sha
   geom_line()+
   #geom_point()+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
-  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+ months(month(max(indice.empleo$fecha))-7),as.Date(max(indice.empleo$fecha)),by="6 months"),
-               #date_breaks = "6 months",
+  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
+               date_breaks = "4 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,50))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -594,10 +593,10 @@ grafico_genero_series_2 <- ggplot(data_grafico_genero_todas)+
                 ),size=.1)+
   geom_line(aes(x=fecha,y=share.cat,color=cat.rct))+
   scale_y_continuous(labels=scales::percent_format(decimal.mark = ","),limits = c(0,.8))+
-  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+months(month(max(indice.empleo$fecha))-1),as.Date(max(indice.empleo$fecha)),by="12 months"),
-               #date_breaks = "6 months",
+  scale_x_date(#limits = c(as.Date("2019-01-01"),as.Date(mes.empleo)),
+               date_breaks = "4 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,50))+
   scale_color_manual(values=cols_arg2)+
    scale_size_continuous(range = c(.1,2))+
   theme_minimal()+
@@ -658,10 +657,10 @@ grafico_empresas_series <- ggplot(indice.empresas,aes(x=as.Date(fecha),y=indice,
   geom_line()+
   #geom_point()+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
- scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha)+months(month(max(indice.empleo$fecha))-8)),as.Date(max(indice.empleo$fecha)),by="6 months"),
-               #date_breaks = "6 months",
+  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
+               date_breaks = "4 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,70))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -762,10 +761,10 @@ grafico_empresas_cat_series <- ggplot(indice.empresas.cat.rct,aes(x=as.Date(fech
   geom_line()+
   #geom_point()+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ",",scale = 100,accuracy = 2))+
-  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha)+months(month(max(indice.empleo$fecha))-8)),as.Date(max(indice.empleo$fecha)),by="6 months"),
-               #date_breaks = "6 months",
+  scale_x_date(#limits = c(as.Date(min(indice.empleo$fecha)),as.Date(max(indice.empleo$fecha)) + months(15)),
+               date_breaks = "4 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,70))+
   # ggrepel::geom_label_repel(data=filter(indice.empleo,fecha==max(indice.empleo$fecha)),
   #                                       aes(label = rct),
   #                  nudge_x = 1,
@@ -846,10 +845,10 @@ grafico_empresas_series_2 <- ggplot(data_grafico_empresas_todas)+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ","),
                      limits = c(90,200)
                      )+
-  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha)+months(month(max(indice.empleo$fecha))-2)),as.Date(max(indice.empleo$fecha)),by="12 months"),
-               #date_breaks = "6 months",
+  scale_x_date(#limits = c(as.Date("2019-01-01"),as.Date(mes.empleo)),
+               date_breaks = "4 months",
                date_labels = "%b%y",
-               expand=c(0,0))+
+               expand=c(0,70))+
   scale_color_manual(values=cols_arg2)+
    scale_size_continuous(range = c(.1,2))+
   theme_minimal()+
@@ -893,10 +892,4 @@ ramas %>%
   rename("CLAE" = clae6,"Empresas"=empresas,"% de mujeres"=share_mujer) %>% 
   datatable(caption=glue("Ramas seleccionadas y valores de { format(as.Date(max(puestos$fecha)),'%B %Y')} (puestos y % de mujeres) y {format(as.Date(fecha_empresas),'%B %Y')} (empresas)"))
 ```
-
-::: {.infobox}
-
-Para recibir las novedades del SINTA escribíle al bot de Telegram de la DNMyE [*SintIA*](https://bitacora.yvera.tur.ar/posts/2022-09-08-sintia/): @RDatinaBot 🤖
-
-:::
 
