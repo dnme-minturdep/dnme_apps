@@ -21,8 +21,8 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2022-04-01"
-mes <- "abril"
+fecha <- "2022-08-01"
+mes <- "agosto"
 anio <- "2022"
 
 #parques <- c("el leoncito", "sierra de las quijadas")
