@@ -21,8 +21,8 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2022-07-01"
-mes <- "julio"
+fecha <- "2022-12-01"
+mes <- "diciembre"
 anio <- "2022"
 
 #parques <- c("el leoncito", "sierra de las quijadas")
@@ -70,7 +70,8 @@ theme_imet <- function() {
 ```{r}
 #Importo datos
 parques_nacionales <- read_excel("/srv/DataDNMYE/areas_protegidas/areas_protegidas_nacionales/pivot_pn.xlsx",
-                                 sheet = "base PN")
+                                 sheet = "base PN") %>% 
+   filter(!parque_nacional %in% c("los arrayanes", "isla pingüino", "nahuel huapi 3p"))
 # parques_nacionales <- read_sheet("https://docs.google.com/spreadsheets/d/1ZM7PfvY16tImMcFKUj0fCn6ASc1yxlye/edit#gid=1610808314")
 #parques_nacionales <- read.xlsx("data/Pivot_PN_20201125.xlsx",sheet="base PN 2008_2020")
 ```
