@@ -188,7 +188,7 @@ tabla1_A <- tabla1 %>%
 
 #Selecciono acumulados 
 acumulados <- tabla1_A %>% select(1,2, 11:16) %>%
-  mutate(indice_tiempo = "Acum. 2022") %>% 
+  mutate(indice_tiempo = "Acum. 2023") %>% 
   rename(pernoctes = acum_pernoctes,
          var_ia_pernoctes = var_ia_acum_pernoctes,
          viajeros = acum_viajeros,
