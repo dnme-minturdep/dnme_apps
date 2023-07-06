@@ -41,12 +41,14 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 # Definir mes / trimestre / año de referencia para títulos ####
 #fecha <- "2022-07-04"
 #mes <- "Marzo"
-trimestre <- "4to"
-anio <- "2022"
-Anio <- 2022
-trim_actual <- 4
-trim_anterior <- 3
-anio_anterior <- 2021
+
+##### SIN ACUMULADO PARA PRIMER TRIMESTRE
+trimestre <- "3er"
+anio <- "2023"
+Anio <- 2023
+trim_actual <- 1
+trim_anterior <- 4
+anio_anterior <- 2022
 
 
 # PALETAS Y FUENTES ---------------------------------------------------------
@@ -100,7 +102,7 @@ turismo_interno2 <- evyth %>%
             pernoctaciones = sum(pondera * px07, na.rm = T),
             estadia = pernoctaciones/turistas,
             gasto.promedio.nom = gasto_total/turistas,
-            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2023_1, na.rm = T),
+            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2023_3, na.rm = T),
             gasto.promedio.real = gasto_total_real/turistas) %>%
   ungroup() %>% 
   group_by(trimestre) %>% 
@@ -127,7 +129,7 @@ turismo_interno_acum <- evyth %>%
             pernoctaciones = sum(pondera * px07, na.rm = T),
             estadia = pernoctaciones/turistas,
             gasto.promedio.nom = gasto_total/turistas,
-            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2023_1, na.rm = T),
+            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2023_3, na.rm = T),
             gasto.promedio.real = gasto_total_real/turistas) %>%
   ungroup() %>% 
   mutate(var.turistas = turistas/lag(turistas,1)-1,
@@ -148,7 +150,7 @@ En este periodo los viajes tuvieron una estadía promedio de `r format(pull(roun
 turismo_interno_tabla <- turismo_interno2 %>%
   filter(trimestre == trim_actual, anio == Anio) %>% 
   mutate(periodo = paste0(trimestre,"° trimestre. ",anio)) %>% 
- bind_rows(turismo_interno_acum) %>% 
+ #bind_rows(turismo_interno_acum) %>% 
   mutate(across(-periodo, .fns = as.numeric),
          turistas_millones = turistas/1000000,
          gasto_total_millones = gasto_total/1000000,
