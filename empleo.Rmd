@@ -382,7 +382,7 @@ grafico_empleo_series_2 <- ggplot(data_grafico_empleo_todas)+
   #                                             '<br>categoria:', cat.rct, 
   #                                             glue('<br>puestos:'), format(empleo.cat,big.mark="."),
   #                                             '<br>indice:', indice)),size=.8)+
-  scale_y_continuous(labels=scales::number_format(decimal.mark = ","),limits = c(90,200))+
+  scale_y_continuous(labels=scales::number_format(decimal.mark = ","),limits = c(80,200))+
  scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha))+months(month(max(indice.empleo$fecha))-1),as.Date(max(indice.empleo$fecha)),by="12 months"),
                #date_breaks = "6 months",
                date_labels = "%b%y",
