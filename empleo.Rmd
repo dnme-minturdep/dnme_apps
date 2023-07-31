@@ -33,7 +33,7 @@ familia_fuente <-"Encode Sans Normal"
 Sys.setlocale(locale = "es_AR.UTF-8")
 ```
 
-### (Publicado en `r format(Sys.Date(),'%B')` `r format(Sys.Date(),'%Y')` con datos actualizados a marzo 2023)
+### (Publicado en `r format(Sys.Date(),'%B')` `r format(Sys.Date(),'%Y')` con datos actualizados a abril 2023)
 
 ```{r}
 #INSUMOS
@@ -644,13 +644,14 @@ indice.empresas <- puestos %>%
   group_by(rct) %>% 
   mutate(indice = empresas/first(empresas),
          var.i.a. = empresas/lag(empresas,12)-1,
-         var.a.2.anios = empresas/lag(empresas,24)-1,
-         var.a.3.anios = empresas/lag(empresas,36)-1)
+         #var.a.2.anios = empresas/lag(empresas,24)-1,
+         #var.a.3.anios = empresas/lag(empresas,36)-1,
+         var.a.4.anios = empresas/lag(empresas,48)-1)
 ```
 
 
 En el mes de **`r format(as.Date(fecha_empresas),"%B %Y")`** se registraron `r indice.empresas%>% filter(fecha == max(fecha) & rct == "RCT") %>% pull(empresas) %>% format(.,big.mark=".")` empresas en ramas turísticas, presentando una variación de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "RCT","var.i.a."],1),decimal.mark=",") `% con respecto a  `r format(as.Date(max(indice.empresas$fecha))-years(1),"%B %Y")`. El resto de los sectores presentó una variación de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "NO RCT","var.i.a."],1),decimal.mark=",") `%.
-En la comparación con `r format(as.Date(max(indice.empresas$fecha))-years(3),"%B %Y")`, la variación en ramas turísticas fue de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "RCT","var.a.3.anios"],1),decimal.mark=",") `%, mientras que en el resto de las ramas fue de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "NO RCT","var.a.3.anios"],1),decimal.mark=",") `%
+En la comparación con `r format(as.Date(max(indice.empresas$fecha))-years(4),"%B %Y")`, la variación en ramas turísticas fue de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "RCT","var.a.4.anios"],1),decimal.mark=",") `%, mientras que en el resto de las ramas fue de `r format(round(100*indice.empresas[indice.empresas$fecha == max(indice.empresas$fecha) & indice.empresas$rct == "NO RCT","var.a.4.anios"],1),decimal.mark=",") `%
 
 ```{r}
 grafico_empresas_series <- ggplot(indice.empresas,aes(x=as.Date(fecha),y=indice,color=rct,group=rct,
@@ -716,8 +717,9 @@ indice.empresas.cat.rct <- puestos %>%
   group_by(cat.rct) %>% 
   mutate(indice = empresas/first(empresas),
          var.i.a. = empresas/lag(empresas,12)-1,
-         var.a.2.anios = empresas/lag(empresas,24)-1,
-         var.a.3.anios = empresas/lag(empresas,36)-1)
+         #var.a.2.anios = empresas/lag(empresas,24)-1,
+         #var.a.3.anios = empresas/lag(empresas,36)-1,
+         var.a.4.anios = empresas/lag(empresas,48)-1)
 ```
 
 A continuación se detalla la información de empleadores en ramas turísticas agrupados en categorías:
@@ -732,7 +734,7 @@ grafico_empresas_cat_rct <- ggplot(data_grafico_empresas_cat_rct,aes(x=reorder(c
             hjust=-.1)+
   geom_label(aes(label=paste0(format(round(100*var.i.a.,1),decimal.mark = ","),"%"),y=max(empresas)*1.25),
              color="#f7a1c9")+
-  geom_label(aes(label=paste0(format(round(100*var.a.3.anios,1),decimal.mark = ","),"%"),y=max(empresas)*1.45),
+  geom_label(aes(label=paste0(format(round(100*var.a.4.anios,1),decimal.mark = ","),"%"),y=max(empresas)*1.45),
              color = "#F7941E")+
   geom_hline(yintercept = 0, size = 0.1) +
   #scale_fill_manual(values = cols_arg2[2])+
@@ -817,8 +819,9 @@ indice_empresas_todas <- puestos %>%
    group_by(clae6,cat.rct) %>% 
   mutate(indice = 100*round(empresas/first(empresas),2), 
          var.i.a. = empresas/lag(empresas,12)-1,
-         var.a.2.anios = empresas/lag(empresas,24)-1)
-         #var.a.3.anios = empresas/lag(empresas,36)-1)
+         #var.a.2.anios = empresas/lag(empresas,24)-1,
+         #var.a.3.anios = empresas/lag(empresas,36)-1,
+         var.a.4.anios = empresas/lag(empresas,48)-1)
 ```
 
 ```{r}
