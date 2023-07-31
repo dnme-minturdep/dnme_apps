@@ -42,24 +42,24 @@ empleadores <- read_file_srv("/empleo/empresas_6_digitos.csv",delim=",")
 fecha_empresas <- max(empleadores$fecha)
 puestos.genero <- read_file_srv("/empleo/puestos_genero_6_digitos.csv",delim=",")
 fecha_genero  <- max(puestos.genero$fecha)
+
+
 ################################################################################
 #IPC PARA SALARIOS REALES
 #ipc <- read.delim("Entradas/IPC_argentina_script.txt",sep = ",")
 ################################################################################
+
+
+
 # Selección de ramas turísticas
-#ATENCIÓN: 
-#la rama 473000 "Venta al por menor de combustible para vehículos automotores y motocicletas" representa
-# ~73% de la facturación de transporte. Como en la CST se toma solo el margen de comercialización, deberíamos
-# replicar ese ratio o sacarla.
-# la rama 681098 "Servicios inmobiliarios realizados por cuenta propia, con bienes urbanos propios o arrendados n.c.p."
-# y 681099 "Servicios inmobiliarios realizados por cuenta propia, con bienes rurales propios o arrendados n.c.p."
-#lo turísitco solo es el alquiler de segundas viviendas para uso turístico en la cst del total de esa rama tomábamos el 3% aprox nada más
-# replicar ese ratio o sacarla
+#ATENCIÓN: LAS RAMAS 473000,681098,681099,780000,562091 se excluyen (por el momento) debido a las siguientes razones: 
+
+#la rama 473000 "Venta al por menor de combustible para vehículos automotores y motocicletas" representa ~73% de la facturación de transporte. Como en la CST se toma solo el margen de comercialización, deberíamos replicar ese ratio (trabajar a futuro).
+# la rama 681098 "Servicios inmobiliarios realizados por cuenta propia, con bienes urbanos propios o arrendados n.c.p." y 681099 "Servicios inmobiliarios realizados por cuenta propia, con bienes rurales propios o arrendados n.c.p." lo turísitco solo es el alquiler de segundas viviendas para uso turístico en la cst del total de esa rama tomábamos el 3% aprox nada más, deberíamos replicar ese ratio (trabajar a futuro).
 # Asimismo, se exluyen algunas ramas que eran parte de la clasifiación de RCT según CLANAE 2004 pero no corresponde:
 # 780000: Obtención y dotación de personal,
 # 562091: Servicios de cantinas con atención exclusiva  a los empleados o estudiantes dentro de empresas o establecimientos educativos.
-# 
-# POR EL MOMENTO LAS SACAMOS
+
 ramas_turismo_6d <- read_file_srv("/empleo/ramas turismo 6 D.xlsx") %>% 
   filter(!COD_ACTIVIDAD_F883 %in% c(473000,681098,681099,780000,562091)) %>% 
   pull(COD_ACTIVIDAD_F883)
