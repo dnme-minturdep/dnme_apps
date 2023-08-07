@@ -76,7 +76,7 @@ cabotaje <- base_total %>%
 
 #Filtramos de momento los casos sin info.
 cabotaje <- cabotaje %>% 
-  filter(region_destino != "No hay info") # Que hacemos con los casos que van a malvinas?
+  filter(region_destino != "No hay info") 
 ```
 
 ```{r}
@@ -1328,7 +1328,7 @@ tercer_rank_prov <- rank_provs[3,1] %>% pull
 ```
 
 
-Las provincias de **`r primer_rank_prov`, `r segun_rank_prov` y `r tercer_rank_prov`** son aquellas que **más vuelos de cabotaje recibieron** durante el último mes.
+Las provincias de **`r primer_rank_prov`, `r segun_rank_prov` y Córdoba** son aquellas que **más vuelos de cabotaje recibieron** durante el último mes.
 
 ```{r, fig.height=8}
 herfintal_prov_empre <- cabotaje %>% 
