@@ -34,7 +34,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 ```{r}
 # Definir mes para títulos ####
-mes <- "Mayo"
+mes <- "Junio"
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -193,7 +193,44 @@ turistas_internacional_tabla <- turismo_internacional_ficha[c(5,6,1,2,7,8,3,4),]
     locations = cells_body(
       columns = vars(receptivo_var_percent_ia),
       rows = receptivo_var_percent_ia > 0)
-  ) %>% ## AGRUPAMIENTO DE COLUMNAS POR VARIABLE DE INTERES
+  ) %>% 
+    tab_style(
+    style = list(
+      cell_text(color = "#EE3D8F"),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(balanza),
+      rows = balanza < 0)
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#50B8B1"),
+      cell_text(weight =  "bold")
+    ),
+    locations = cells_body(
+      columns = vars(balanza),
+      rows = balanza > 0)
+  )  %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#EE3D8F"),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(balanza_var_abs_ia),
+      rows = balanza_var_abs_ia < 0)
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#50B8B1"),
+      cell_text(weight =  "bold")
+    ),
+    locations = cells_body(
+      columns = vars(balanza_var_abs_ia),
+      rows = balanza_var_abs_ia > 0)
+  )  %>%
+    ## AGRUPAMIENTO DE COLUMNAS POR VARIABLE DE INTERES
   tab_spanner(
     label = md("**RECEPTIVO**"),
     columns = vars(receptivo_turistas,
@@ -264,7 +301,6 @@ grafico_1 <- ggplot(data_grafico)  +
     panel.grid.major = element_line(colour="grey90",size = rel(0.5)),         
     panel.grid.minor = element_blank()) +
   labs(title = "EVOLUCIÓN MENSUAL DEL TURISMO INTERNACIONAL",
-       #subtitle = "Prueba",
        subtitle = glue("**abril 2018-{tolower(mes)} {anio}** <span style='color:#37BBED'>**receptivo**</span>, <span style='color:#9283BE'>**emisivo**</span>  y **balanza (miles de turistas)**"),x="",y="", fill = "",
        caption = "Fuente: Elaboración de la DNMyE en base a DNM y ETI-INDEC") 
 ggplotly(grafico_1,tooltip = "text")
@@ -400,6 +436,43 @@ información de la Dirección Nacional de Migraciones y la Encuesta de Turismo I
     locations = cells_body(
       columns = vars(tvar.i.a_emisivo),
       rows = tvar.i.a_emisivo > 0)
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#EE3D8F"),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(balanza_n),
+      rows = balanza_n < 0)
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#50B8B1"),
+      cell_text(weight =  "bold")
+    ),
+    locations = cells_body(
+      columns = vars(balanza_n),
+      rows = balanza_n > 0)
+  )  %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#EE3D8F"),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var.balanza),
+      rows = var.balanza < 0)
+  ) %>%
+  
+  tab_style(
+    style = list(
+      cell_text(color = "#50B8B1"),
+      cell_text(weight =  "bold")
+    ),
+    locations = cells_body(
+      columns = vars(var.balanza),
+      rows = var.balanza > 0)
   ) %>%
   fmt_missing(
       columns = 1:8,
