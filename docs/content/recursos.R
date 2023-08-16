@@ -4,10 +4,11 @@ library(tidyverse)
 
 data.frame(
   recurso = c("Conectividad Aérea", "Turismo Internacional", "Ocupación Hotelera", "Naturaleza", "EVYTH", "Explorador",
-              "PUNA", "MULC", "Empleo", "mapeAr", "Agencias", "SIG", "CRUCERISMO", "Conectividad Aérea Reporte"),
+              "PUNA", "MULC", "Empleo", "mapeAr", "Agencias", "SIG", "CRUCERISMO", "Conectividad Aérea Reporte",
+              "Indicadores ODS"),
   src = c("img/conectividad.png","img/ti.png", "img/eoh.png","img/parques.png","img/evyth.png","img/ti_dash.png" ,
           "img/puna.png", "img/mulc.png", "img/empleo.png", "img/mapeAr.png", "img/agencias.png", "img/visor.png",
-          "img/crucerismo.png", "img/conectividad_aerea.png"),
+          "img/crucerismo.png", "img/conectividad_aerea.png","img/indicadores_ods.png"),
   url = c("https://tableros.yvera.tur.ar/conectividad/",
           "https://tableros.yvera.tur.ar/internacional.html",
           "https://tableros.yvera.tur.ar/eoh.html",
@@ -21,7 +22,8 @@ data.frame(
           "https://tableros.yvera.tur.ar/agencias", 
           "https://tableros.yvera.tur.ar/inversiones", 
           "https://tableros.yvera.tur.ar/crucerismo",
-          "https://tableros.yvera.tur.ar/conectividad.html"
+          "https://tableros.yvera.tur.ar/conectividad.html",
+          "https://tableros.yvera.tur.ar/tablero_ODS"
           ),
   description  = c("Tablero interactivo con información aerocomercial para el turismo",
                    "El reporte presenta la última información de turismo receptivo, emisivo y balanza turística
@@ -37,15 +39,16 @@ data.frame(
                    "Tablero con información del Registro de Agencias de Viajes de la Dirección Nacional de Agencias de Viajes",
                    "Visor de Información Geográfica de Turismo para Plataforma de Inversiones", 
                    "Tablero interactivo con información sobre el crucerismo en Argentina",
-                   "Reporte mensual sobre los últimos datos del sector aerocomercial a partir de la información de la Administración Nacional de Aviación Civil"
+                   "Reporte mensual sobre los últimos datos del sector aerocomercial a partir de la información de la Administración Nacional de Aviación Civil",
+                   "Tablero interactivo para el seguimiento de indicadores de turismo en Argentina relacionados con los Objetivos de Desarrollo Sostenible (ODS)"
                    ),
   tags = c("Tablero","Reporte","Reporte","Reporte","Reporte","Tablero", "Tablero", "Reporte", 
-           "Reporte", "Tablero", "Tablero", "Tablero", "Tablero", "Reporte"),
-  Todos = c(1,1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1),
-  Tablero = c(1, 0, 0, 0, 0, 1, 1, 0, 0, 1,1,1,1,0),
-  Reporte = c(0,1, 1, 1, 1, 0, 0, 1, 1, 0,0,0,0, 1)) %>%
+           "Reporte", "Tablero", "Tablero", "Tablero", "Tablero", "Reporte", "Tablero"),
+  Todos = c(1,1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1),
+  Tablero = c(1, 0, 0, 0, 0, 1, 1, 0, 0, 1,1,1,1,0,1),
+  Reporte = c(0,1, 1, 1, 1, 0, 0, 1, 1, 0,0,0,0, 1,0)) %>%
   as_tibble() %>%
-  mutate(orden = c(-1,1, 5, 4, 3, 2, 6, 7, 8, 9, 0,-3,-4, -2)) %>%   # OREDNO POR TEMA Y NO POR TIPO DE RECURSO
+  mutate(orden = c(-1,1, 5, 4, 3, 2, 6, 7, 8, 9, 0,-3,-4, -2,10)) %>%   # OREDNO POR TEMA Y NO POR TIPO DE RECURSO
   arrange(orden)  %>%
   write_csv(here::here("content", "recursos.csv"))
 
