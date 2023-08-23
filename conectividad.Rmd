@@ -1694,7 +1694,7 @@ freq_ciudad_dest_22 <- cabotaje %>%
          participacion_22 = frecuencias_22/sum(frecuencias_22, na.rm = T))
 
 freq_ciudad_dest_23 <- freq_ciudad_dest_23 %>% 
-  full_join(freq_ciudad_dest_22, by = "destino_localidad_etiqueta") %>% 
+  full_join(freq_ciudad_dest_22, by = "destino_localidad_etiqueta") %>%
   mutate(variacion = (frecuencias_23-frecuencias_22)/frecuencias_22,
          destino_localidad_etiqueta = case_when(posicion_23 >= 20 ~ "Resto",
                                                 T ~ destino_localidad_etiqueta)) %>%
@@ -1702,7 +1702,7 @@ freq_ciudad_dest_23 <- freq_ciudad_dest_23 %>%
   summarise(frecuencias_23 = sum(frecuencias_23, na.rm = T),
             frecuencias_22 = sum(frecuencias_22, na.rm = T),
             posicion_23 = first(posicion_23),
-            posicion_22 = first(posicion_22)            ) %>% 
+            posicion_22 = first(posicion_22)) %>% 
   mutate(variacion = (frecuencias_23-frecuencias_22)/frecuencias_22,
          participacion_23 = frecuencias_23/sum(frecuencias_23, na.rm = T),
          posicion_23 = case_when(destino_localidad_etiqueta == "Resto" ~ "-",
@@ -1720,7 +1720,13 @@ freq_ciudad_dest_23 <- freq_ciudad_dest_23 %>%
   mutate(situacion = case_when(as.numeric(posicion_23) < as.numeric(posicion_22) ~ "▲",
                                as.numeric(posicion_23) > as.numeric(posicion_22) ~ "▼",
                                T ~ "=")) %>% 
-  rbind(resto)
+  rbind(resto) %>% 
+  drop_na(posicion_23) %>% 
+  mutate(across(.cols = contains("frecuencias"), ~ round(., 0)),
+         posicion_22 = if_else(is.na(posicion_22),
+                               "-",
+                               posicion_22))
+
 
 col_order <- c("destino_localidad_etiqueta",
                "posicion_23",
@@ -1733,9 +1739,9 @@ col_order <- c("destino_localidad_etiqueta",
 
 freq_ciudad_dest_23 <- freq_ciudad_dest_23[, col_order]
 
+freq_ciudad_dest_23[sapply(freq_ciudad_dest_23, is.infinite)] <- NA
+
 freq_ciudad_dest_23 %>%
-  mutate(across(.cols = contains("frecuencias"), ~ round(., 0))) %>%
-  drop_na(posicion_23) %>%
   gt() %>% 
   tab_header(
     title = md("__DESTINOS POR VUELOS DE CABOTAJE__"),
@@ -1749,7 +1755,7 @@ freq_ciudad_dest_23 %>%
     posicion_23 = md("**2023**"),
     frecuencias_22 = md("**2022**"),
     frecuencias_23 = md("**2023**"),
-    variacion = md("**var %**"),
+    variacion = md("**v.a. %**"),
     participacion_23 = md("**Participación 2023 (%)**")) %>% 
   cols_align(
     align = "center",
@@ -1803,7 +1809,11 @@ freq_ciudad_dest_23 %>%
     ),
     locations = cells_body(
       columns = situacion,
-      rows = as.numeric(posicion_23) < as.numeric(posicion_22)))
+      rows = as.numeric(posicion_23) < as.numeric(posicion_22))) %>% 
+    sub_missing(
+    columns = everything(),
+    rows = everything(),
+    missing_text = "-")
 ```
 
 ```{r}
@@ -4397,5 +4407,235 @@ rutas_federales <- cabotaje %>%
 ggplotly(rutas_federales, tooltip = "text") %>%
   layout(legend = list(orientation = 'h',
                        x = 0.4, y = -0.2))
+```
+
+```{r}
+pasajeros_totales_cabotaje <- cabotaje %>% 
+  select(anio_local, mes_local, origen_oaci, destino_oaci, pax_ad) %>%
+  pivot_longer(cols = c(origen_oaci, destino_oaci),
+               names_to = "variable",
+               values_to = "oaci") %>%
+  filter(oaci != "EGYP") %>% 
+  group_by(anio_local, mes_local, oaci) %>% 
+  summarise(pasajeros = sum(pax_ad, na.rm = T)) %>% 
+  mutate(pasajeros = round(pasajeros))
+
+pasajeros_totales_cabotaje_mes <- pasajeros_totales_cabotaje %>% 
+  ungroup() %>% 
+  filter(anio_local == max(anio_local)) %>% 
+  filter(mes_local == max(mes_local)) %>% 
+  rename(pasajeros_mes_actual = pasajeros) %>% 
+  ungroup() %>% 
+  select(oaci,
+         pasajeros_mes_actual)
+
+pasajeros_totales_cabotaje_mes_previo <- pasajeros_totales_cabotaje %>% 
+  ungroup() %>% 
+  filter(anio_local == max(anio_local)) %>% 
+  filter(mes_local == max(mes_local) - 1) %>% 
+  rename(pasajeros_mes_previo = pasajeros) %>% 
+  ungroup() %>% 
+  select(oaci,
+         pasajeros_mes_previo)
+
+pasajeros_totales_cabotaje_mes_anio_previo <- pasajeros_totales_cabotaje %>% 
+  ungroup() %>% 
+  filter(anio_local == max(anio_local) - 1) %>% 
+  filter(mes_local == month(max(base_total$Fecha))) %>%
+  rename(pasajeros_mes_anio_previo = pasajeros) %>% 
+  ungroup() %>% 
+  select(oaci,
+         pasajeros_mes_anio_previo)
+
+pasajeros_totales_cabotaje_mes_2019 <- pasajeros_totales_cabotaje %>% 
+  ungroup() %>% 
+  filter(anio_local == 2019) %>% 
+  filter(mes_local == month(max(base_total$Fecha))) %>%
+  rename(pasajeros_mes_2019 = pasajeros) %>% 
+  ungroup() %>% 
+  select(oaci,
+         pasajeros_mes_2019)
+  
+pasajeros_totales_cabotaje_mes <- pasajeros_totales_cabotaje_mes %>% 
+  full_join(pasajeros_totales_cabotaje_mes_2019, by = "oaci") %>% 
+  full_join(pasajeros_totales_cabotaje_mes_previo, by = "oaci") %>% 
+  full_join(pasajeros_totales_cabotaje_mes_anio_previo, by = "oaci") %>% 
+  mutate(across(.cols = everything(.),
+                ~ replace_na(., 0)),
+         variacion_mes = (pasajeros_mes_actual/pasajeros_mes_previo) - 1,
+         variacion_mes = if_else(!is.finite(variacion_mes),
+                                 0,
+                                 variacion_mes),
+         variacion_anual = (pasajeros_mes_actual/pasajeros_mes_anio_previo) - 1,
+         variacion_anual = if_else(!is.finite(variacion_anual),
+                                   0,
+                                   variacion_anual))
+
+pasajeros_totales_cabotaje_acumulado <- pasajeros_totales_cabotaje %>% 
+  ungroup() %>% 
+  filter(mes_local <= month(max(base_total$Fecha))) %>% 
+  group_by(anio_local, oaci) %>% 
+  summarise(pasajeros_acumulados = sum(pasajeros, na.rm = T)) %>% 
+  mutate(anio_local = paste0("anio_", anio_local)) %>% 
+  pivot_wider(names_from = anio_local,
+              values_from = pasajeros_acumulados)
+  
+aeropuertos <- read_file_srv("aerocomercial/libros_de_codigos/ANAC/aeropuertos_nuevos.xlsx", col_types = "text") %>% 
+  mutate(aeropuerto_etiqueta_anac = case_when(is.na(aeropuerto_etiqueta_anac) ~ nombre_ingles,
+                                              T ~ aeropuerto_etiqueta_anac),
+         localidad_etiqueta_indec = case_when(is.na(localidad_etiqueta_indec) ~ localidad_ingles,
+                                              T ~ localidad_etiqueta_indec)) %>% 
+  select(codigo_oaci,
+         aeropuerto = aeropuerto_etiqueta_anac,
+         localidad = localidad_etiqueta_indec,
+         provincia)
+
+tabla <- pasajeros_totales_cabotaje_acumulado %>% 
+  left_join(pasajeros_totales_cabotaje_mes, by = "oaci") %>% 
+  left_join(aeropuertos, by = c("oaci" = "codigo_oaci")) %>% 
+  arrange(-anio_2023) %>% 
+  mutate(ranking = row_number(),
+         localidad = case_when(ranking >= 40 ~ "Resto",
+                               T ~ localidad)) %>% 
+  group_by(localidad) %>% 
+  summarise(anio_2017 = sum(anio_2017, na.rm = T),
+            anio_2018 = sum(anio_2018, na.rm = T),
+            anio_2019 = sum(anio_2019, na.rm = T),
+            anio_2020 = sum(anio_2020, na.rm = T),
+            anio_2021 = sum(anio_2021, na.rm = T),
+            anio_2022 = sum(anio_2022, na.rm = T),
+            anio_2023 = sum(anio_2023, na.rm = T),
+            pasajeros_mes_actual = sum(pasajeros_mes_actual, na.rm = T),
+            pasajeros_mes_2019 = sum(pasajeros_mes_2019, na.rm = T),
+            pasajeros_mes_previo = sum(pasajeros_mes_previo, na.rm = T),
+            pasajeros_mes_anio_previo = sum(pasajeros_mes_anio_previo, na.rm = T)) %>%
+    janitor::adorn_totals(where = "row",
+                        na.rm = T) %>% 
+    mutate(across(.cols = 2:12,
+                ~ replace_na(., 0)),
+         variacion_mes = (pasajeros_mes_actual/pasajeros_mes_previo) - 1,
+         variacion_mes = if_else(!is.finite(variacion_mes),
+                                 0,
+                                 variacion_mes),
+         variacion_anual = (pasajeros_mes_actual/pasajeros_mes_anio_previo) - 1,
+         variacion_anual = if_else(!is.finite(variacion_anual),
+                                   0,
+                                   variacion_anual)) %>%
+    arrange(-anio_2023)  
+
+tabla_grande <- tabla %>% 
+  select(-ends_with("_previo")) %>% 
+  gt() %>% 
+  tab_header(
+    title = md("__PASAJEROS TOTALES EN VUELOS DE CABOTAJE POR AEROPUERTO__")) %>%  
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    localidad = md("**Aeropuerto**"),
+    anio_2017 = md("2017"),
+    anio_2018 = md("2018"),
+    anio_2019 = md("2019"),
+    anio_2020 = md("2020"),
+    anio_2021 = md("2021"),
+    anio_2022 = md("2022"),
+    anio_2023 = md("2023"),
+    pasajeros_mes_2019 = md("2019"),
+    pasajeros_mes_actual = md("2023"),
+    variacion_mes = md("Mensual"),
+    variacion_anual = md("Anual")) %>% 
+  cols_align(
+    align = "center",
+    columns = c(2:12))  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_percent(columns = c(9:12), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  fmt_missing(
+    columns = everything(),
+    rows = everything(),
+    missing_text = "-") %>%
+  data_color(
+    columns = contains("variacion"),
+    apply_to = "text",
+    colors = scales::col_bin(
+      bins = c(-Inf, 0, Inf),
+      palette = c(dnmye_colores("rosa"), dnmye_colores("azul verde")),
+    )
+  ) %>% 
+  tab_spanner(
+    label = "Variación",
+    columns = c(variacion_mes, variacion_anual)) %>% 
+  tab_spanner(
+    label = glue::glue("Pasajeros {str_to_title(strftime(max(base_total$Fecha), '%B'))}"),
+    columns = c(pasajeros_mes_actual,
+                pasajeros_mes_2019)) %>% 
+  tab_spanner(
+    label = glue::glue("Acumulado Período {str_to_title(month(1, , label = T, abbr = T))}","-","{str_to_title(month(max(base_total$Fecha), label = T, abbr = T))}"),
+    columns = starts_with("anio")) %>% 
+  tab_style(style = cell_text(weight = "bold"),
+            locations = cells_column_spanners()) %>%
+  comunicacion::gt_theme_dnmye(var_total = localidad) %>% 
+  fmt_number(columns = c(starts_with("anio"),
+                         starts_with("pasajeros")), 
+             sep_mark = ".", 
+             decimals = 0)
+
+# gtsave(tabla,
+#        "tabla_aeropuertos.png", vwidth = 2000)
+
+tabla %>% 
+  select(-ends_with("_previo")) %>% 
+  select(-c(anio_2017, anio_2018, anio_2020, anio_2021)) %>% 
+  gt() %>% 
+  tab_header(
+    title = md("__PASAJEROS TOTALES EN VUELOS DE CABOTAJE POR AEROPUERTO__")) %>%  
+  tab_source_note(
+    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+  cols_label(
+    localidad = md("**Aeropuerto**"),
+    anio_2023 = md("2023"),
+    anio_2022 = md("2022"),
+    anio_2019 = md("2019"),
+    pasajeros_mes_2019 = md("2019"),
+    pasajeros_mes_actual = md("2023"),
+    variacion_mes = md("Mensual"),
+    variacion_anual = md("Anual")) %>% 
+  cols_align(
+    align = "center",
+    columns = c(2:8))  %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_percent(columns = c(7:8), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  fmt_missing(
+    columns = everything(),
+    rows = everything(),
+    missing_text = "-") %>%
+  data_color(
+    columns = contains("variacion"),
+    apply_to = "text",
+    colors = scales::col_bin(
+      bins = c(-Inf, 0, Inf),
+      palette = c(dnmye_colores("rosa"), dnmye_colores("azul verde")),
+    )
+  ) %>% 
+  tab_spanner(
+    label = "Variación",
+    columns = c(variacion_mes, variacion_anual)) %>% 
+  tab_spanner(
+    label = glue::glue("Pasajeros {str_to_title(strftime(max(base_total$Fecha), '%B'))}"),
+    columns = c(pasajeros_mes_actual,
+                pasajeros_mes_2019)) %>% 
+  tab_spanner(
+    label = glue::glue("Acumulado Período {str_to_title(month(1, , label = T, abbr = T))}","-","{str_to_title(month(max(base_total$Fecha), label = T, abbr = T))}"),
+    columns = starts_with("anio")) %>% 
+  tab_style(style = cell_text(weight = "bold"),
+            locations = cells_column_spanners()) %>%
+  comunicacion::gt_theme_dnmye(var_total = localidad) %>% 
+  fmt_number(columns = c(starts_with("anio"),
+                         starts_with("pasajeros")), 
+             sep_mark = ".", 
+             decimals = 0)
+
 ```
 
