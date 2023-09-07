@@ -456,7 +456,7 @@ int_variacion_interanual_pasajeros <- if_else(int_pasajeros_mes$var_ia > 0,
                                        "% ",
                                        "menos"))
 
-int_pasajeros_acumulados_total <- pasajeros_mes %>% 
+int_pasajeros_acumulados_total <- int_pasajeros_mes %>% 
   select(acum_anual) %>% 
   pull %>%
   format(., big.mark = ".")
@@ -1328,7 +1328,7 @@ tercer_rank_prov <- rank_provs[3,1] %>% pull
 ```
 
 
-Las provincias de **`r primer_rank_prov`, `r segun_rank_prov` y Córdoba** son aquellas que **más vuelos de cabotaje recibieron** durante el último mes.
+Las provincias de **`r primer_rank_prov`, `r segun_rank_prov` y `r tercer_rank_prov`** son aquellas que **más vuelos de cabotaje recibieron** durante el último mes.
 
 ```{r, fig.height=8}
 herfintal_prov_empre <- cabotaje %>% 
@@ -3541,7 +3541,29 @@ vuelos_int %>%
     ),
     locations = cells_body(
       columns = situacion,
-      rows = as.numeric(posicion_23) < as.numeric(posicion_22)))%>% 
+      rows = as.numeric(posicion_23) < as.numeric(posicion_22))) %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")),
+    locations = cells_column_spanners(spanners = everything())
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#EE3D8F"),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = variacion,
+      rows = variacion < 0)
+  ) %>% 
+  tab_style(
+    style = list(
+      cell_text(color = "#50B8B1"),
+      cell_text(weight =  "bold")
+    ),
+    locations = cells_body(
+      columns = variacion,
+      rows = variacion >= 0)) %>% 
   tab_style(
     style = list(
       cell_text(weight = "bold")),
@@ -3550,6 +3572,7 @@ vuelos_int %>%
     columns = everything(),
     rows = everything(),
     missing_text = "-")
+
 ```
 
 ```{r}
@@ -3894,6 +3917,28 @@ aerolineas_int %>%
     style = list(
       cell_text(weight = "bold")),
     locations = cells_column_spanners(spanners = everything())) %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")),
+    locations = cells_column_spanners(spanners = everything())
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#EE3D8F"),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = variacion,
+      rows = variacion < 0)
+  ) %>% 
+  tab_style(
+    style = list(
+      cell_text(color = "#50B8B1"),
+      cell_text(weight =  "bold")
+    ),
+    locations = cells_body(
+      columns = variacion,
+      rows = variacion > 0)) %>% 
   sub_missing(
     columns = everything(),
     rows = everything(),
@@ -4183,8 +4228,8 @@ portenias <- ggplot(rutas_ranking_portenias,
   geom_bar(stat = "identity", fill = dnmye_colores("cian"), width = 0.65) +
   geom_label(aes(label = total),
              hjust = -0.25) +
-  scale_y_continuous(limits = c(0, 1000),
-                     breaks = seq(0, 1000, 500))+
+  scale_y_continuous(limits = c(0, 1250),
+                     breaks = seq(0, 1250, 250))+
   scale_x_discrete(labels = function(ruta_nombre) str_wrap(ruta_nombre, width = 27))+
   labs(title = "Del AMBA",
        #subtitle = glue::glue("{str_to_title(strftime(max(base_total$Fecha), '%B %Y'))}"),
@@ -4200,7 +4245,7 @@ federales <- ggplot(rutas_ranking_federales,
   geom_label(aes(label = total),
              hjust = -0.25) +
   scale_y_continuous(limits = c(0, 1000),
-                     breaks = seq(0, 1000, 500))+
+                     breaks = seq(0, 1000, 250))+
   scale_x_discrete(labels = function(ruta_nombre) str_wrap(ruta_nombre, width = 27))+
   labs(title = "Federales",
        #subtitle = glue::glue("{str_to_title(strftime(max(base_total$Fecha), '%B %Y'))}"),
