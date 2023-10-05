@@ -1366,7 +1366,7 @@ herfintal_prov_empre <- cabotaje %>%
 
 herfintal_prov_empre_2022 <- cabotaje %>% 
   filter(anio_local == year(max(cabotaje$Fecha)) - 1 & mes_local == month(max(cabotaje$Fecha))) %>%
-  group_by(destino_provincia_etiqueta) %>%
+  group_by(destino_provincia_etiqueta, .drop = F) %>%
   summarise(freq_totaltes_prov = sum(vuelos, na.rm = T)) %>%
   arrange(-freq_totaltes_prov) %>% 
   mutate(orden = 1 : n()) %>% 
@@ -1390,6 +1390,7 @@ herfintal_prov_empre %>%
                        herfintal_prov_empre_2022 = 0,
                        federalizacion = 0)) %>% 
   left_join(herfintal_prov_empre_2022) %>% 
+  complete(fill = list(orden = 24)) %>%
   ggplot() +
   geom_segment(aes(x = fct_reorder(as.factor(destino_provincia_etiqueta), -orden),
                    xend = fct_reorder(as.factor(destino_provincia_etiqueta), -orden),
@@ -4387,7 +4388,7 @@ cowplot::plot_grid(titulo, cuadro, ncol = 1, rel_heights = c(0.1, 0.75))
 
 ```{r}
 valores_vacios <- data.table::data.table(anio_local = 2020,
-                             mes_local = 4:10,
+                             mes_local = 4:8,
                              total_rutas = 0)
 
 rutas_federales <- cabotaje %>%
