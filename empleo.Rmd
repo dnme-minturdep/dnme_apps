@@ -850,7 +850,7 @@ grafico_empresas_series_2 <- ggplot(data_grafico_empresas_todas)+
                 ),size=.1)+
   geom_line(aes(x=fecha,y=indice.cat,color=cat.rct))+
   scale_y_continuous(labels=scales::number_format(decimal.mark = ","),
-                     limits = c(90,200)
+                     limits = c(20,300)
                      )+
   scale_x_date(breaks = seq.Date(as.Date(min(indice.empleo$fecha)+months(month(max(indice.empleo$fecha))-2)),as.Date(max(indice.empleo$fecha)),by="12 months"),
                #date_breaks = "6 months",
