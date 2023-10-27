@@ -8,7 +8,7 @@ Turismo Internacional,img/ti.png,https://tableros.yvera.tur.ar/internacional.htm
                    por todas las vías (aéreo, terrestre y fluvial / marítimo)",Reporte,1,0,1,1
 Explorador,img/ti_dash.png,https://tableros.yvera.tur.ar/turismo_internacional/,Tablero para la consulta de datos desagregados de las estimaciones históricas de Turismo Internacional,Tablero,1,1,0,2
 EVYTH,img/evyth.png,https://tableros.yvera.tur.ar/interno.html,Reporte de los últimos datos de Turismo Interno estimados por la Encuesta de Viajes y Turismo de los Hogares,Reporte,1,0,1,3
-Naturaleza,img/parques.png,https://tableros.yvera.tur.ar/parques_nacionales.html,Información de visitas a Parques Nacionales,Reporte,1,0,1,4
+Naturaleza,img/parques.png,https://tableros.yvera.tur.ar/areas_protegidas.html,Información de visitas a Áreas Protegidas Nacionales y Provinciales,Reporte,1,0,1,4
 Ocupación Hotelera,img/eoh.png,https://tableros.yvera.tur.ar/eoh.html,Presenta los últimos datos disponibles de la Encuesta de Ocupación Hotelera (EOH),Reporte,1,0,1,5
 PUNA,img/puna.png,https://tableros.yvera.tur.ar/puna/,Tablero para la consulta de estimaciones agregadas del Padrón Único Nacional de Alojamientos (PUNA),Tablero,1,1,0,6
 MULC,img/mulc.png,https://tableros.yvera.tur.ar/mulc.html,Reporte sobre transacciones en divisas relacionadas al turismo en el Mercado de Cambios (BCRA),Reporte,1,0,1,7

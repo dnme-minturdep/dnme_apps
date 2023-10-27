@@ -1,6 +1,6 @@
 ---
-title: "Parques Nacionales"
-description: "Resumen de los últimos datos de visitas a Parques y Reservas Nacionales del país según origen (condición de residencia) de los visitantes. La información se obtiene a partir de datos relevados por la Administración de Parques Nacionales."
+title: "Áreas Protegidas"
+description: "Resumen de los últimos datos de visitas a Parques Nacionales y Áreas Protegidas Provinciales según origen (condición de residencia) de los visitantes. La información se obtiene a partir de datos relevados por la Administración de Parques Nacionales y organismos provinciales."
 output: distill::distill_article
 ---
 ```{r setup, include=FALSE}
@@ -16,14 +16,16 @@ library(glue)
 library(janitor)
 library(readxl)
 library(plotly)
+library(herramientas)
+library(comunicacion)
 Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 ```
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2022-12-01"
-mes <- "diciembre"
-anio <- "2022"
+fecha <- "2023-02-01"
+mes <- "febrero"
+anio <- "2023"
 
 #parques <- c("el leoncito", "sierra de las quijadas")
 # PALETAS Y FUENTES ---------------------------------------------------------
@@ -66,12 +68,16 @@ theme_imet <- function() {
 
 ### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste(mes," de ",anio)`)
 
-<br> 
+<br>
+
+## Parques Nacionales
 ```{r}
 #Importo datos
 parques_nacionales <- read_excel("/srv/DataDNMYE/areas_protegidas/areas_protegidas_nacionales/pivot_pn.xlsx",
                                  sheet = "base PN") %>% 
-   filter(!parque_nacional %in% c("los arrayanes", "isla pingüino", "nahuel huapi 3p"))
+   filter(parque_nacional !=  "nahuel huapi") %>% 
+  mutate(parque_nacional = ifelse(parque_nacional == "nahuel huapi 3p", "nahuel huapi",
+                                  parque_nacional))
 # parques_nacionales <- read_sheet("https://docs.google.com/spreadsheets/d/1ZM7PfvY16tImMcFKUj0fCn6ASc1yxlye/edit#gid=1610808314")
 #parques_nacionales <- read.xlsx("data/Pivot_PN_20201125.xlsx",sheet="base PN 2008_2020")
 ```
@@ -549,12 +555,121 @@ data_tabla_2 <- data_tabla_2 %>%
     #tab_source_note("Nota: entre el 22 y 30 de mayo los parques nacionales se cerraron a las visitas (según DI-2021-95-APN-DNO#APNAC) en adhesión a las medidas nacionales (Decreto 334/2021).")
 ```
 
+## Áreas Protegidas Provinciales
 
-### Recursos - Parques Nacionales
+```{r}
+months <- data.frame(Mes = c("enero","febrero","marzo","abril","mayo","junio",
+                     "julio","agosto","septiembre","octubre","noviembre","diciembre"),
+                     month = seq(1,12))
 
-[**Datos Abiertos**](http://datos.yvera.gob.ar/dataset/parques-nacionales)
+chubut <-  read_csv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/base_trabajo/bases_chubut.csv") %>% 
+  filter(Mes != "total") %>% 
+  mutate(Mes = ifelse(Mes=="setiembre", "septiembre", Mes)) %>% 
+  left_join(months) %>% 
+  mutate(indice_tiempo = as.Date(paste(anio,month,"01",sep = "-")),
+         residencia = ifelse(residencia == "no_residentes", "No residentes", "Residentes"),
+         provincia = "Chubut")
 
-[**Informes**](https://www.yvera.tur.ar/estadistica/informe/info/parques-nacionales)
+sanjuan <-readxl::read_excel("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/Base_parq_prov_ischigualasto.xlsx") %>% 
+  rename(indice_tiempo = 1, visitantes = 2) %>% 
+  filter(indice_tiempo != "Total general") %>% 
+  mutate(indice_tiempo = lubridate::ym(indice_tiempo),
+         Mes = months(indice_tiempo),
+         anio = year(indice_tiempo),
+         provincia = "San Juan (Ischigualasto)") %>% 
+  left_join(months)
+
+tabla_parques <- bind_rows(chubut, sanjuan) %>% 
+  filter(indice_tiempo <= fecha, anio >= as.integer(.GlobalEnv$anio)-1) %>% 
+  group_by(anio, Mes, month, indice_tiempo, provincia, residencia) %>% 
+  summarise(visitantes = sum(visitantes)) %>% 
+  ungroup()
+  
+var_ia <- tabla_parques %>% 
+  filter(Mes == mes) %>% 
+  mutate(residencia = ifelse(is.na(residencia), "Total", tolower(str_replace(residencia, " ", "_")))) %>% 
+  pivot_wider(names_from = "residencia", values_from = "visitantes") %>% 
+  mutate(Total = ifelse(provincia == "Chubut", no_residentes + residentes, Total)) %>% 
+  group_by(provincia) %>% 
+  mutate(var_total = (Total/lag(Total,1))-1,
+         var_residentes = (residentes/lag(residentes,1))-1,
+         var_no_residentes = (no_residentes/lag(no_residentes,1))-1,
+         part_residentes = residentes/Total,
+         part_no_residentes = no_residentes/Total,
+         Mes = paste0(Mes," ",anio)) %>% 
+  filter(indice_tiempo == fecha) %>% 
+  select(-c(indice_tiempo, month))
+
+var_acum <- tabla_parques %>% 
+  filter(month <= month(fecha)) %>% 
+  group_by(anio, provincia, residencia) %>% 
+  summarise(visitantes = sum(visitantes)) %>% 
+  ungroup() %>% 
+  mutate(residencia = ifelse(is.na(residencia), "Total", tolower(str_replace(residencia, " ", "_")))) %>% 
+  pivot_wider(names_from = "residencia", values_from = "visitantes") %>% 
+  mutate(Total = ifelse(provincia == "Chubut", no_residentes + residentes, Total)) %>% 
+  group_by(provincia) %>% 
+  mutate(var_total = (Total/lag(Total,1))-1,
+         var_residentes = (residentes/lag(residentes,1))-1,
+         var_no_residentes = (no_residentes/lag(no_residentes,1))-1,
+         part_residentes = residentes/Total,
+         part_no_residentes = no_residentes/Total,
+         Mes = paste0("acumulado ", anio)) %>% 
+  filter(anio == as.integer(.GlobalEnv$anio))
+```
+
+En el caso de los parques provinciales, durante el mes de `r mes` se registraron `r lbl_int(var_ia[var_ia$provincia == "Chubut", "Total"] %>% pull())` visitas a áreas naturales protegidas del Chubut, con `r lbl_int(var_ia[var_ia$provincia == "Chubut", "residentes"] %>% pull())` visitas de residentes y `r lbl_int(var_ia[var_ia$provincia == "Chubut", "no_residentes"] %>% pull())` de no residentes. Mientras que el Parque Provincial Ischigualasto, en San Juan, recibió un total de `r lbl_int(var_ia[var_ia$provincia == "San Juan (Ischigualasto)", "Total"] %>% pull())` visitas.
+
+```{r}
+ var_ia %>% 
+  rbind(var_acum) %>% 
+  select(provincia, Mes, Total, var_total, residentes, var_residentes, part_residentes,
+         no_residentes, var_no_residentes, part_no_residentes) %>% 
+  gt(groupname_col = "provincia") %>%
+  fmt_number(columns = c(3,5,8), decimals = 0, sep_mark = ".", dec_mark = ",") %>% 
+  fmt_percent(columns = c(4,6,7,9,10), decimals = 1, sep_mark = ".", dec_mark = ",") %>%
+  cols_label(
+    Total = md("Visitas") ,             
+    residentes = md("Visitas") ,             
+    no_residentes = md("Visitas") ,                  
+    var_no_residentes = md("Var. i.a.<br>  %") ,             
+    var_residentes = md("Var i.a.<br> %") ,                  
+    var_total = md("Var. i.a.<br> %")  ,
+    part_residentes = md("Part.<br>%"),
+    part_no_residentes = md("Part.<br>%"),
+    Mes = md("Período")
+  ) %>% 
+  tab_spanner(
+    label = md("**TOTAL**"),
+    columns = vars(Total,
+                   var_total)) %>% 
+  tab_spanner(
+    label = md("**RESIDENTES**"),
+    columns = vars(residentes,
+                   var_residentes,
+                   part_residentes)) %>% 
+  tab_spanner(
+    label = md("**NO RESIDENTES**"),
+    columns = vars(no_residentes,
+                   var_no_residentes,
+                   part_no_residentes)
+  )  %>% 
+    tab_header(title="Visitas a Áreas Protegidas Provinciales") %>% 
+  cols_align(
+    align = "center") %>% 
+  gt_theme_dnmye() %>% 
+    fmt_missing(columns = 1:10,
+              missing_text = "-") %>% 
+  tab_source_note(source_note = "-: no se cuenta con información desagregada por residencia para San Juan.") %>% 
+  tab_source_note(source_note = "Fuente: DNMyE en base a datos del Parque Provincial Ischigualasto y el Departamento Observatorio Turístico del Chubut.")
+
+```
+
+### Recursos - Áreas Protegidas
+
+[**Datos Abiertos**](https://datos.yvera.gob.ar/dataset?groups=turismo-naturaleza)
+
+[**Informes**](https://www.yvera.tur.ar/sinta/informe/info/areas-protegidas)
 
 ::: {.infobox}
 

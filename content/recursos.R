@@ -12,7 +12,7 @@ data.frame(
   url = c("https://tableros.yvera.tur.ar/conectividad/",
           "https://tableros.yvera.tur.ar/internacional.html",
           "https://tableros.yvera.tur.ar/eoh.html",
-          "https://tableros.yvera.tur.ar/parques_nacionales.html",
+          "https://tableros.yvera.tur.ar/areas_protegidas.html",
           "https://tableros.yvera.tur.ar/interno.html",
           "https://tableros.yvera.tur.ar/turismo_internacional/",
           "https://tableros.yvera.tur.ar/puna/",
@@ -29,7 +29,7 @@ data.frame(
                    "El reporte presenta la última información de turismo receptivo, emisivo y balanza turística
                    por todas las vías (aéreo, terrestre y fluvial / marítimo)",
                    "Presenta los últimos datos disponibles de la Encuesta de Ocupación Hotelera (EOH)",
-                   "Información de visitas a Parques Nacionales",
+                   "Información de visitas a Áreas Protegidas Nacionales y Provinciales",
                    "Reporte de los últimos datos de Turismo Interno estimados por la Encuesta de Viajes y Turismo de los Hogares",
                    "Tablero para la consulta de datos desagregados de las estimaciones históricas de Turismo Internacional",
                    "Tablero para la consulta de estimaciones agregadas del Padrón Único Nacional de Alojamientos (PUNA)",
