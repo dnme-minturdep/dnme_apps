@@ -23,8 +23,8 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2023-02-01"
-mes <- "febrero"
+fecha <- "2023-03-01"
+mes <- "marzo"
 anio <- "2023"
 
 #parques <- c("el leoncito", "sierra de las quijadas")
@@ -73,8 +73,9 @@ theme_imet <- function() {
 ## Parques Nacionales
 ```{r}
 #Importo datos
-parques_nacionales <- read_excel("/srv/DataDNMYE/areas_protegidas/areas_protegidas_nacionales/pivot_pn.xlsx",
-                                 sheet = "base PN") %>% 
+# parques_nacionales <- #read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_nacionales/pivot_#pn.xlsx",
+#                                  sheet = "base PN")
+parques_nacionales <- read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_nacionales/pivot_pn.xlsx", sheet= 2)%>% 
    filter(parque_nacional !=  "nahuel huapi") %>% 
   mutate(parque_nacional = ifelse(parque_nacional == "nahuel huapi 3p", "nahuel huapi",
                                   parque_nacional))
@@ -562,7 +563,7 @@ months <- data.frame(Mes = c("enero","febrero","marzo","abril","mayo","junio",
                      "julio","agosto","septiembre","octubre","noviembre","diciembre"),
                      month = seq(1,12))
 
-chubut <-  read_csv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/base_trabajo/bases_chubut.csv") %>% 
+chubut <-  read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/base_trabajo/bases_chubut.csv") %>% 
   filter(Mes != "total") %>% 
   mutate(Mes = ifelse(Mes=="setiembre", "septiembre", Mes)) %>% 
   left_join(months) %>% 
@@ -570,7 +571,7 @@ chubut <-  read_csv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provincial
          residencia = ifelse(residencia == "no_residentes", "No residentes", "Residentes"),
          provincia = "Chubut")
 
-sanjuan <-readxl::read_excel("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/Base_parq_prov_ischigualasto.xlsx") %>% 
+sanjuan <-read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/Base_parq_prov_ischigualasto.xlsx") %>% 
   rename(indice_tiempo = 1, visitantes = 2) %>% 
   filter(indice_tiempo != "Total general") %>% 
   mutate(indice_tiempo = lubridate::ym(indice_tiempo),
