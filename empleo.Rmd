@@ -33,7 +33,7 @@ familia_fuente <-"Encode Sans Normal"
 Sys.setlocale(locale = "es_AR.UTF-8")
 ```
 
-### (Publicado en `r format(Sys.Date(),'%B')` `r format(Sys.Date(),'%Y')` con datos actualizados a junio 2023)
+### (Publicado en `r format(Sys.Date(),'%B')` `r format(Sys.Date(),'%Y')` con datos actualizados a julio 2023)
 
 ```{r}
 #INSUMOS
