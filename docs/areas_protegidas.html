@@ -50,16 +50,17 @@ pre.numberSource code > span > a:first-child::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {   }
+  { color: #00769e; background-color: #f1f3f5; }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
+code span { color: #00769e; } /* Normal */
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { } /* Attribute */
+code span.at { color: #657422; } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
-code span.cf { color: #007ba5; } /* ControlFlow */
+code span.cf { color: #00769e; } /* ControlFlow */
 code span.ch { color: #20794d; } /* Char */
 code span.cn { color: #8f5902; } /* Constant */
 code span.co { color: #5e5e5e; } /* Comment */
@@ -73,9 +74,9 @@ code span.fl { color: #ad0000; } /* Float */
 code span.fu { color: #4758ab; } /* Function */
 code span.im { } /* Import */
 code span.in { color: #5e5e5e; } /* Information */
-code span.kw { color: #007ba5; } /* Keyword */
+code span.kw { color: #00769e; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
-code span.ot { color: #007ba5; } /* Other */
+code span.ot { color: #00769e; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
 code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
@@ -788,6 +789,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   d-article table.gt_table td,
   d-article table.gt_table th {
     border-bottom: none;
+    font-size: 100%;
   }
 
   .html-widget {
@@ -1029,10 +1031,6 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     position: relative;
     margin-bottom: 2.5em;
     margin-top: 1.5em;
-  }
-
-  .figure img {
-    width: 100%;
   }
 
   .figure .caption {
@@ -1864,9 +1862,21 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
+        const citeChild = $(this).children()[0]
+        // Do not process if @xyz has been used without escaping and without bibliography activated
+        // https://github.com/rstudio/distill/issues/466
+        if (citeChild === undefined) return true
+
+        if (citeChild.nodeName == "D-FOOTNOTE") {
+          var fn = citeChild
+          $(this).html(fn.shadowRoot.querySelector("sup"))
+          $(this).id = fn.id
+          fn.remove()
+        }
         var refs = $(this).attr('data-cites').split(" ");
         var refHtml = refs.map(function(ref) {
-          return "<p>" + $('#ref-' + ref).html() + "</p>";
+          // Could use CSS.escape too here, we insure backward compatibility in navigator
+          return "<p>" + $('div[id="ref-' + ref + '"]').html() + "</p>";
         }).join("\n");
         window.tippy(this, {
           allowHTML: true,
@@ -1878,6 +1888,31 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
           placement: 'bottom-start'
         });
       });
+
+      // fix footnotes in tables (#411)
+      // replacing broken distill.pub feature
+      $('table d-footnote').each(function() {
+        // we replace internal showAtNode methode which is triggered when hovering a footnote
+        this.hoverBox.showAtNode = function(node) {
+          // ported from https://github.com/distillpub/template/pull/105/files
+          calcOffset = function(elem) {
+              let x = elem.offsetLeft;
+              let y = elem.offsetTop;
+              // Traverse upwards until an `absolute` element is found or `elem`
+              // becomes null.
+              while (elem = elem.offsetParent && elem.style.position != 'absolute') {
+                  x += elem.offsetLeft;
+                  y += elem.offsetTop;
+              }
+
+              return { left: x, top: y };
+          }
+          // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetTop
+          const bbox = node.getBoundingClientRect();
+          const offset = calcOffset(node);
+          this.show([offset.left + bbox.width, offset.top + bbox.height]);
+        }
+      })
 
       // clear polling timer
       clearInterval(tid);
@@ -1977,6 +2012,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     // mark non-body figures created by knitr chunks as 100% width
     $('.layout-chunk').each(function(i, val) {
       var figures = $(this).find('img, .html-widget');
+      // ignore leaflet img layers (#106)
+      figures = figures.filter(':not(img[class*="leaflet"])')
       if ($(this).attr('data-layout') !== "l-body") {
         figures.css('width', '100%');
       } else {
@@ -1999,7 +2036,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     // get rid of index.html references in header
     if (window.location.protocol !== "file:") {
       $('.distill-site-header a[href]').each(function(i,val) {
-        $(this).attr('href', $(this).attr('href').replace("index.html", "./"));
+        $(this).attr('href', $(this).attr('href').replace(/^index[.]html/, "./"));
       });
     }
 
@@ -2038,15 +2075,15 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </script>
 
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.20/header-attrs.js"></script>
-  <script src="site_libs/htmlwidgets-1.6.1/htmlwidgets.js"></script>
-  <script src="site_libs/plotly-binding-4.9.4.1/plotly.js"></script>
+  <script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+  <script src="site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+  <script src="site_libs/plotly-binding-4.10.2/plotly.js"></script>
   <script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
   <script src="site_libs/jquery-3.5.1/jquery.min.js"></script>
-  <link href="site_libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
-  <script src="site_libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
-  <link href="site_libs/plotly-htmlwidgets-css-1.57.1/plotly-htmlwidgets.css" rel="stylesheet" />
-  <script src="site_libs/plotly-main-1.57.1/plotly-latest.min.js"></script>
+  <link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+  <script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+  <link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+  <script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -6988,7 +7025,7 @@ SINTA
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<h3 id="publicado-en-octubre-2023-con-datos-actualizados-a-febrero-de-2023">(Publicado en octubre 2023 con datos actualizados a febrero de 2023)</h3>
+<h3 id="publicado-en-noviembre-2023-con-datos-actualizados-a-abril-de-2023">(Publicado en noviembre 2023 con datos actualizados a abril de 2023)</h3>
 <p><br></p>
 <h2 id="parques-nacionales">Parques Nacionales</h2>
 <div class="layout-chunk" data-layout="l-body">
@@ -7000,15 +7037,16 @@ SINTA
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<p><br> En el mes de febrero se registraron 488.123 visitas a Parques Nacionales, con 354.197 visitas de residentes y 133.926 de no residentes.</p>
+<p><br>
+En el mes de abril se registraron 329.691 visitas a Parques Nacionales, con 224.521 visitas de residentes y 105.170 de no residentes.</p>
 <br>
 <div class="layout-chunk" data-layout="l-body">
-<div id="mlzoukhsxb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="jhmndtdpen" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#mlzoukhsxb .gt_table {
+#jhmndtdpen .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -7033,7 +7071,7 @@ SINTA
   border-left-color: #D3D3D3;
 }
 
-#mlzoukhsxb .gt_heading {
+#jhmndtdpen .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -7045,7 +7083,12 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#mlzoukhsxb .gt_title {
+#jhmndtdpen .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#jhmndtdpen .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -7057,7 +7100,7 @@ SINTA
   border-bottom-width: 0;
 }
 
-#mlzoukhsxb .gt_subtitle {
+#jhmndtdpen .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -7069,13 +7112,13 @@ SINTA
   border-top-width: 0;
 }
 
-#mlzoukhsxb .gt_bottom_border {
+#jhmndtdpen .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mlzoukhsxb .gt_col_headings {
+#jhmndtdpen .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7090,7 +7133,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#mlzoukhsxb .gt_col_heading {
+#jhmndtdpen .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7110,7 +7153,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#mlzoukhsxb .gt_column_spanner_outer {
+#jhmndtdpen .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7122,15 +7165,15 @@ SINTA
   padding-right: 4px;
 }
 
-#mlzoukhsxb .gt_column_spanner_outer:first-child {
+#jhmndtdpen .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mlzoukhsxb .gt_column_spanner_outer:last-child {
+#jhmndtdpen .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mlzoukhsxb .gt_column_spanner {
+#jhmndtdpen .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -7142,7 +7185,7 @@ SINTA
   width: 100%;
 }
 
-#mlzoukhsxb .gt_group_heading {
+#jhmndtdpen .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7165,9 +7208,10 @@ SINTA
   border-right-width: 1px;
   border-right-color: #D3D3D3;
   vertical-align: middle;
+  text-align: left;
 }
 
-#mlzoukhsxb .gt_empty_group_heading {
+#jhmndtdpen .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -7182,15 +7226,15 @@ SINTA
   vertical-align: middle;
 }
 
-#mlzoukhsxb .gt_from_md > :first-child {
+#jhmndtdpen .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mlzoukhsxb .gt_from_md > :last-child {
+#jhmndtdpen .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mlzoukhsxb .gt_row {
+#jhmndtdpen .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7209,7 +7253,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#mlzoukhsxb .gt_stub {
+#jhmndtdpen .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7222,7 +7266,7 @@ SINTA
   padding-right: 5px;
 }
 
-#mlzoukhsxb .gt_stub_row_group {
+#jhmndtdpen .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7236,11 +7280,11 @@ SINTA
   vertical-align: top;
 }
 
-#mlzoukhsxb .gt_row_group_first td {
+#jhmndtdpen .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#mlzoukhsxb .gt_summary_row {
+#jhmndtdpen .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7250,16 +7294,16 @@ SINTA
   padding-right: 5px;
 }
 
-#mlzoukhsxb .gt_first_summary_row {
+#jhmndtdpen .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#mlzoukhsxb .gt_first_summary_row.thick {
+#jhmndtdpen .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#mlzoukhsxb .gt_last_summary_row {
+#jhmndtdpen .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7269,7 +7313,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#mlzoukhsxb .gt_grand_summary_row {
+#jhmndtdpen .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7279,7 +7323,7 @@ SINTA
   padding-right: 5px;
 }
 
-#mlzoukhsxb .gt_first_grand_summary_row {
+#jhmndtdpen .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7289,11 +7333,11 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#mlzoukhsxb .gt_striped {
+#jhmndtdpen .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mlzoukhsxb .gt_table_body {
+#jhmndtdpen .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7302,7 +7346,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#mlzoukhsxb .gt_footnotes {
+#jhmndtdpen .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7316,7 +7360,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#mlzoukhsxb .gt_footnote {
+#jhmndtdpen .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -7325,7 +7369,7 @@ SINTA
   padding-right: 5px;
 }
 
-#mlzoukhsxb .gt_sourcenotes {
+#jhmndtdpen .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7339,7 +7383,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#mlzoukhsxb .gt_sourcenote {
+#jhmndtdpen .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -7347,124 +7391,117 @@ SINTA
   padding-right: 5px;
 }
 
-#mlzoukhsxb .gt_left {
+#jhmndtdpen .gt_left {
   text-align: left;
 }
 
-#mlzoukhsxb .gt_center {
+#jhmndtdpen .gt_center {
   text-align: center;
 }
 
-#mlzoukhsxb .gt_right {
+#jhmndtdpen .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mlzoukhsxb .gt_font_normal {
+#jhmndtdpen .gt_font_normal {
   font-weight: normal;
 }
 
-#mlzoukhsxb .gt_font_bold {
+#jhmndtdpen .gt_font_bold {
   font-weight: bold;
 }
 
-#mlzoukhsxb .gt_font_italic {
+#jhmndtdpen .gt_font_italic {
   font-style: italic;
 }
 
-#mlzoukhsxb .gt_super {
+#jhmndtdpen .gt_super {
   font-size: 65%;
 }
 
-#mlzoukhsxb .gt_two_val_uncert {
-  display: inline-block;
-  line-height: 1em;
-  text-align: right;
-  font-size: 60%;
-  vertical-align: -0.25em;
-  margin-left: 0.1em;
-}
-
-#mlzoukhsxb .gt_footnote_marks {
+#jhmndtdpen .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#mlzoukhsxb .gt_asterisk {
+#jhmndtdpen .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#mlzoukhsxb .gt_slash_mark {
-  font-size: 0.7em;
-  line-height: 0.7em;
-  vertical-align: 0.15em;
+#jhmndtdpen .gt_indent_1 {
+  text-indent: 5px;
 }
 
-#mlzoukhsxb .gt_fraction_numerator {
-  font-size: 0.6em;
-  line-height: 0.6em;
-  vertical-align: 0.45em;
+#jhmndtdpen .gt_indent_2 {
+  text-indent: 10px;
 }
 
-#mlzoukhsxb .gt_fraction_denominator {
-  font-size: 0.6em;
-  line-height: 0.6em;
-  vertical-align: -0.05em;
+#jhmndtdpen .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#jhmndtdpen .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#jhmndtdpen .gt_indent_5 {
+  text-indent: 25px;
 }
 </style>
 <table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="9" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>Visitas a Parques Nacionales</th>
+      <td colspan="9" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>Visitas a Parques Nacionales</td>
     </tr>
     
   </thead>
   <thead class="gt_col_headings">
     <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="2" colspan="1">Período</th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2">
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="2" colspan="1" scope="col" id="Período">Período</th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id="&lt;strong&gt;TOTAL&lt;/strong&gt;">
         <span class="gt_column_spanner"><strong>TOTAL</strong></span>
       </th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3">
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3" scope="colgroup" id="&lt;strong&gt;RESIDENTES&lt;/strong&gt;">
         <span class="gt_column_spanner"><strong>RESIDENTES</strong></span>
       </th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3">
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3" scope="colgroup" id="&lt;strong&gt;NO RESIDENTES&lt;/strong&gt;">
         <span class="gt_column_spanner"><strong>NO RESIDENTES</strong></span>
       </th>
     </tr>
     <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Miles<br>de<br>Visitas</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Var. i.a.<br> %</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Miles<br>de<br>Visitas</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Var i.a.<br> %</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Part.<br>%</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Miles<br>de<br>Visitas</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Var. i.a.<br>  %</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Part.<br>%</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Miles&lt;br&gt;de&lt;br&gt;Visitas">Miles<br>de<br>Visitas</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Var. i.a.&lt;br&gt; %">Var. i.a.<br> %</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Miles&lt;br&gt;de&lt;br&gt;Visitas">Miles<br>de<br>Visitas</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Var i.a.&lt;br&gt; %">Var i.a.<br> %</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Part.&lt;br&gt;%">Part.<br>%</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Miles&lt;br&gt;de&lt;br&gt;Visitas">Miles<br>de<br>Visitas</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Var. i.a.&lt;br&gt;  %">Var. i.a.<br>  %</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Part.&lt;br&gt;%">Part.<br>%</th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_center">febrero 2023*</td>
-<td class="gt_row gt_center">488,1</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;10,4%</td>
-<td class="gt_row gt_center">354,2</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;31,1%</td>
-<td class="gt_row gt_center">72,6%</td>
-<td class="gt_row gt_center">133,9</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">335,1%</td>
-<td class="gt_row gt_center">27,4%</td></tr>
-    <tr><td class="gt_row gt_center">Acum. 2023*</td>
-<td class="gt_row gt_center">1.087,1</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;5,5%</td>
-<td class="gt_row gt_center">802,9</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;26,2%</td>
-<td class="gt_row gt_center">73,9%</td>
-<td class="gt_row gt_center">284,2</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">348,7%</td>
-<td class="gt_row gt_center">26,1%</td></tr>
+    <tr><td headers="periodo" class="gt_row gt_center">abril 2023*</td>
+<td headers="total" class="gt_row gt_center">329,7</td>
+<td headers="var.total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">2,0%</td>
+<td headers="n_residentes" class="gt_row gt_center">224,5</td>
+<td headers="var.n_residentes" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">−17,8%</td>
+<td headers="part.res" class="gt_row gt_center">68,1%</td>
+<td headers="n_no_residentes" class="gt_row gt_center">105,2</td>
+<td headers="var.n_no_residentes" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">109,4%</td>
+<td headers="part.no.res" class="gt_row gt_center">31,9%</td></tr>
+    <tr><td headers="periodo" class="gt_row gt_center">Acum. 2023*</td>
+<td headers="total" class="gt_row gt_center">1.745,3</td>
+<td headers="var.total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−5,7%</td>
+<td headers="n_residentes" class="gt_row gt_center">1.234,9</td>
+<td headers="var.n_residentes" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−27,2%</td>
+<td headers="part.res" class="gt_row gt_center">70,8%</td>
+<td headers="n_no_residentes" class="gt_row gt_center">510,4</td>
+<td headers="var.n_no_residentes" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">230,1%</td>
+<td headers="part.no.res" class="gt_row gt_center">29,2%</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
@@ -7477,21 +7514,21 @@ SINTA
 </div>
 <p><br></p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-16f233cd3f70eb2f8fcd" style="width:624px;height:384px;"></div>
-<script type="application/json" data-for="htmlwidget-16f233cd3f70eb2f8fcd">{"x":{"data":[{"x":[17517,19404],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,0,0,0.7)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389],"y":[682.3,516.4,375.1,255.3,162.7,131.8,343.5,234.4,269.1,342,352.8,362.1,615,476.1,408.7,310.1,176.5,184.3,376,258,294.6,359,404.5,436.2,779,616.9,177.7,0,0,0,3.4,5.7,10.5,17.2,26.5,39.2,204,226.4,166.1,103.7,31.5,20.1,143.4,137.7,174.8,272.2,268.5,271.6,606.3,544.6,376.8,323.2,198,191,373.2,245.3,278.4,362.4,342.1,270.4,599,488.1],"text":"","type":"scatter","mode":"lines","line":{"width":3.77952755905512,"color":"rgba(146,131,190,0.5)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389],"y":[682.3,516.4,375.1,255.3,162.7,131.8,343.5,234.4,269.1,342,352.8,362.1,615,476.1,408.7,310.1,176.5,184.3,376,258,294.6,359,404.5,436.2,779,616.9,177.7,0,0,0,3.4,5.7,10.5,17.2,26.5,39.2,204,226.4,166.1,103.7,31.5,20.1,143.4,137.7,174.8,272.2,268.5,271.6,606.3,544.6,376.8,323.2,198,191,373.2,245.3,278.4,362.4,342.1,270.4,599,488.1],"text":["fecha:   ene-18 <br>visitas:  682,3  m","fecha:   feb-18 <br>visitas:  516,4  m","fecha:   mar-18 <br>visitas:  375,1  m","fecha:   abr-18 <br>visitas:  255,3  m","fecha:   may-18 <br>visitas:  162,7  m","fecha:   jun-18 <br>visitas:  131,8  m","fecha:   jul-18 <br>visitas:  343,5  m","fecha:   ago-18 <br>visitas:  234,4  m","fecha:   sep-18 <br>visitas:  269,1  m","fecha:   oct-18 <br>visitas:  342,0  m","fecha:   nov-18 <br>visitas:  352,8  m","fecha:   dic-18 <br>visitas:  362,1  m","fecha:   ene-19 <br>visitas:  615,0  m","fecha:   feb-19 <br>visitas:  476,1  m","fecha:   mar-19 <br>visitas:  408,7  m","fecha:   abr-19 <br>visitas:  310,1  m","fecha:   may-19 <br>visitas:  176,5  m","fecha:   jun-19 <br>visitas:  184,3  m","fecha:   jul-19 <br>visitas:  376,0  m","fecha:   ago-19 <br>visitas:  258,0  m","fecha:   sep-19 <br>visitas:  294,6  m","fecha:   oct-19 <br>visitas:  359,0  m","fecha:   nov-19 <br>visitas:  404,5  m","fecha:   dic-19 <br>visitas:  436,2  m","fecha:   ene-20 <br>visitas:  779,0  m","fecha:   feb-20 <br>visitas:  616,9  m","fecha:   mar-20 <br>visitas:  177,7  m","fecha:   abr-20 <br>visitas:    0,0  m","fecha:   may-20 <br>visitas:    0,0  m","fecha:   jun-20 <br>visitas:    0,0  m","fecha:   jul-20 <br>visitas:    3,4  m","fecha:   ago-20 <br>visitas:    5,7  m","fecha:   sep-20 <br>visitas:   10,5  m","fecha:   oct-20 <br>visitas:   17,2  m","fecha:   nov-20 <br>visitas:   26,5  m","fecha:   dic-20 <br>visitas:   39,2  m","fecha:   ene-21 <br>visitas:  204,0  m","fecha:   feb-21 <br>visitas:  226,4  m","fecha:   mar-21 <br>visitas:  166,1  m","fecha:   abr-21 <br>visitas:  103,7  m","fecha:   may-21 <br>visitas:   31,5  m","fecha:   jun-21 <br>visitas:   20,1  m","fecha:   jul-21 <br>visitas:  143,4  m","fecha:   ago-21 <br>visitas:  137,7  m","fecha:   sep-21 <br>visitas:  174,8  m","fecha:   oct-21 <br>visitas:  272,2  m","fecha:   nov-21 <br>visitas:  268,5  m","fecha:   dic-21 <br>visitas:  271,6  m","fecha:   ene-22 <br>visitas:  606,3  m","fecha:   feb-22 <br>visitas:  544,6  m","fecha:   mar-22 <br>visitas:  376,8  m","fecha:   abr-22 <br>visitas:  323,2  m","fecha:   may-22 <br>visitas:  198,0  m","fecha:   jun-22 <br>visitas:  191,0  m","fecha:   jul-22 <br>visitas:  373,2  m","fecha:   ago-22 <br>visitas:  245,3  m","fecha:   sep-22 <br>visitas:  278,4  m","fecha:   oct-22 <br>visitas:  362,4  m","fecha:   nov-22 <br>visitas:  342,1  m","fecha:   dic-22 <br>visitas:  270,4  m","fecha:   ene-23 <br>visitas:  599,0  m","fecha:   feb-23 <br>visitas:  488,1  m"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(146,131,190,1)","opacity":1,"size":4.15748031496063,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(146,131,190,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.4063926940639,"r":7.30593607305936,"b":35.4503943545039,"l":22.9140722291407},"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187},"title":{"text":"Visitas en Parques Nacionales","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[17517,19404],"tickmode":"array","ticktext":["ene18","feb18","mar18","abr18","may18","jun18","jul18","ago18","sep18","oct18","nov18","dic18","ene19","feb19","mar19","abr19","may19","jun19","jul19","ago19","sep19","oct19","nov19","dic19","ene20","feb20","mar20","abr20","may20","jun20","jul20","ago20","sep20","oct20","nov20","dic20","ene21","feb21","mar21","abr21","may21","jun21","jul21","ago21","sep21","oct21","nov21","dic21","ene22","feb22","mar22","abr22","may22","jun22","jul22","ago22","sep22","oct22","nov22","dic22","ene23","feb23"],"tickvals":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389],"categoryorder":"array","categoryarray":["ene18","feb18","mar18","abr18","may18","jun18","jul18","ago18","sep18","oct18","nov18","dic18","ene19","feb19","mar19","abr19","may19","jun19","jul19","ago19","sep19","oct19","nov19","dic19","ene20","feb20","mar20","abr20","may20","jun20","jul20","ago20","sep20","oct20","nov20","dic20","ene21","feb21","mar21","abr21","may21","jun21","jul21","ago21","sep21","oct21","nov21","dic21","ene22","feb22","mar22","abr22","may22","jun22","jul22","ago22","sep22","oct22","nov22","dic22","ene23","feb23"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":7.97011207970112},"tickangle":-90,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-38.95,817.95],"tickmode":"array","ticktext":["0","100","200","300","400","500","600","700","800"],"tickvals":[0,100,200,300,400,500,600,700,800],"categoryorder":"array","categoryarray":["0","100","200","300","400","500","600","700","800"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":7.97011207970112},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"9b921536246":{"yintercept":{},"type":"scatter"},"9b972492bb7":{"x":{},"y":{}},"9b93079d1a3":{"x":{},"y":{},"text":{}}},"cur_data":"9b921536246","visdat":{"9b921536246":["function (y) ","x"],"9b972492bb7":["function (y) ","x"],"9b93079d1a3":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-be5114fbd6ea0ef42e21" style="width:624px;height:384px;"></div>
+<script type="application/json" data-for="htmlwidget-be5114fbd6ea0ef42e21">{"x":{"data":[{"x":[17517,19463],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,0,0,0.7)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448],"y":[682.3,516.4,375.1,255.3,162.7,131.8,343.5,234.4,269.1,342,352.8,362.1,615,476.1,408.7,310.1,176.5,184.3,376,258,294.6,359,404.5,436.2,779,616.9,177.7,0,0,0,3.4,5.7,10.5,17.2,26.5,39.2,204,226.4,166.1,103.7,31.5,20.1,143.4,137.7,174.8,272.2,268.5,271.6,606.3,544.6,376.8,323.2,198,191,373.4,245.7,278.7,362.8,342.3,270.4,599.5,488.7,327.5,329.7],"text":"","type":"scatter","mode":"lines","line":{"width":3.77952755905512,"color":"rgba(146,131,190,0.5)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448],"y":[682.3,516.4,375.1,255.3,162.7,131.8,343.5,234.4,269.1,342,352.8,362.1,615,476.1,408.7,310.1,176.5,184.3,376,258,294.6,359,404.5,436.2,779,616.9,177.7,0,0,0,3.4,5.7,10.5,17.2,26.5,39.2,204,226.4,166.1,103.7,31.5,20.1,143.4,137.7,174.8,272.2,268.5,271.6,606.3,544.6,376.8,323.2,198,191,373.4,245.7,278.7,362.8,342.3,270.4,599.5,488.7,327.5,329.7],"text":["fecha:   ene.-18 <br>visitas:  682,3  m","fecha:   feb.-18 <br>visitas:  516,4  m","fecha:   mar.-18 <br>visitas:  375,1  m","fecha:   abr.-18 <br>visitas:  255,3  m","fecha:   may.-18 <br>visitas:  162,7  m","fecha:   jun.-18 <br>visitas:  131,8  m","fecha:   jul.-18 <br>visitas:  343,5  m","fecha:   ago.-18 <br>visitas:  234,4  m","fecha:   sep.-18 <br>visitas:  269,1  m","fecha:   oct.-18 <br>visitas:  342,0  m","fecha:   nov.-18 <br>visitas:  352,8  m","fecha:   dic.-18 <br>visitas:  362,1  m","fecha:   ene.-19 <br>visitas:  615,0  m","fecha:   feb.-19 <br>visitas:  476,1  m","fecha:   mar.-19 <br>visitas:  408,7  m","fecha:   abr.-19 <br>visitas:  310,1  m","fecha:   may.-19 <br>visitas:  176,5  m","fecha:   jun.-19 <br>visitas:  184,3  m","fecha:   jul.-19 <br>visitas:  376,0  m","fecha:   ago.-19 <br>visitas:  258,0  m","fecha:   sep.-19 <br>visitas:  294,6  m","fecha:   oct.-19 <br>visitas:  359,0  m","fecha:   nov.-19 <br>visitas:  404,5  m","fecha:   dic.-19 <br>visitas:  436,2  m","fecha:   ene.-20 <br>visitas:  779,0  m","fecha:   feb.-20 <br>visitas:  616,9  m","fecha:   mar.-20 <br>visitas:  177,7  m","fecha:   abr.-20 <br>visitas:    0,0  m","fecha:   may.-20 <br>visitas:    0,0  m","fecha:   jun.-20 <br>visitas:    0,0  m","fecha:   jul.-20 <br>visitas:    3,4  m","fecha:   ago.-20 <br>visitas:    5,7  m","fecha:   sep.-20 <br>visitas:   10,5  m","fecha:   oct.-20 <br>visitas:   17,2  m","fecha:   nov.-20 <br>visitas:   26,5  m","fecha:   dic.-20 <br>visitas:   39,2  m","fecha:   ene.-21 <br>visitas:  204,0  m","fecha:   feb.-21 <br>visitas:  226,4  m","fecha:   mar.-21 <br>visitas:  166,1  m","fecha:   abr.-21 <br>visitas:  103,7  m","fecha:   may.-21 <br>visitas:   31,5  m","fecha:   jun.-21 <br>visitas:   20,1  m","fecha:   jul.-21 <br>visitas:  143,4  m","fecha:   ago.-21 <br>visitas:  137,7  m","fecha:   sep.-21 <br>visitas:  174,8  m","fecha:   oct.-21 <br>visitas:  272,2  m","fecha:   nov.-21 <br>visitas:  268,5  m","fecha:   dic.-21 <br>visitas:  271,6  m","fecha:   ene.-22 <br>visitas:  606,3  m","fecha:   feb.-22 <br>visitas:  544,6  m","fecha:   mar.-22 <br>visitas:  376,8  m","fecha:   abr.-22 <br>visitas:  323,2  m","fecha:   may.-22 <br>visitas:  198,0  m","fecha:   jun.-22 <br>visitas:  191,0  m","fecha:   jul.-22 <br>visitas:  373,4  m","fecha:   ago.-22 <br>visitas:  245,7  m","fecha:   sep.-22 <br>visitas:  278,7  m","fecha:   oct.-22 <br>visitas:  362,8  m","fecha:   nov.-22 <br>visitas:  342,3  m","fecha:   dic.-22 <br>visitas:  270,4  m","fecha:   ene.-23 <br>visitas:  599,5  m","fecha:   feb.-23 <br>visitas:  488,7  m","fecha:   mar.-23 <br>visitas:  327,5  m","fecha:   abr.-23 <br>visitas:  329,7  m"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(146,131,190,1)","opacity":1,"size":4.15748031496063,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(146,131,190,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":45.4063926940639,"r":7.30593607305936,"b":39.4354503943545,"l":22.9140722291407},"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187},"title":{"text":"Visitas en Parques Nacionales","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[17517,19463],"tickmode":"array","ticktext":["ene.18","feb.18","mar.18","abr.18","may.18","jun.18","jul.18","ago.18","sep.18","oct.18","nov.18","dic.18","ene.19","feb.19","mar.19","abr.19","may.19","jun.19","jul.19","ago.19","sep.19","oct.19","nov.19","dic.19","ene.20","feb.20","mar.20","abr.20","may.20","jun.20","jul.20","ago.20","sep.20","oct.20","nov.20","dic.20","ene.21","feb.21","mar.21","abr.21","may.21","jun.21","jul.21","ago.21","sep.21","oct.21","nov.21","dic.21","ene.22","feb.22","mar.22","abr.22","may.22","jun.22","jul.22","ago.22","sep.22","oct.22","nov.22","dic.22","ene.23","feb.23","mar.23","abr.23"],"tickvals":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448],"categoryorder":"array","categoryarray":["ene.18","feb.18","mar.18","abr.18","may.18","jun.18","jul.18","ago.18","sep.18","oct.18","nov.18","dic.18","ene.19","feb.19","mar.19","abr.19","may.19","jun.19","jul.19","ago.19","sep.19","oct.19","nov.19","dic.19","ene.20","feb.20","mar.20","abr.20","may.20","jun.20","jul.20","ago.20","sep.20","oct.20","nov.20","dic.20","ene.21","feb.21","mar.21","abr.21","may.21","jun.21","jul.21","ago.21","sep.21","oct.21","nov.21","dic.21","ene.22","feb.22","mar.22","abr.22","may.22","jun.22","jul.22","ago.22","sep.22","oct.22","nov.22","dic.22","ene.23","feb.23","mar.23","abr.23"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":7.97011207970112},"tickangle":-90,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0.33208800332088,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-38.95,817.95],"tickmode":"array","ticktext":["0","100","200","300","400","500","600","700","800"],"tickvals":[0,100,200,300,400,500,600,700,800],"categoryorder":"array","categoryarray":["0","100","200","300","400","500","600","700","800"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":7.97011207970112},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0.33208800332088,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"8b24233971bf":{"yintercept":{},"type":"scatter"},"8b2415dd42ed":{"x":{},"y":{}},"8b2410c75b94":{"x":{},"y":{},"text":{}}},"cur_data":"8b24233971bf","visdat":{"8b24233971bf":["function (y) ","x"],"8b2415dd42ed":["function (y) ","x"],"8b2410c75b94":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <p><br></p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div id="wstnqlppni" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="ruwkouobec" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Encode+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 html {
   font-family: 'Encode Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#wstnqlppni .gt_table {
+#ruwkouobec .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -7516,7 +7553,7 @@ html {
   border-left-color: #D3D3D3;
 }
 
-#wstnqlppni .gt_heading {
+#ruwkouobec .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -7528,7 +7565,12 @@ html {
   border-right-color: #D3D3D3;
 }
 
-#wstnqlppni .gt_title {
+#ruwkouobec .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ruwkouobec .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -7540,7 +7582,7 @@ html {
   border-bottom-width: 0;
 }
 
-#wstnqlppni .gt_subtitle {
+#ruwkouobec .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -7552,13 +7594,13 @@ html {
   border-top-width: 0;
 }
 
-#wstnqlppni .gt_bottom_border {
+#ruwkouobec .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#wstnqlppni .gt_col_headings {
+#ruwkouobec .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7573,7 +7615,7 @@ html {
   border-right-color: #D3D3D3;
 }
 
-#wstnqlppni .gt_col_heading {
+#ruwkouobec .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7593,7 +7635,7 @@ html {
   overflow-x: hidden;
 }
 
-#wstnqlppni .gt_column_spanner_outer {
+#ruwkouobec .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7605,15 +7647,15 @@ html {
   padding-right: 4px;
 }
 
-#wstnqlppni .gt_column_spanner_outer:first-child {
+#ruwkouobec .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#wstnqlppni .gt_column_spanner_outer:last-child {
+#ruwkouobec .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#wstnqlppni .gt_column_spanner {
+#ruwkouobec .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -7625,7 +7667,7 @@ html {
   width: 100%;
 }
 
-#wstnqlppni .gt_group_heading {
+#ruwkouobec .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7648,9 +7690,10 @@ html {
   border-right-width: 1px;
   border-right-color: #D3D3D3;
   vertical-align: middle;
+  text-align: left;
 }
 
-#wstnqlppni .gt_empty_group_heading {
+#ruwkouobec .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -7665,15 +7708,15 @@ html {
   vertical-align: middle;
 }
 
-#wstnqlppni .gt_from_md > :first-child {
+#ruwkouobec .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#wstnqlppni .gt_from_md > :last-child {
+#ruwkouobec .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#wstnqlppni .gt_row {
+#ruwkouobec .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7692,7 +7735,7 @@ html {
   overflow-x: hidden;
 }
 
-#wstnqlppni .gt_stub {
+#ruwkouobec .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7705,7 +7748,7 @@ html {
   padding-right: 5px;
 }
 
-#wstnqlppni .gt_stub_row_group {
+#ruwkouobec .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7719,11 +7762,11 @@ html {
   vertical-align: top;
 }
 
-#wstnqlppni .gt_row_group_first td {
+#ruwkouobec .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#wstnqlppni .gt_summary_row {
+#ruwkouobec .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7733,16 +7776,16 @@ html {
   padding-right: 5px;
 }
 
-#wstnqlppni .gt_first_summary_row {
+#ruwkouobec .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#wstnqlppni .gt_first_summary_row.thick {
+#ruwkouobec .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#wstnqlppni .gt_last_summary_row {
+#ruwkouobec .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7752,7 +7795,7 @@ html {
   border-bottom-color: #D3D3D3;
 }
 
-#wstnqlppni .gt_grand_summary_row {
+#ruwkouobec .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7762,7 +7805,7 @@ html {
   padding-right: 5px;
 }
 
-#wstnqlppni .gt_first_grand_summary_row {
+#ruwkouobec .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7772,11 +7815,11 @@ html {
   border-top-color: #D3D3D3;
 }
 
-#wstnqlppni .gt_striped {
+#ruwkouobec .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#wstnqlppni .gt_table_body {
+#ruwkouobec .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7785,7 +7828,7 @@ html {
   border-bottom-color: #D3D3D3;
 }
 
-#wstnqlppni .gt_footnotes {
+#ruwkouobec .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7799,7 +7842,7 @@ html {
   border-right-color: #D3D3D3;
 }
 
-#wstnqlppni .gt_footnote {
+#ruwkouobec .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -7808,7 +7851,7 @@ html {
   padding-right: 5px;
 }
 
-#wstnqlppni .gt_sourcenotes {
+#ruwkouobec .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7822,7 +7865,7 @@ html {
   border-right-color: #D3D3D3;
 }
 
-#wstnqlppni .gt_sourcenote {
+#ruwkouobec .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -7830,378 +7873,371 @@ html {
   padding-right: 5px;
 }
 
-#wstnqlppni .gt_left {
+#ruwkouobec .gt_left {
   text-align: left;
 }
 
-#wstnqlppni .gt_center {
+#ruwkouobec .gt_center {
   text-align: center;
 }
 
-#wstnqlppni .gt_right {
+#ruwkouobec .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#wstnqlppni .gt_font_normal {
+#ruwkouobec .gt_font_normal {
   font-weight: normal;
 }
 
-#wstnqlppni .gt_font_bold {
+#ruwkouobec .gt_font_bold {
   font-weight: bold;
 }
 
-#wstnqlppni .gt_font_italic {
+#ruwkouobec .gt_font_italic {
   font-style: italic;
 }
 
-#wstnqlppni .gt_super {
+#ruwkouobec .gt_super {
   font-size: 65%;
 }
 
-#wstnqlppni .gt_two_val_uncert {
-  display: inline-block;
-  line-height: 1em;
-  text-align: right;
-  font-size: 60%;
-  vertical-align: -0.25em;
-  margin-left: 0.1em;
-}
-
-#wstnqlppni .gt_footnote_marks {
+#ruwkouobec .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#wstnqlppni .gt_asterisk {
+#ruwkouobec .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#wstnqlppni .gt_slash_mark {
-  font-size: 0.7em;
-  line-height: 0.7em;
-  vertical-align: 0.15em;
+#ruwkouobec .gt_indent_1 {
+  text-indent: 5px;
 }
 
-#wstnqlppni .gt_fraction_numerator {
-  font-size: 0.6em;
-  line-height: 0.6em;
-  vertical-align: 0.45em;
+#ruwkouobec .gt_indent_2 {
+  text-indent: 10px;
 }
 
-#wstnqlppni .gt_fraction_denominator {
-  font-size: 0.6em;
-  line-height: 0.6em;
-  vertical-align: -0.05em;
+#ruwkouobec .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ruwkouobec .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ruwkouobec .gt_indent_5 {
+  text-indent: 25px;
 }
 </style>
 <table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="10" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>FEBRERO 2023</th>
+      <td colspan="10" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>ABRIL 2023</td>
     </tr>
     
   </thead>
   <thead class="gt_col_headings">
     <tr>
-      <th rowspan="1" colspan="1"></th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2"></th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="1">
+      <th rowspan="1" colspan="1" scope="col"></th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id></th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;ACUMULADO 2023&lt;/strong&gt;">
         <span class="gt_column_spanner"><strong>ACUMULADO 2023</strong></span>
       </th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="4"></th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2">
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="4" scope="colgroup" id></th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id="&lt;strong&gt;ACUMULADO 2023&lt;/strong&gt;">
         <span class="gt_column_spanner"><strong>ACUMULADO 2023</strong></span>
       </th>
     </tr>
     <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1"><strong>Parque Nacional</strong></th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1" scope="col" id="&lt;strong&gt;Parque Nacional&lt;/strong&gt;"><strong>Parque Nacional</strong></th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3" scope="colgroup" id="&lt;strong&gt;TOTAL&lt;/strong&gt;">
         <span class="gt_column_spanner"><strong>TOTAL</strong></span>
       </th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2">
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id="&lt;strong&gt;RESIDENTES&lt;/strong&gt;">
         <span class="gt_column_spanner"><strong>RESIDENTES</strong></span>
       </th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2">
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id="&lt;strong&gt;NO RESIDENTES&lt;/strong&gt;">
         <span class="gt_column_spanner"><strong>NO RESIDENTES</strong></span>
       </th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="2" colspan="1">Visitas</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="2" colspan="1">Var % i.a.</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="2" colspan="1" scope="col" id="Visitas">Visitas</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="2" colspan="1" scope="col" id="Var % i.a.">Var % i.a.</th>
     </tr>
     <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Visitas</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Var % i.a.</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Participación %</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Visitas</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Var % i.a.</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Visitas</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Var % i.a.</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Visitas">Visitas</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Var % i.a.">Var % i.a.</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Participación %">Participación %</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Visitas">Visitas</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Var % i.a.">Var % i.a.</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Visitas">Visitas</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Var % i.a.">Var % i.a.</th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_right gt_stub">Iguazu</td>
-<td class="gt_row gt_center">142.437</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">249,5%</td>
-<td class="gt_row gt_center">24,6%</td>
-<td class="gt_row gt_center">128.786</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">216,1%</td>
-<td class="gt_row gt_center">13.651</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">136.410,0%</td>
-<td class="gt_row gt_center">282.940</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">328,9%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Los Glaciares</td>
-<td class="gt_row gt_center">84.032</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">164,6%</td>
-<td class="gt_row gt_center">14,9%</td>
-<td class="gt_row gt_center">74.653</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">135,6%</td>
-<td class="gt_row gt_center">9.379</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">13.298,6%</td>
-<td class="gt_row gt_center">171.344</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">229,9%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Nahuel Huapi</td>
-<td class="gt_row gt_center">80.252</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">69,6%</td>
-<td class="gt_row gt_center">14,5%</td>
-<td class="gt_row gt_center">78.476</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">66,1%</td>
-<td class="gt_row gt_center">1.776</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">2.811,5%</td>
-<td class="gt_row gt_center">166.376</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">68,3%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Los Alerces</td>
-<td class="gt_row gt_center">65.486</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">289,2%</td>
-<td class="gt_row gt_center">13,9%</td>
-<td class="gt_row gt_center">65.447</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">289,0%</td>
-<td class="gt_row gt_center">39</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">3.800,0%</td>
-<td class="gt_row gt_center">159.918</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">315,9%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Lanin</td>
-<td class="gt_row gt_center">50.540</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">33,0%</td>
-<td class="gt_row gt_center">10,2%</td>
-<td class="gt_row gt_center">50.303</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">32,3%</td>
-<td class="gt_row gt_center">237</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">23.600,0%</td>
-<td class="gt_row gt_center">116.937</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">67,7%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Tierra Del Fuego</td>
-<td class="gt_row gt_center">51.895</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">295,5%</td>
-<td class="gt_row gt_center">9,4%</td>
-<td class="gt_row gt_center">47.361</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">262,4%</td>
-<td class="gt_row gt_center">4.534</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">8.619,2%</td>
-<td class="gt_row gt_center">108.257</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">240,2%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Los Arrayanes</td>
-<td class="gt_row gt_center">16.218</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">23,4%</td>
-<td class="gt_row gt_center">3,4%</td>
-<td class="gt_row gt_center">15.987</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">21,7%</td>
-<td class="gt_row gt_center">231</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">5.675,0%</td>
-<td class="gt_row gt_center">39.269</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">28,9%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">El Palmar</td>
-<td class="gt_row gt_center">19.043</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">101,3%</td>
-<td class="gt_row gt_center">3,1%</td>
-<td class="gt_row gt_center">18.971</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">100,6%</td>
-<td class="gt_row gt_center">72</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">928,6%</td>
-<td class="gt_row gt_center">35.628</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">108,3%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Talampaya</td>
-<td class="gt_row gt_center">6.610</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">139,6%</td>
-<td class="gt_row gt_center">1,1%</td>
-<td class="gt_row gt_center">6.398</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">132,1%</td>
-<td class="gt_row gt_center">212</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">6.966,7%</td>
-<td class="gt_row gt_center">12.784</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">144,6%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Los Cardones</td>
-<td class="gt_row gt_center">4.202</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">75,2%</td>
-<td class="gt_row gt_center">0,8%</td>
-<td class="gt_row gt_center">4.040</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">72,2%</td>
-<td class="gt_row gt_center">162</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">211,5%</td>
-<td class="gt_row gt_center">9.259</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">147,6%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Predelta</td>
-<td class="gt_row gt_center">6.987</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">393,8%</td>
-<td class="gt_row gt_center">0,8%</td>
-<td class="gt_row gt_center">6.977</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">393,1%</td>
-<td class="gt_row gt_center">10</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">9.163</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">367,3%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Sierra De Las Quijadas</td>
-<td class="gt_row gt_center">2.652</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">306,7%</td>
-<td class="gt_row gt_center">0,5%</td>
-<td class="gt_row gt_center">2.628</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">305,6%</td>
-<td class="gt_row gt_center">24</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">500,0%</td>
-<td class="gt_row gt_center">5.501</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">743,7%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">El Leoncito</td>
-<td class="gt_row gt_center">2.341</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;1,9%</td>
-<td class="gt_row gt_center">0,4%</td>
-<td class="gt_row gt_center">2.316</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;2,5%</td>
-<td class="gt_row gt_center">25</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">127,3%</td>
-<td class="gt_row gt_center">4.089</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">17,0%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Monte Leon</td>
-<td class="gt_row gt_center">1.522</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">0,4%</td>
-<td class="gt_row gt_center">1.444</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">78</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">4.068</td>
-<td class="gt_row gt_center">///</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Patagonia</td>
-<td class="gt_row gt_center">1.229</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">232,2%</td>
-<td class="gt_row gt_center">0,3%</td>
-<td class="gt_row gt_center">1.186</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">220,5%</td>
-<td class="gt_row gt_center">43</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">3.781</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">352,3%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Calilegua</td>
-<td class="gt_row gt_center">1.403</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">574,5%</td>
-<td class="gt_row gt_center">0,3%</td>
-<td class="gt_row gt_center">1.343</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">545,7%</td>
-<td class="gt_row gt_center">60</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">3.526</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">491,6%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Ciervo De Los Pantanos</td>
-<td class="gt_row gt_center">1.558</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">23,8%</td>
-<td class="gt_row gt_center">0,2%</td>
-<td class="gt_row gt_center">1.550</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">23,2%</td>
-<td class="gt_row gt_center">8</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">2.770</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">21,3%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Rio Pilcomayo</td>
-<td class="gt_row gt_center">810</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">0,2%</td>
-<td class="gt_row gt_center">806</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">4</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">2.387</td>
-<td class="gt_row gt_center">///</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Bosques Petrificados</td>
-<td class="gt_row gt_center">687</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">192,3%</td>
-<td class="gt_row gt_center">0,2%</td>
-<td class="gt_row gt_center">638</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">171,5%</td>
-<td class="gt_row gt_center">49</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">1.989</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">349,0%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Ibera</td>
-<td class="gt_row gt_center">162</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;87,4%</td>
-<td class="gt_row gt_center">0,1%</td>
-<td class="gt_row gt_center">115</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;91,1%</td>
-<td class="gt_row gt_center">47</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">1.625</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;17,5%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Mburucuya</td>
-<td class="gt_row gt_center">803</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">481,9%</td>
-<td class="gt_row gt_center">0,1%</td>
-<td class="gt_row gt_center">792</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">473,9%</td>
-<td class="gt_row gt_center">11</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">1.607</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">783,0%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Quebrada Del Condorito</td>
-<td class="gt_row gt_center">1.306</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">11,8%</td>
-<td class="gt_row gt_center">0,1%</td>
-<td class="gt_row gt_center">1.273</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">10,0%</td>
-<td class="gt_row gt_center">33</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">200,0%</td>
-<td class="gt_row gt_center">1.306</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;26,0%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Chaco</td>
-<td class="gt_row gt_center">644</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;43,4%</td>
-<td class="gt_row gt_center">0,1%</td>
-<td class="gt_row gt_center">638</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;43,9%</td>
-<td class="gt_row gt_center">6</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">1.174</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;32,9%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Laguna Blanca</td>
-<td class="gt_row gt_center">298</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">120,7%</td>
-<td class="gt_row gt_center">0,1%</td>
-<td class="gt_row gt_center">296</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">119,3%</td>
-<td class="gt_row gt_center">2</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">1.041</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">205,3%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Lihue Calel</td>
-<td class="gt_row gt_center">391</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">160,7%</td>
-<td class="gt_row gt_center">0,1%</td>
-<td class="gt_row gt_center">387</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">158,0%</td>
-<td class="gt_row gt_center">4</td>
-<td class="gt_row gt_center">///</td>
-<td class="gt_row gt_center">1.032</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">221,5%</td></tr>
-    <tr><td class="gt_row gt_right gt_stub">Resto</td>
-<td class="gt_row gt_center">1.128</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">295,8%</td>
-<td class="gt_row gt_center">0,3%</td>
-<td class="gt_row gt_center">1.044</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">266,3%</td>
-<td class="gt_row gt_center">84</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">Inf%</td>
-<td class="gt_row gt_center">3.134</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">568,2%</td></tr>
+    <tr><th id="stub_1_1" scope="row" class="gt_row gt_left gt_stub">Iguazu</th>
+<td headers="stub_1_1 visitantes_2023_total" class="gt_row gt_center">128.450</td>
+<td headers="stub_1_1 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">14,9%</td>
+<td headers="stub_1_1 participacion" class="gt_row gt_center">30,6%</td>
+<td headers="stub_1_1 visitantes_2023_residentes" class="gt_row gt_center">80.940</td>
+<td headers="stub_1_1 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−5,1%</td>
+<td headers="stub_1_1 visitantes_2023_no_residentes" class="gt_row gt_center">47.510</td>
+<td headers="stub_1_1 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">79,2%</td>
+<td headers="stub_1_1 acumulado_2023_total" class="gt_row gt_center">534.254</td>
+<td headers="stub_1_1 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">9,0%</td></tr>
+    <tr><th id="stub_1_2" scope="row" class="gt_row gt_left gt_stub">Los Glaciares</th>
+<td headers="stub_1_2 visitantes_2023_total" class="gt_row gt_center">60.633</td>
+<td headers="stub_1_2 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−1,7%</td>
+<td headers="stub_1_2 participacion" class="gt_row gt_center">19,7%</td>
+<td headers="stub_1_2 visitantes_2023_residentes" class="gt_row gt_center">32.105</td>
+<td headers="stub_1_2 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−35,1%</td>
+<td headers="stub_1_2 visitantes_2023_no_residentes" class="gt_row gt_center">28.528</td>
+<td headers="stub_1_2 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">133,4%</td>
+<td headers="stub_1_2 acumulado_2023_total" class="gt_row gt_center">343.686</td>
+<td headers="stub_1_2 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">11,4%</td></tr>
+    <tr><th id="stub_1_3" scope="row" class="gt_row gt_left gt_stub">Nahuel Huapi</th>
+<td headers="stub_1_3 visitantes_2023_total" class="gt_row gt_center">39.817</td>
+<td headers="stub_1_3 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">17,3%</td>
+<td headers="stub_1_3 participacion" class="gt_row gt_center">13,1%</td>
+<td headers="stub_1_3 visitantes_2023_residentes" class="gt_row gt_center">27.654</td>
+<td headers="stub_1_3 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−5,8%</td>
+<td headers="stub_1_3 visitantes_2023_no_residentes" class="gt_row gt_center">12.163</td>
+<td headers="stub_1_3 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">165,0%</td>
+<td headers="stub_1_3 acumulado_2023_total" class="gt_row gt_center">228.437</td>
+<td headers="stub_1_3 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−11,2%</td></tr>
+    <tr><th id="stub_1_4" scope="row" class="gt_row gt_left gt_stub">Tierra Del Fuego</th>
+<td headers="stub_1_4 visitantes_2023_total" class="gt_row gt_center">32.364</td>
+<td headers="stub_1_4 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−7,3%</td>
+<td headers="stub_1_4 participacion" class="gt_row gt_center">10,6%</td>
+<td headers="stub_1_4 visitantes_2023_residentes" class="gt_row gt_center">20.802</td>
+<td headers="stub_1_4 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−31,3%</td>
+<td headers="stub_1_4 visitantes_2023_no_residentes" class="gt_row gt_center">11.562</td>
+<td headers="stub_1_4 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">150,8%</td>
+<td headers="stub_1_4 acumulado_2023_total" class="gt_row gt_center">184.927</td>
+<td headers="stub_1_4 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−3,1%</td></tr>
+    <tr><th id="stub_1_5" scope="row" class="gt_row gt_left gt_stub">Lanin</th>
+<td headers="stub_1_5 visitantes_2023_total" class="gt_row gt_center">7.488</td>
+<td headers="stub_1_5 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−16,5%</td>
+<td headers="stub_1_5 participacion" class="gt_row gt_center">6,6%</td>
+<td headers="stub_1_5 visitantes_2023_residentes" class="gt_row gt_center">6.578</td>
+<td headers="stub_1_5 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−24,0%</td>
+<td headers="stub_1_5 visitantes_2023_no_residentes" class="gt_row gt_center">910</td>
+<td headers="stub_1_5 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">186,2%</td>
+<td headers="stub_1_5 acumulado_2023_total" class="gt_row gt_center">115.857</td>
+<td headers="stub_1_5 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−24,6%</td></tr>
+    <tr><th id="stub_1_6" scope="row" class="gt_row gt_left gt_stub">Los Alerces</th>
+<td headers="stub_1_6 visitantes_2023_total" class="gt_row gt_center">5.554</td>
+<td headers="stub_1_6 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−54,7%</td>
+<td headers="stub_1_6 participacion" class="gt_row gt_center">6,3%</td>
+<td headers="stub_1_6 visitantes_2023_residentes" class="gt_row gt_center">5.554</td>
+<td headers="stub_1_6 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−54,5%</td>
+<td headers="stub_1_6 visitantes_2023_no_residentes" class="gt_row gt_center">0</td>
+<td headers="stub_1_6 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−100,0%</td>
+<td headers="stub_1_6 acumulado_2023_total" class="gt_row gt_center">109.305</td>
+<td headers="stub_1_6 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−45,2%</td></tr>
+    <tr><th id="stub_1_7" scope="row" class="gt_row gt_left gt_stub">El Palmar</th>
+<td headers="stub_1_7 visitantes_2023_total" class="gt_row gt_center">12.560</td>
+<td headers="stub_1_7 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−7,4%</td>
+<td headers="stub_1_7 participacion" class="gt_row gt_center">2,8%</td>
+<td headers="stub_1_7 visitantes_2023_residentes" class="gt_row gt_center">12.291</td>
+<td headers="stub_1_7 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−8,5%</td>
+<td headers="stub_1_7 visitantes_2023_no_residentes" class="gt_row gt_center">269</td>
+<td headers="stub_1_7 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">103,8%</td>
+<td headers="stub_1_7 acumulado_2023_total" class="gt_row gt_center">49.119</td>
+<td headers="stub_1_7 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−16,1%</td></tr>
+    <tr><th id="stub_1_8" scope="row" class="gt_row gt_left gt_stub">Los Arrayanes</th>
+<td headers="stub_1_8 visitantes_2023_total" class="gt_row gt_center">4.702</td>
+<td headers="stub_1_8 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−0,4%</td>
+<td headers="stub_1_8 participacion" class="gt_row gt_center">2,2%</td>
+<td headers="stub_1_8 visitantes_2023_residentes" class="gt_row gt_center">3.425</td>
+<td headers="stub_1_8 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−19,9%</td>
+<td headers="stub_1_8 visitantes_2023_no_residentes" class="gt_row gt_center">1.277</td>
+<td headers="stub_1_8 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">186,3%</td>
+<td headers="stub_1_8 acumulado_2023_total" class="gt_row gt_center">38.149</td>
+<td headers="stub_1_8 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−26,1%</td></tr>
+    <tr><th id="stub_1_9" scope="row" class="gt_row gt_left gt_stub">Talampaya</th>
+<td headers="stub_1_9 visitantes_2023_total" class="gt_row gt_center">8.558</td>
+<td headers="stub_1_9 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−17,1%</td>
+<td headers="stub_1_9 participacion" class="gt_row gt_center">1,3%</td>
+<td headers="stub_1_9 visitantes_2023_residentes" class="gt_row gt_center">8.010</td>
+<td headers="stub_1_9 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−18,8%</td>
+<td headers="stub_1_9 visitantes_2023_no_residentes" class="gt_row gt_center">548</td>
+<td headers="stub_1_9 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">19,9%</td>
+<td headers="stub_1_9 acumulado_2023_total" class="gt_row gt_center">21.852</td>
+<td headers="stub_1_9 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−26,9%</td></tr>
+    <tr><th id="stub_1_10" scope="row" class="gt_row gt_left gt_stub">Los Cardones</th>
+<td headers="stub_1_10 visitantes_2023_total" class="gt_row gt_center">4.625</td>
+<td headers="stub_1_10 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−5,1%</td>
+<td headers="stub_1_10 participacion" class="gt_row gt_center">1,2%</td>
+<td headers="stub_1_10 visitantes_2023_residentes" class="gt_row gt_center">3.499</td>
+<td headers="stub_1_10 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−25,6%</td>
+<td headers="stub_1_10 visitantes_2023_no_residentes" class="gt_row gt_center">1.126</td>
+<td headers="stub_1_10 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">547,1%</td>
+<td headers="stub_1_10 acumulado_2023_total" class="gt_row gt_center">21.709</td>
+<td headers="stub_1_10 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">22,6%</td></tr>
+    <tr><th id="stub_1_11" scope="row" class="gt_row gt_left gt_stub">Predelta</th>
+<td headers="stub_1_11 visitantes_2023_total" class="gt_row gt_center">6.491</td>
+<td headers="stub_1_11 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−11,9%</td>
+<td headers="stub_1_11 participacion" class="gt_row gt_center">1,1%</td>
+<td headers="stub_1_11 visitantes_2023_residentes" class="gt_row gt_center">6.471</td>
+<td headers="stub_1_11 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−11,8%</td>
+<td headers="stub_1_11 visitantes_2023_no_residentes" class="gt_row gt_center">20</td>
+<td headers="stub_1_11 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−35,5%</td>
+<td headers="stub_1_11 acumulado_2023_total" class="gt_row gt_center">18.478</td>
+<td headers="stub_1_11 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−11,6%</td></tr>
+    <tr><th id="stub_1_12" scope="row" class="gt_row gt_left gt_stub">Quebrada Del Condorito</th>
+<td headers="stub_1_12 visitantes_2023_total" class="gt_row gt_center">3.213</td>
+<td headers="stub_1_12 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">81,8%</td>
+<td headers="stub_1_12 participacion" class="gt_row gt_center">0,5%</td>
+<td headers="stub_1_12 visitantes_2023_residentes" class="gt_row gt_center">2.948</td>
+<td headers="stub_1_12 var_ia_visitantes_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">75,7%</td>
+<td headers="stub_1_12 visitantes_2023_no_residentes" class="gt_row gt_center">265</td>
+<td headers="stub_1_12 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">197,8%</td>
+<td headers="stub_1_12 acumulado_2023_total" class="gt_row gt_center">9.193</td>
+<td headers="stub_1_12 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">104,6%</td></tr>
+    <tr><th id="stub_1_13" scope="row" class="gt_row gt_left gt_stub">Sierra De Las Quijadas</th>
+<td headers="stub_1_13 visitantes_2023_total" class="gt_row gt_center">2.375</td>
+<td headers="stub_1_13 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−35,1%</td>
+<td headers="stub_1_13 participacion" class="gt_row gt_center">0,5%</td>
+<td headers="stub_1_13 visitantes_2023_residentes" class="gt_row gt_center">2.233</td>
+<td headers="stub_1_13 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−37,3%</td>
+<td headers="stub_1_13 visitantes_2023_no_residentes" class="gt_row gt_center">142</td>
+<td headers="stub_1_13 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">51,1%</td>
+<td headers="stub_1_13 acumulado_2023_total" class="gt_row gt_center">9.170</td>
+<td headers="stub_1_13 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−18,6%</td></tr>
+    <tr><th id="stub_1_14" scope="row" class="gt_row gt_left gt_stub">El Leoncito</th>
+<td headers="stub_1_14 visitantes_2023_total" class="gt_row gt_center">2.193</td>
+<td headers="stub_1_14 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−5,8%</td>
+<td headers="stub_1_14 participacion" class="gt_row gt_center">0,5%</td>
+<td headers="stub_1_14 visitantes_2023_residentes" class="gt_row gt_center">2.063</td>
+<td headers="stub_1_14 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−8,4%</td>
+<td headers="stub_1_14 visitantes_2023_no_residentes" class="gt_row gt_center">130</td>
+<td headers="stub_1_14 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">71,1%</td>
+<td headers="stub_1_14 acumulado_2023_total" class="gt_row gt_center">9.062</td>
+<td headers="stub_1_14 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">9,6%</td></tr>
+    <tr><th id="stub_1_15" scope="row" class="gt_row gt_left gt_stub">Ciervo De Los Pantanos</th>
+<td headers="stub_1_15 visitantes_2023_total" class="gt_row gt_center">2.966</td>
+<td headers="stub_1_15 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−23,1%</td>
+<td headers="stub_1_15 participacion" class="gt_row gt_center">0,5%</td>
+<td headers="stub_1_15 visitantes_2023_residentes" class="gt_row gt_center">2.957</td>
+<td headers="stub_1_15 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−23,1%</td>
+<td headers="stub_1_15 visitantes_2023_no_residentes" class="gt_row gt_center">9</td>
+<td headers="stub_1_15 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">12,5%</td>
+<td headers="stub_1_15 acumulado_2023_total" class="gt_row gt_center">9.033</td>
+<td headers="stub_1_15 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−2,1%</td></tr>
+    <tr><th id="stub_1_16" scope="row" class="gt_row gt_left gt_stub">Calilegua</th>
+<td headers="stub_1_16 visitantes_2023_total" class="gt_row gt_center">1.323</td>
+<td headers="stub_1_16 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">6,1%</td>
+<td headers="stub_1_16 participacion" class="gt_row gt_center">0,4%</td>
+<td headers="stub_1_16 visitantes_2023_residentes" class="gt_row gt_center">1.148</td>
+<td headers="stub_1_16 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−2,0%</td>
+<td headers="stub_1_16 visitantes_2023_no_residentes" class="gt_row gt_center">175</td>
+<td headers="stub_1_16 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">133,3%</td>
+<td headers="stub_1_16 acumulado_2023_total" class="gt_row gt_center">6.706</td>
+<td headers="stub_1_16 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">13,3%</td></tr>
+    <tr><th id="stub_1_17" scope="row" class="gt_row gt_left gt_stub">Monte Leon</th>
+<td headers="stub_1_17 visitantes_2023_total" class="gt_row gt_center">378</td>
+<td headers="stub_1_17 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">6,5%</td>
+<td headers="stub_1_17 participacion" class="gt_row gt_center">0,3%</td>
+<td headers="stub_1_17 visitantes_2023_residentes" class="gt_row gt_center">299</td>
+<td headers="stub_1_17 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−11,3%</td>
+<td headers="stub_1_17 visitantes_2023_no_residentes" class="gt_row gt_center">79</td>
+<td headers="stub_1_17 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">338,9%</td>
+<td headers="stub_1_17 acumulado_2023_total" class="gt_row gt_center">5.952</td>
+<td headers="stub_1_17 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">13,8%</td></tr>
+    <tr><th id="stub_1_18" scope="row" class="gt_row gt_left gt_stub">Patagonia</th>
+<td headers="stub_1_18 visitantes_2023_total" class="gt_row gt_center">440</td>
+<td headers="stub_1_18 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−26,3%</td>
+<td headers="stub_1_18 participacion" class="gt_row gt_center">0,3%</td>
+<td headers="stub_1_18 visitantes_2023_residentes" class="gt_row gt_center">364</td>
+<td headers="stub_1_18 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−34,9%</td>
+<td headers="stub_1_18 visitantes_2023_no_residentes" class="gt_row gt_center">76</td>
+<td headers="stub_1_18 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">100,0%</td>
+<td headers="stub_1_18 acumulado_2023_total" class="gt_row gt_center">4.708</td>
+<td headers="stub_1_18 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−9,6%</td></tr>
+    <tr><th id="stub_1_19" scope="row" class="gt_row gt_left gt_stub">Ibera</th>
+<td headers="stub_1_19 visitantes_2023_total" class="gt_row gt_center">1.502</td>
+<td headers="stub_1_19 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">1,1%</td>
+<td headers="stub_1_19 participacion" class="gt_row gt_center">0,3%</td>
+<td headers="stub_1_19 visitantes_2023_residentes" class="gt_row gt_center">1.380</td>
+<td headers="stub_1_19 var_ia_visitantes_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">6,1%</td>
+<td headers="stub_1_19 visitantes_2023_no_residentes" class="gt_row gt_center">122</td>
+<td headers="stub_1_19 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−33,7%</td>
+<td headers="stub_1_19 acumulado_2023_total" class="gt_row gt_center">4.642</td>
+<td headers="stub_1_19 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">26,4%</td></tr>
+    <tr><th id="stub_1_20" scope="row" class="gt_row gt_left gt_stub">Rio Pilcomayo</th>
+<td headers="stub_1_20 visitantes_2023_total" class="gt_row gt_center">523</td>
+<td headers="stub_1_20 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−25,9%</td>
+<td headers="stub_1_20 participacion" class="gt_row gt_center">0,2%</td>
+<td headers="stub_1_20 visitantes_2023_residentes" class="gt_row gt_center">512</td>
+<td headers="stub_1_20 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−27,0%</td>
+<td headers="stub_1_20 visitantes_2023_no_residentes" class="gt_row gt_center">11</td>
+<td headers="stub_1_20 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">120,0%</td>
+<td headers="stub_1_20 acumulado_2023_total" class="gt_row gt_center">4.117</td>
+<td headers="stub_1_20 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">11,1%</td></tr>
+    <tr><th id="stub_1_21" scope="row" class="gt_row gt_left gt_stub">Mburucuya</th>
+<td headers="stub_1_21 visitantes_2023_total" class="gt_row gt_center">706</td>
+<td headers="stub_1_21 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">28,4%</td>
+<td headers="stub_1_21 participacion" class="gt_row gt_center">0,2%</td>
+<td headers="stub_1_21 visitantes_2023_residentes" class="gt_row gt_center">687</td>
+<td headers="stub_1_21 var_ia_visitantes_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">26,8%</td>
+<td headers="stub_1_21 visitantes_2023_no_residentes" class="gt_row gt_center">19</td>
+<td headers="stub_1_21 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">137,5%</td>
+<td headers="stub_1_21 acumulado_2023_total" class="gt_row gt_center">2.678</td>
+<td headers="stub_1_21 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">9,9%</td></tr>
+    <tr><th id="stub_1_22" scope="row" class="gt_row gt_left gt_stub">Lihue Calel</th>
+<td headers="stub_1_22 visitantes_2023_total" class="gt_row gt_center">636</td>
+<td headers="stub_1_22 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">53,3%</td>
+<td headers="stub_1_22 participacion" class="gt_row gt_center">0,1%</td>
+<td headers="stub_1_22 visitantes_2023_residentes" class="gt_row gt_center">619</td>
+<td headers="stub_1_22 var_ia_visitantes_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">49,9%</td>
+<td headers="stub_1_22 visitantes_2023_no_residentes" class="gt_row gt_center">17</td>
+<td headers="stub_1_22 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">750,0%</td>
+<td headers="stub_1_22 acumulado_2023_total" class="gt_row gt_center">2.491</td>
+<td headers="stub_1_22 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">36,1%</td></tr>
+    <tr><th id="stub_1_23" scope="row" class="gt_row gt_left gt_stub">Bosques Petrificados</th>
+<td headers="stub_1_23 visitantes_2023_total" class="gt_row gt_center">115</td>
+<td headers="stub_1_23 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−57,7%</td>
+<td headers="stub_1_23 participacion" class="gt_row gt_center">0,1%</td>
+<td headers="stub_1_23 visitantes_2023_residentes" class="gt_row gt_center">87</td>
+<td headers="stub_1_23 var_ia_visitantes_res" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−66,1%</td>
+<td headers="stub_1_23 visitantes_2023_no_residentes" class="gt_row gt_center">28</td>
+<td headers="stub_1_23 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">86,7%</td>
+<td headers="stub_1_23 acumulado_2023_total" class="gt_row gt_center">1.878</td>
+<td headers="stub_1_23 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−31,2%</td></tr>
+    <tr><th id="stub_1_24" scope="row" class="gt_row gt_left gt_stub">Perito Moreno</th>
+<td headers="stub_1_24 visitantes_2023_total" class="gt_row gt_center">151</td>
+<td headers="stub_1_24 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">184,9%</td>
+<td headers="stub_1_24 participacion" class="gt_row gt_center">0,1%</td>
+<td headers="stub_1_24 visitantes_2023_residentes" class="gt_row gt_center">98</td>
+<td headers="stub_1_24 var_ia_visitantes_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">92,2%</td>
+<td headers="stub_1_24 visitantes_2023_no_residentes" class="gt_row gt_center">53</td>
+<td headers="stub_1_24 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">2.550,0%</td>
+<td headers="stub_1_24 acumulado_2023_total" class="gt_row gt_center">1.790</td>
+<td headers="stub_1_24 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">38,9%</td></tr>
+    <tr><th id="stub_1_25" scope="row" class="gt_row gt_left gt_stub">Chaco</th>
+<td headers="stub_1_25 visitantes_2023_total" class="gt_row gt_center">578</td>
+<td headers="stub_1_25 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">21,4%</td>
+<td headers="stub_1_25 participacion" class="gt_row gt_center">0,1%</td>
+<td headers="stub_1_25 visitantes_2023_residentes" class="gt_row gt_center">562</td>
+<td headers="stub_1_25 var_ia_visitantes_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">20,3%</td>
+<td headers="stub_1_25 visitantes_2023_no_residentes" class="gt_row gt_center">16</td>
+<td headers="stub_1_25 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">77,8%</td>
+<td headers="stub_1_25 acumulado_2023_total" class="gt_row gt_center">1.692</td>
+<td headers="stub_1_25 var_ia_acumulado_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−19,3%</td></tr>
+    <tr><th id="stub_1_26" scope="row" class="gt_row gt_left gt_stub">Resto</th>
+<td headers="stub_1_26 visitantes_2023_total" class="gt_row gt_center">1.350</td>
+<td headers="stub_1_26 var_ia_visitantes_2023_tot" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">21,1%</td>
+<td headers="stub_1_26 participacion" class="gt_row gt_center">0,4%</td>
+<td headers="stub_1_26 visitantes_2023_residentes" class="gt_row gt_center">1.235</td>
+<td headers="stub_1_26 var_ia_visitantes_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">16,4%</td>
+<td headers="stub_1_26 visitantes_2023_no_residentes" class="gt_row gt_center">115</td>
+<td headers="stub_1_26 var_ia_visitantes_no_res" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">113,0%</td>
+<td headers="stub_1_26 acumulado_2023_total" class="gt_row gt_center">6.414</td>
+<td headers="stub_1_26 var_ia_acumulado_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">29,3%</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
@@ -8219,15 +8255,15 @@ html {
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<p>En el caso de los parques provinciales, durante el mes de febrero se registraron 73.153 visitas a áreas naturales protegidas del Chubut, con 58.461 visitas de residentes y 14.692 de no residentes. Mientras que el Parque Provincial Ischigualasto, en San Juan, recibió un total de 6.963 visitas.</p>
+<p>En el caso de los parques provinciales, durante el mes de abril se registraron 18.951 visitas a áreas naturales protegidas del Chubut, con 16.503 visitas de residentes y 2.448 de no residentes. Mientras que el Parque Provincial Ischigualasto, en San Juan, recibió un total de 10.747 visitas.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div id="labskhbwmj" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="abhrtegbej" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Encode+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 html {
   font-family: 'Encode Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#labskhbwmj .gt_table {
+#abhrtegbej .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -8252,7 +8288,7 @@ html {
   border-left-color: #D3D3D3;
 }
 
-#labskhbwmj .gt_heading {
+#abhrtegbej .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -8264,7 +8300,12 @@ html {
   border-right-color: #D3D3D3;
 }
 
-#labskhbwmj .gt_title {
+#abhrtegbej .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#abhrtegbej .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -8276,7 +8317,7 @@ html {
   border-bottom-width: 0;
 }
 
-#labskhbwmj .gt_subtitle {
+#abhrtegbej .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -8288,13 +8329,13 @@ html {
   border-top-width: 0;
 }
 
-#labskhbwmj .gt_bottom_border {
+#abhrtegbej .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#labskhbwmj .gt_col_headings {
+#abhrtegbej .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -8309,7 +8350,7 @@ html {
   border-right-color: #D3D3D3;
 }
 
-#labskhbwmj .gt_col_heading {
+#abhrtegbej .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8329,7 +8370,7 @@ html {
   overflow-x: hidden;
 }
 
-#labskhbwmj .gt_column_spanner_outer {
+#abhrtegbej .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8341,15 +8382,15 @@ html {
   padding-right: 4px;
 }
 
-#labskhbwmj .gt_column_spanner_outer:first-child {
+#abhrtegbej .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#labskhbwmj .gt_column_spanner_outer:last-child {
+#abhrtegbej .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#labskhbwmj .gt_column_spanner {
+#abhrtegbej .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -8361,7 +8402,7 @@ html {
   width: 100%;
 }
 
-#labskhbwmj .gt_group_heading {
+#abhrtegbej .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8384,9 +8425,10 @@ html {
   border-right-width: 1px;
   border-right-color: #D3D3D3;
   vertical-align: middle;
+  text-align: left;
 }
 
-#labskhbwmj .gt_empty_group_heading {
+#abhrtegbej .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -8401,15 +8443,15 @@ html {
   vertical-align: middle;
 }
 
-#labskhbwmj .gt_from_md > :first-child {
+#abhrtegbej .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#labskhbwmj .gt_from_md > :last-child {
+#abhrtegbej .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#labskhbwmj .gt_row {
+#abhrtegbej .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8428,7 +8470,7 @@ html {
   overflow-x: hidden;
 }
 
-#labskhbwmj .gt_stub {
+#abhrtegbej .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8441,7 +8483,7 @@ html {
   padding-right: 5px;
 }
 
-#labskhbwmj .gt_stub_row_group {
+#abhrtegbej .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8455,11 +8497,11 @@ html {
   vertical-align: top;
 }
 
-#labskhbwmj .gt_row_group_first td {
+#abhrtegbej .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#labskhbwmj .gt_summary_row {
+#abhrtegbej .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -8469,16 +8511,16 @@ html {
   padding-right: 5px;
 }
 
-#labskhbwmj .gt_first_summary_row {
+#abhrtegbej .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#labskhbwmj .gt_first_summary_row.thick {
+#abhrtegbej .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#labskhbwmj .gt_last_summary_row {
+#abhrtegbej .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8488,7 +8530,7 @@ html {
   border-bottom-color: #D3D3D3;
 }
 
-#labskhbwmj .gt_grand_summary_row {
+#abhrtegbej .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -8498,7 +8540,7 @@ html {
   padding-right: 5px;
 }
 
-#labskhbwmj .gt_first_grand_summary_row {
+#abhrtegbej .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8508,11 +8550,11 @@ html {
   border-top-color: #D3D3D3;
 }
 
-#labskhbwmj .gt_striped {
+#abhrtegbej .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#labskhbwmj .gt_table_body {
+#abhrtegbej .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -8521,7 +8563,7 @@ html {
   border-bottom-color: #D3D3D3;
 }
 
-#labskhbwmj .gt_footnotes {
+#abhrtegbej .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -8535,7 +8577,7 @@ html {
   border-right-color: #D3D3D3;
 }
 
-#labskhbwmj .gt_footnote {
+#abhrtegbej .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -8544,7 +8586,7 @@ html {
   padding-right: 5px;
 }
 
-#labskhbwmj .gt_sourcenotes {
+#abhrtegbej .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -8558,7 +8600,7 @@ html {
   border-right-color: #D3D3D3;
 }
 
-#labskhbwmj .gt_sourcenote {
+#abhrtegbej .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -8566,148 +8608,141 @@ html {
   padding-right: 5px;
 }
 
-#labskhbwmj .gt_left {
+#abhrtegbej .gt_left {
   text-align: left;
 }
 
-#labskhbwmj .gt_center {
+#abhrtegbej .gt_center {
   text-align: center;
 }
 
-#labskhbwmj .gt_right {
+#abhrtegbej .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#labskhbwmj .gt_font_normal {
+#abhrtegbej .gt_font_normal {
   font-weight: normal;
 }
 
-#labskhbwmj .gt_font_bold {
+#abhrtegbej .gt_font_bold {
   font-weight: bold;
 }
 
-#labskhbwmj .gt_font_italic {
+#abhrtegbej .gt_font_italic {
   font-style: italic;
 }
 
-#labskhbwmj .gt_super {
+#abhrtegbej .gt_super {
   font-size: 65%;
 }
 
-#labskhbwmj .gt_two_val_uncert {
-  display: inline-block;
-  line-height: 1em;
-  text-align: right;
-  font-size: 60%;
-  vertical-align: -0.25em;
-  margin-left: 0.1em;
-}
-
-#labskhbwmj .gt_footnote_marks {
+#abhrtegbej .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#labskhbwmj .gt_asterisk {
+#abhrtegbej .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#labskhbwmj .gt_slash_mark {
-  font-size: 0.7em;
-  line-height: 0.7em;
-  vertical-align: 0.15em;
+#abhrtegbej .gt_indent_1 {
+  text-indent: 5px;
 }
 
-#labskhbwmj .gt_fraction_numerator {
-  font-size: 0.6em;
-  line-height: 0.6em;
-  vertical-align: 0.45em;
+#abhrtegbej .gt_indent_2 {
+  text-indent: 10px;
 }
 
-#labskhbwmj .gt_fraction_denominator {
-  font-size: 0.6em;
-  line-height: 0.6em;
-  vertical-align: -0.05em;
+#abhrtegbej .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#abhrtegbej .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#abhrtegbej .gt_indent_5 {
+  text-indent: 25px;
 }
 </style>
 <table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="9" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>Visitas a Áreas Protegidas Provinciales</th>
+      <td colspan="9" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>Visitas a Áreas Protegidas Provinciales</td>
     </tr>
     
   </thead>
   <thead class="gt_col_headings">
     <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="2" colspan="1">Período</th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2">
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="2" colspan="1" scope="col" id="Período">Período</th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id="&lt;strong&gt;TOTAL&lt;/strong&gt;">
         <span class="gt_column_spanner"><strong>TOTAL</strong></span>
       </th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3">
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3" scope="colgroup" id="&lt;strong&gt;RESIDENTES&lt;/strong&gt;">
         <span class="gt_column_spanner"><strong>RESIDENTES</strong></span>
       </th>
-      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3">
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3" scope="colgroup" id="&lt;strong&gt;NO RESIDENTES&lt;/strong&gt;">
         <span class="gt_column_spanner"><strong>NO RESIDENTES</strong></span>
       </th>
     </tr>
     <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Visitas</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Var. i.a.<br> %</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Visitas</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Var i.a.<br> %</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Part.<br>%</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Visitas</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Var. i.a.<br>  %</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">Part.<br>%</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Visitas">Visitas</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Var. i.a.&lt;br&gt; %">Var. i.a.<br> %</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Visitas">Visitas</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Var i.a.&lt;br&gt; %">Var i.a.<br> %</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Part.&lt;br&gt;%">Part.<br>%</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Visitas">Visitas</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Var. i.a.&lt;br&gt;  %">Var. i.a.<br>  %</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Part.&lt;br&gt;%">Part.<br>%</th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
     <tr class="gt_group_heading_row">
-      <td colspan="9" class="gt_group_heading">Chubut</td>
+      <th colspan="9" class="gt_group_heading" scope="colgroup" id="Chubut">Chubut</th>
     </tr>
-    <tr class="gt_row_group_first"><td class="gt_row gt_center">febrero 2023</td>
-<td class="gt_row gt_center">73.153</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">0,4%</td>
-<td class="gt_row gt_center">58.461</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;17,8%</td>
-<td class="gt_row gt_center">79,9%</td>
-<td class="gt_row gt_center">14.692</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">728,7%</td>
-<td class="gt_row gt_center">20,1%</td></tr>
-    <tr><td class="gt_row gt_center">acumulado 2023</td>
-<td class="gt_row gt_center">192.643</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">12,7%</td>
-<td class="gt_row gt_center">163.050</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;2,5%</td>
-<td class="gt_row gt_center">84,6%</td>
-<td class="gt_row gt_center">29.593</td>
-<td class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">687,3%</td>
-<td class="gt_row gt_center">15,4%</td></tr>
+    <tr class="gt_row_group_first"><td headers="Chubut  Mes" class="gt_row gt_center">abril 2023</td>
+<td headers="Chubut  Total" class="gt_row gt_center">18.951,00</td>
+<td headers="Chubut  var_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">0,18</td>
+<td headers="Chubut  residentes" class="gt_row gt_center">16.503,00</td>
+<td headers="Chubut  var_residentes" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">0,09</td>
+<td headers="Chubut  part_residentes" class="gt_row gt_center">0,87</td>
+<td headers="Chubut  no_residentes" class="gt_row gt_center">2.448,00</td>
+<td headers="Chubut  var_no_residentes" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">1,60</td>
+<td headers="Chubut  part_no_residentes" class="gt_row gt_center">0,13</td></tr>
+    <tr><td headers="Chubut  Mes" class="gt_row gt_center">acumulado 2023</td>
+<td headers="Chubut  Total" class="gt_row gt_center">246.074,00</td>
+<td headers="Chubut  var_total" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">0,14</td>
+<td headers="Chubut  residentes" class="gt_row gt_center">203.475,00</td>
+<td headers="Chubut  var_residentes" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−0,03</td>
+<td headers="Chubut  part_residentes" class="gt_row gt_center">0,83</td>
+<td headers="Chubut  no_residentes" class="gt_row gt_center">42.599,00</td>
+<td headers="Chubut  var_no_residentes" class="gt_row gt_center" style="color: #50B8B1; font-weight: bold;">5,13</td>
+<td headers="Chubut  part_no_residentes" class="gt_row gt_center">0,17</td></tr>
     <tr class="gt_group_heading_row">
-      <td colspan="9" class="gt_group_heading">San Juan (Ischigualasto)</td>
+      <th colspan="9" class="gt_group_heading" scope="colgroup" id="San Juan (Ischigualasto)">San Juan (Ischigualasto)</th>
     </tr>
-    <tr class="gt_row_group_first"><td class="gt_row gt_center">febrero 2023</td>
-<td class="gt_row gt_center">6.963</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;20,0%</td>
-<td class="gt_row gt_center">-</td>
-<td class="gt_row gt_center" style="color: #808080; font-weight: bold;">-</td>
-<td class="gt_row gt_center">-</td>
-<td class="gt_row gt_center">-</td>
-<td class="gt_row gt_center" style="color: #808080; font-weight: bold;">-</td>
-<td class="gt_row gt_center">-</td></tr>
-    <tr><td class="gt_row gt_center">acumulado 2023</td>
-<td class="gt_row gt_center">15.669</td>
-<td class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">&minus;7,7%</td>
-<td class="gt_row gt_center">-</td>
-<td class="gt_row gt_center" style="color: #808080; font-weight: bold;">-</td>
-<td class="gt_row gt_center">-</td>
-<td class="gt_row gt_center">-</td>
-<td class="gt_row gt_center" style="color: #808080; font-weight: bold;">-</td>
-<td class="gt_row gt_center">-</td></tr>
+    <tr class="gt_row_group_first"><td headers="San Juan (Ischigualasto)  Mes" class="gt_row gt_center">abril 2023</td>
+<td headers="San Juan (Ischigualasto)  Total" class="gt_row gt_center">10.747,00</td>
+<td headers="San Juan (Ischigualasto)  var_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−0,16</td>
+<td headers="San Juan (Ischigualasto)  residentes" class="gt_row gt_center">-</td>
+<td headers="San Juan (Ischigualasto)  var_residentes" class="gt_row gt_center" style="color: #808080; font-weight: bold;">-</td>
+<td headers="San Juan (Ischigualasto)  part_residentes" class="gt_row gt_center">-</td>
+<td headers="San Juan (Ischigualasto)  no_residentes" class="gt_row gt_center">-</td>
+<td headers="San Juan (Ischigualasto)  var_no_residentes" class="gt_row gt_center" style="color: #808080; font-weight: bold;">-</td>
+<td headers="San Juan (Ischigualasto)  part_no_residentes" class="gt_row gt_center">-</td></tr>
+    <tr><td headers="San Juan (Ischigualasto)  Mes" class="gt_row gt_center">acumulado 2023</td>
+<td headers="San Juan (Ischigualasto)  Total" class="gt_row gt_center">31.914,00</td>
+<td headers="San Juan (Ischigualasto)  var_total" class="gt_row gt_center" style="color: #EE3D8F; font-weight: bold;">−0,16</td>
+<td headers="San Juan (Ischigualasto)  residentes" class="gt_row gt_center">-</td>
+<td headers="San Juan (Ischigualasto)  var_residentes" class="gt_row gt_center" style="color: #808080; font-weight: bold;">-</td>
+<td headers="San Juan (Ischigualasto)  part_residentes" class="gt_row gt_center">-</td>
+<td headers="San Juan (Ischigualasto)  no_residentes" class="gt_row gt_center">-</td>
+<td headers="San Juan (Ischigualasto)  var_no_residentes" class="gt_row gt_center" style="color: #808080; font-weight: bold;">-</td>
+<td headers="San Juan (Ischigualasto)  part_no_residentes" class="gt_row gt_center">-</td></tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
@@ -8743,7 +8778,9 @@ html {
 <!--/radix_placeholder_appendices-->
 <!--radix_placeholder_navigation_after_body-->
 <div class="distill-site-nav distill-site-footer">
-<p>Dirección Nacional de Mercados y Estadísticas | Subsecretaría de Desarrollo Estratégico | Ministerio de Turismo y Deportes de la Nación (<script>document.write(new Date().getFullYear())</script>)</p>
+<p>Dirección Nacional de Mercados y Estadísticas | Subsecretaría de
+Desarrollo Estratégico | Ministerio de Turismo y Deportes de la Nación
+(<script>document.write(new Date().getFullYear())</script>)</p>
 </div>
 <!--/radix_placeholder_navigation_after_body-->
 
