@@ -23,8 +23,8 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2023-03-01"
-mes <- "marzo"
+fecha <- "2023-04-01"
+mes <- "abril"
 anio <- "2023"
 
 #parques <- c("el leoncito", "sierra de las quijadas")
@@ -361,27 +361,27 @@ data_tabla_2 <- tabla_parques %>%
   mutate(visitantes = coalesce(visitantes, 0)) %>% 
   group_by(anio, parque_nacional, residencia) %>% 
   mutate(acumulado = cumsum(visitantes)) %>% ungroup() %>% 
-  filter(anio >= 2019 & month == month(fecha)) %>% 
+  filter(anio >= 2022 & month == month(fecha)) %>% 
   pivot_wider(names_from  = c("anio", "residencia"), values_from = c(visitantes, acumulado)) %>% 
   mutate(across(where(is.numeric), ~ coalesce(.x, 0))) %>%
   clean_names() %>% 
-  mutate(visitantes_2022_total = visitantes_2022_residentes + visitantes_2022_no_residentes,
-         visitantes_2021_total = visitantes_2021_residentes + visitantes_2021_no_residentes,
-         visitantes_2020_total = visitantes_2020_residentes + visitantes_2020_no_residentes,
-         acumulado_2022_total = acumulado_2022_residentes + acumulado_2022_no_residentes,
-         acumulado_2021_total  = acumulado_2021_residentes + acumulado_2021_no_residentes,
-         acumulado_2020_total  = acumulado_2020_residentes + acumulado_2020_no_residentes,
-         participacion = round(acumulado_2022_total / sum(acumulado_2022_total), 3)) %>%
+  mutate(visitantes_2023_total = visitantes_2023_residentes + visitantes_2023_no_residentes,
+         visitantes_2022_total = visitantes_2022_residentes + visitantes_2022_no_residentes,
+         # visitantes_2020_total = visitantes_2020_residentes + visitantes_2020_no_residentes,
+         acumulado_2023_total = acumulado_2023_residentes + acumulado_2023_no_residentes,
+         acumulado_2022_total  = acumulado_2022_residentes + acumulado_2022_no_residentes,
+         # acumulado_2020_total  = acumulado_2020_residentes + acumulado_2020_no_residentes,
+         participacion = round(acumulado_2023_total / sum(acumulado_2023_total), 3)) %>%
   # mutate(across(where(is.numeric), ~ case_when(parque_nacional %in% parques ~ NA_real_,
   #                                          TRUE ~ .))) %>% 
   arrange(-participacion) %>%
-  mutate(var_ia_visitantes_2022_tot = visitantes_2022_total/visitantes_2021_total-1,
-         var_ia_visitantes_res = visitantes_2022_residentes/visitantes_2021_residentes-1,
-         var_ia_visitantes_no_res = visitantes_2022_no_residentes/visitantes_2021_no_residentes-1,
-         var_ia_acumulado_total  = acumulado_2022_total/ acumulado_2021_total-1) %>% 
+  mutate(var_ia_visitantes_2023_tot = visitantes_2023_total/visitantes_2022_total-1,
+         var_ia_visitantes_res = visitantes_2023_residentes/visitantes_2022_residentes-1,
+         var_ia_visitantes_no_res = visitantes_2023_no_residentes/visitantes_2022_no_residentes-1,
+         var_ia_acumulado_total  = acumulado_2023_total/ acumulado_2022_total-1) %>% 
   mutate(across(where(is.numeric), ~ coalesce(.x, 0))) %>%  
-  arrange(-acumulado_2022_total) %>% 
-  mutate(orden = rank(-acumulado_2022_total),
+  arrange(-acumulado_2023_total) %>% 
+  mutate(orden = rank(-acumulado_2023_total),
          presentacion = case_when(orden <= 25 ~ parque_nacional,
                                   TRUE ~ "Resto")) %>% 
    mutate(across(where(is.numeric), ~ case_when(is.infinite(.) ~ NA_real_,
@@ -393,10 +393,10 @@ data_tabla_2 <- tabla_parques %>%
 resto_pn <- data_tabla_2 %>% 
   filter(presentacion == "Resto") %>% 
   summarise_if(is.numeric, sum) %>% 
-  mutate(var_ia_visitantes_2022_tot = visitantes_2022_total/visitantes_2021_total-1,
-         var_ia_visitantes_res = visitantes_2022_residentes/visitantes_2021_residentes-1,
-         var_ia_visitantes_no_res = visitantes_2022_no_residentes/visitantes_2021_no_residentes-1,
-         var_ia_acumulado_total  = acumulado_2022_total/acumulado_2021_total-1,
+  mutate(var_ia_visitantes_2023_tot = visitantes_2023_total/visitantes_2022_total-1,
+         var_ia_visitantes_res = visitantes_2023_residentes/visitantes_2022_residentes-1,
+         var_ia_visitantes_no_res = visitantes_2023_no_residentes/visitantes_2022_no_residentes-1,
+         var_ia_acumulado_total  = acumulado_2023_total/acumulado_2022_total-1,
          parque_nacional = "Resto") 
   # mutate(
   #   var_ia_visitantes_2021_tot = `is.na<-`(var_ia_visitantes_2021_tot),
@@ -406,12 +406,12 @@ resto_pn <- data_tabla_2 %>%
 data_tabla_2 <- data_tabla_2 %>% 
   filter(presentacion != "Resto") %>% 
   bind_rows(resto_pn) %>% 
-  mutate(participacion = round(acumulado_2022_total / sum(acumulado_2022_total), 3)) %>% 
+  mutate(participacion = round(acumulado_2023_total / sum(acumulado_2023_total), 3)) %>% 
   select(parque_nacional,
-         visitantes_2022_total, var_ia_visitantes_2022_tot, 
-         visitantes_2022_residentes, var_ia_visitantes_res,
-         visitantes_2022_no_residentes, var_ia_visitantes_no_res,
-         acumulado_2022_total, var_ia_acumulado_total, 
+         visitantes_2023_total, var_ia_visitantes_2023_tot, 
+         visitantes_2023_residentes, var_ia_visitantes_res,
+         visitantes_2023_no_residentes, var_ia_visitantes_no_res,
+         acumulado_2023_total, var_ia_acumulado_total, 
          participacion)
 
 #tabla2 <- 
@@ -420,13 +420,13 @@ data_tabla_2 <- data_tabla_2 %>%
   #select(-var_ia_acumulado_total,-acumulado_2021_total) %>% 
   gt(rowname_col = "parque_nacional") %>% #SOLO EN ENERO
   cols_label(
-    visitantes_2022_total         = md("Visitas"),
-    var_ia_visitantes_2022_tot    = md("Var % i.a."),
-    visitantes_2022_residentes    = md("Visitas") ,
+    visitantes_2023_total         = md("Visitas"),
+    var_ia_visitantes_2023_tot    = md("Var % i.a."),
+    visitantes_2023_residentes    = md("Visitas") ,
     var_ia_visitantes_res         = md("Var % i.a."),
-    visitantes_2022_no_residentes = md("Visitas"),
+    visitantes_2023_no_residentes = md("Visitas"),
     var_ia_visitantes_no_res      = md("Var % i.a."), #SOLO EN ENERO
-    acumulado_2022_total          = md("Visitas"), #SOLO EN ENERO
+    acumulado_2023_total          = md("Visitas"), #SOLO EN ENERO
     var_ia_acumulado_total        = md("Var % i.a."),
     participacion                 = md("Participación %")
   ) %>% 
@@ -434,9 +434,9 @@ data_tabla_2 <- data_tabla_2 %>%
   fmt_percent(columns = c(3,5,7,9,10), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
   cols_align(
     align = "center",
-    columns = vars(visitantes_2022_total, var_ia_visitantes_2022_tot, visitantes_2022_residentes,
-                   var_ia_visitantes_res, visitantes_2022_no_residentes, var_ia_visitantes_no_res,
-                   acumulado_2022_total, var_ia_acumulado_total,  #SOLO ENERO
+    columns = vars(visitantes_2023_total, var_ia_visitantes_2023_tot, visitantes_2023_residentes,
+                   var_ia_visitantes_res, visitantes_2023_no_residentes, var_ia_visitantes_no_res,
+                   acumulado_2023_total, var_ia_acumulado_total,  #SOLO ENERO
                    participacion)
   )  %>% 
   opt_table_font(
@@ -462,8 +462,8 @@ data_tabla_2 <- data_tabla_2 %>%
       cell_text(weight  = "bold")
     ),
     locations = cells_body(
-      columns = vars(var_ia_visitantes_2022_tot),
-      rows = var_ia_visitantes_2022_tot < 0)
+      columns = vars(var_ia_visitantes_2023_tot),
+      rows = var_ia_visitantes_2023_tot < 0)
   ) %>%
   tab_style(
     style = list(
@@ -471,8 +471,8 @@ data_tabla_2 <- data_tabla_2 %>%
       cell_text(weight =  "bold")
     ),
     locations = cells_body(
-      columns = vars(var_ia_visitantes_2022_tot),
-      rows = var_ia_visitantes_2022_tot > 0)
+      columns = vars(var_ia_visitantes_2023_tot),
+      rows = var_ia_visitantes_2023_tot > 0)
   )  %>%
   tab_style(
     style = list(
@@ -531,22 +531,22 @@ data_tabla_2 <- data_tabla_2 %>%
   tab_header(title = toupper(glue("{mes} {anio}"))) %>% 
   tab_spanner(
     label = md("**TOTAL**"),
-    columns = vars(visitantes_2022_total, 
-                   var_ia_visitantes_2022_tot,
+    columns = vars(visitantes_2023_total, 
+                   var_ia_visitantes_2023_tot,
                    participacion #SOLO ENERO
                    )) %>%
   tab_spanner(
     label = md("**RESIDENTES**"),
-    columns = vars(visitantes_2022_residentes,
+    columns = vars(visitantes_2023_residentes,
                    var_ia_visitantes_res))  %>%
     tab_spanner(
     label = md("**NO RESIDENTES**"),
-    columns = vars(visitantes_2022_no_residentes,
+    columns = vars(visitantes_2023_no_residentes,
                    var_ia_visitantes_no_res))  %>%
   #tab_header(title = "ACUMULADO 2020")
   tab_spanner(
    label = md(glue("**ACUMULADO {anio}**")),
-   columns = vars(acumulado_2022_total,
+   columns = vars(acumulado_2023_total,
                   var_ia_acumulado_total,
                   participacion)) %>%
   tab_stubhead(label = md("**Parque Nacional**")) %>% 
