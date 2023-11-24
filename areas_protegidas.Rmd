@@ -23,8 +23,8 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2023-04-01"
-mes <- "abril"
+fecha <- "2023-06-01"
+mes <- "junio"
 anio <- "2023"
 
 #parques <- c("el leoncito", "sierra de las quijadas")
@@ -583,7 +583,7 @@ sanjuan <-read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provin
 tabla_parques <- bind_rows(chubut, sanjuan) %>% 
   filter(indice_tiempo <= fecha, anio >= as.integer(.GlobalEnv$anio)-1) %>% 
   group_by(anio, Mes, month, indice_tiempo, provincia, residencia) %>% 
-  summarise(visitantes = sum(visitantes)) %>% 
+  summarise(visitantes = sum(visitantes,na.rm = T)) %>% 
   ungroup()
   
 var_ia <- tabla_parques %>% 
@@ -604,7 +604,7 @@ var_ia <- tabla_parques %>%
 var_acum <- tabla_parques %>% 
   filter(month <= month(fecha)) %>% 
   group_by(anio, provincia, residencia) %>% 
-  summarise(visitantes = sum(visitantes)) %>% 
+  summarise(visitantes = sum(visitantes, na.rm = T)) %>% 
   ungroup() %>% 
   mutate(residencia = ifelse(is.na(residencia), "Total", tolower(str_replace(residencia, " ", "_")))) %>% 
   pivot_wider(names_from = "residencia", values_from = "visitantes") %>% 
@@ -627,6 +627,7 @@ En el caso de los parques provinciales, durante el mes de `r mes` se registraron
   select(provincia, Mes, Total, var_total, residentes, var_residentes, part_residentes,
          no_residentes, var_no_residentes, part_no_residentes) %>% 
   gt(groupname_col = "provincia") %>%
+    gt_theme_dnmye() %>% 
   fmt_number(columns = c(3,5,8), decimals = 0, sep_mark = ".", dec_mark = ",") %>% 
   fmt_percent(columns = c(4,6,7,9,10), decimals = 1, sep_mark = ".", dec_mark = ",") %>%
   cols_label(
@@ -658,7 +659,6 @@ En el caso de los parques provinciales, durante el mes de `r mes` se registraron
     tab_header(title="Visitas a Áreas Protegidas Provinciales") %>% 
   cols_align(
     align = "center") %>% 
-  gt_theme_dnmye() %>% 
     fmt_missing(columns = 1:10,
               missing_text = "-") %>% 
   tab_source_note(source_note = "-: no se cuenta con información desagregada por residencia para San Juan.") %>% 
