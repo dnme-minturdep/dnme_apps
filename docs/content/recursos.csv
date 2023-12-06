@@ -1,5 +1,6 @@
 recurso,src,url,description,tags,Todos,Tablero,Reporte,orden
-Últimos datos,img/ultimos_datos.png,https://tableros.yvera.tur.ar/tablero_ultimos_datos/,Tablero interactivo con los últimos datos del turismo en Argentina,Tablero,1,1,0,-5
+Últimos datos,img/ultimos_datos.png,https://tableros.yvera.tur.ar/tablero_ultimos_datos/,Tablero interactivo con los últimos datos del turismo en Argentina,Tablero,1,1,0,-6
+Índice Turístico,img/indice.png,https://tableros.yvera.tur.ar/indice_turistico,Tablero interactivo para la exploración del Índice Turístico de Localidades,Tablero,1,1,0,-5
 CRUCERISMO,img/crucerismo.png,https://tableros.yvera.tur.ar/crucerismo,Tablero interactivo con información sobre el crucerismo en Argentina,Tablero,1,1,0,-4
 SIG,img/visor.png,https://tableros.yvera.tur.ar/inversiones,Visor de Información Geográfica de Turismo para Plataforma de Inversiones,Tablero,1,1,0,-3
 Conectividad Aérea Reporte,img/conectividad_aerea.png,https://tableros.yvera.tur.ar/conectividad.html,Reporte mensual sobre los últimos datos del sector aerocomercial a partir de la información de la Administración Nacional de Aviación Civil,Reporte,1,0,1,-2
