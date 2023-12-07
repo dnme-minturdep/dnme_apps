@@ -2,13 +2,14 @@
 library(tidyverse)
 
 data.frame(
-  recurso = c("Conectividad Aérea", "Turismo Internacional", "Ocupación Hotelera", "Naturaleza", "EVYTH", "Explorador",
+  recurso = c("Conectividad Terrestre","Conectividad Aérea", "Turismo Internacional", "Ocupación Hotelera", "Naturaleza", "EVYTH", "Explorador",
               "PUNA", "MULC", "Empleo", "mapeAr", "Agencias", "SIG", "CRUCERISMO", "Conectividad Aérea Reporte",
               "Indicadores ODS","Índice Turístico","Últimos datos"),
-  src = c("img/conectividad.png","img/ti.png", "img/eoh.png","img/parques.png","img/evyth.png","img/ti_dash.png" ,
+  src = c("img/conectividad-terrestre.png", "img/conectividad.png","img/ti.png", "img/eoh.png","img/parques.png","img/evyth.png","img/ti_dash.png" ,
           "img/puna.png", "img/mulc.png", "img/empleo.png", "img/mapeAr.png", "img/agencias.png", "img/visor.png",
           "img/crucerismo.png", "img/conectividad_aerea.png","img/indicadores_ods.png","img/indice.png","img/ultimos_datos.png"),
-  url = c("https://tableros.yvera.tur.ar/conectividad/",
+  url = c("https://tableros.yvera.tur.ar/conectividad_terrestre/", 
+          "https://tableros.yvera.tur.ar/conectividad/",
           "https://tableros.yvera.tur.ar/internacional.html",
           "https://tableros.yvera.tur.ar/eoh.html",
           "https://tableros.yvera.tur.ar/areas_protegidas.html",
@@ -26,7 +27,8 @@ data.frame(
           "https://tableros.yvera.tur.ar/indice_turistico",
           "https://tableros.yvera.tur.ar/tablero_ultimos_datos/"
   ),
-  description  = c("Tablero interactivo con información aerocomercial para el turismo",
+  description  = c("Tablero interactivo con información de servicios regulares interurbanos de buses",
+                   "Tablero interactivo con información aerocomercial para el turismo",
                    "El reporte presenta la última información de turismo receptivo, emisivo y balanza turística
                    por todas las vías (aéreo, terrestre y fluvial / marítimo)",
                    "Presenta los últimos datos disponibles de la Encuesta de Ocupación Hotelera (EOH)",
@@ -45,12 +47,12 @@ data.frame(
                    "Tablero interactivo para la exploración del Índice Turístico de Localidades",
                    "Tablero interactivo con los últimos datos del turismo en Argentina"
   ),
-  tags = c("Tablero","Reporte","Reporte","Reporte","Reporte","Tablero", "Tablero", "Reporte", 
+  tags = c("Tablero", "Tablero","Reporte","Reporte","Reporte","Reporte","Tablero", "Tablero", "Reporte", 
            "Reporte", "Tablero", "Tablero", "Tablero", "Tablero", "Reporte", "Tablero","Tablero","Tablero"),
-  Todos = c(1,1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,1,1),
-  Tablero = c(1, 0, 0, 0, 0, 1, 1, 0, 0, 1,1,1,1,0,1,1,1),
-  Reporte = c(0,1, 1, 1, 1, 0, 0, 1, 1, 0,0,0,0, 1,0,0,0)) %>%
+  Todos = c(1, 1,1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,1,1),
+  Tablero = c(1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1,1,1,1,0,1,1,1),
+  Reporte = c(0, 0,1, 1, 1, 1, 0, 0, 1, 1, 0,0,0,0, 1,0,0,0)) %>%
   as_tibble() %>%
-  mutate(orden = c(-1,1, 5, 4, 3, 2, 6, 7, 8, 9, 0,-3,-4, -2,10,-5,-6)) %>%   # OREDNO POR TEMA Y NO POR TIPO DE RECURSO
+  mutate(orden = c(-2, -1,1, 5, 4, 3, 2, 6, 7, 8, 9, 0,-3,-4, -2,10,-5,-6)) %>%   # OREDNO POR TEMA Y NO POR TIPO DE RECURSO
   arrange(orden)  %>%
   write_csv(here::here("content", "recursos.csv"))
