@@ -3,6 +3,7 @@ recurso,src,url,description,tags,Todos,Tablero,Reporte,orden
 Índice Turístico,img/indice.png,https://tableros.yvera.tur.ar/indice_turistico,Tablero interactivo para la exploración del Índice Turístico de Localidades,Tablero,1,1,0,-5
 CRUCERISMO,img/crucerismo.png,https://tableros.yvera.tur.ar/crucerismo,Tablero interactivo con información sobre el crucerismo en Argentina,Tablero,1,1,0,-4
 SIG,img/visor.png,https://tableros.yvera.tur.ar/inversiones,Visor de Información Geográfica de Turismo para Plataforma de Inversiones,Tablero,1,1,0,-3
+Conectividad Terrestre,img/conectividad-terrestre.png,https://tableros.yvera.tur.ar/conectividad_terrestre/,Tablero interactivo con información de servicios regulares interurbanos de buses,Tablero,1,1,0,-2
 Conectividad Aérea Reporte,img/conectividad_aerea.png,https://tableros.yvera.tur.ar/conectividad.html,Reporte mensual sobre los últimos datos del sector aerocomercial a partir de la información de la Administración Nacional de Aviación Civil,Reporte,1,0,1,-2
 Conectividad Aérea,img/conectividad.png,https://tableros.yvera.tur.ar/conectividad/,Tablero interactivo con información aerocomercial para el turismo,Tablero,1,1,0,-1
 Agencias,img/agencias.png,https://tableros.yvera.tur.ar/agencias,Tablero con información del Registro de Agencias de Viajes de la Dirección Nacional de Agencias de Viajes,Tablero,1,1,0,0
