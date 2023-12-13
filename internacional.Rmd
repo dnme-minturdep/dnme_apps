@@ -34,7 +34,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 ```{r}
 # Definir mes para títulos ####
-mes <- "Septiembre"
+mes <- "Octubre"
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -57,7 +57,7 @@ data.frame(pais = c("bol","bra","chi","py","uy","eeuu_can","rest_am","euro","res
 
 # Importo datos ####
 turismo_internacional_turistas <- readRDS("/srv/DataDNMYE/turismo_internacional/bases_proceso/turismo_internacional_visitantes.rds") %>%
-  filter(tipo_visitante == "Turistas")
+  filter(tipo_visitante == "Turistas" & anio >= 2016)
 
 anio <- as.numeric(turismo_internacional_turistas[nrow(turismo_internacional_turistas), 1])
 mes_nro  <- as.numeric(as_tibble(turismo_internacional_turistas[nrow(turismo_internacional_turistas),2]))
