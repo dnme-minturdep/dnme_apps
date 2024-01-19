@@ -23,8 +23,8 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2023-10-01"
-mes <- "octubre"
+fecha <- "2023-11-01"
+mes <- "noviembre"
 anio <- "2023"
 
 #parques <- c("el leoncito", "sierra de las quijadas")
@@ -450,12 +450,12 @@ data_tabla_2 <- data_tabla_2 %>%
   ) %>%
   tab_source_note(
     source_note = md(
-      "**Fuente**: Dirección Nacional de Mercados y Estadística, Subsecretaría de Desarrollo Estratégico, Ministerio de Turismo y Deportes en base a la informacion suministrada por la Dirección de Mercadeo de la Dirección Nacional de Uso Público, APN")
+      "**Fuente**: Dirección Nacional de Mercados y Estadística, Subsecretaría de Turismo en base a la informacion suministrada por la Dirección de Mercadeo de la Dirección Nacional de Uso Público, APN")
   ) %>%
-  #   tab_source_note(
-  #   source_note = md(
-  #     "**Nota**: En enero 2022 se incorporó información de visitas del Parque Patagonia en la provincia de Santa Cruz")
-  # ) %>%
+    tab_source_note(
+    source_note = md(
+      "**Nota**: El PN Ciervo de los pantanos se cerró a la visita por obras")
+  ) %>%
   tab_style(
     style = list(
       cell_text(color = "#EE3D8F"),
@@ -552,6 +552,7 @@ data_tabla_2 <- data_tabla_2 %>%
   tab_stubhead(label = md("**Parque Nacional**")) %>% 
   fmt_missing(columns = 1:10,
               missing_text = "///") %>% 
+  sub_zero(columns = 1:10, zero_text = "-") %>% 
   tab_source_note(glue("///: Dato que no corresponde mostrar debido a la naturaleza de las cosas.")) 
     #tab_source_note("Nota: entre el 22 y 30 de mayo los parques nacionales se cerraron a las visitas (según DI-2021-95-APN-DNO#APNAC) en adhesión a las medidas nacionales (Decreto 334/2021).")
 ```
