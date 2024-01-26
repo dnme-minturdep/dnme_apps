@@ -23,8 +23,8 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2023-11-01"
-mes <- "noviembre"
+fecha <- "2023-12-01"
+mes <- "diciembre"
 anio <- "2023"
 
 #parques <- c("el leoncito", "sierra de las quijadas")
@@ -452,10 +452,10 @@ data_tabla_2 <- data_tabla_2 %>%
     source_note = md(
       "**Fuente**: Dirección Nacional de Mercados y Estadística, Subsecretaría de Turismo en base a la informacion suministrada por la Dirección de Mercadeo de la Dirección Nacional de Uso Público, APN")
   ) %>%
-    tab_source_note(
-    source_note = md(
-      "**Nota**: El PN Ciervo de los pantanos se cerró a la visita por obras")
-  ) %>%
+  #   tab_source_note(
+  #   source_note = md(
+  #     "**Nota**: El PN Ciervo de los pantanos se cerró a la visita por obras")
+  # ) %>%
   tab_style(
     style = list(
       cell_text(color = "#EE3D8F"),
