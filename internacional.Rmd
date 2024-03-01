@@ -34,7 +34,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 ```{r}
 # Definir mes para títulos ####
-mes <- "Diciembre"
+mes <- "Enero"
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -113,14 +113,16 @@ Los `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo 
 
 [^1]: A partir del reporte del mes de septiembre de 2022, hemos renombrado la unidad de análisis que contabilizamos mensualmente. En pos de definir mejor la terminología utilizada según las definiciones internacionales de turismo, lo que antes llamábamos “turistas”, ahora lo renombramos como “viajes de turistas” tanto para el turismo receptivo como el emisivo. Si bien la serie de datos publicada puede presentar rectificaciones, debido a una mejor operacionalización de los criterios utilizados, se mantiene la misma metodología de estimación. El **viaje realizado por un turista no residente** se registra desde el momento que llega a la Argentina hasta que sale. Un **turista no residente** puede salir de Argentina para efectuar visitas a otros países y volver a ingresar en un corto período de tiempo, antes de regresar a su país de residencia habitual. Por ello, la cantidad de **viajes de turistas receptivos** puede ser mayor que la cantidad de **turistas receptivos**. En tanto, el **viaje realizado por un visitante residente** en Argentina (turismo emisivo) se registra desde el momento en que sale del país hasta que retorna, independientemente de la cantidad de países visitados. Por ello, la cantidad de **viajes emisivos** coincide con la cantidad de **visitantes emisivos**.
 
-En el total del año `r anio` se registraron `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(receptivo_turistas)/1000000,2)],big.mark=".",decimal.mark=",")` millones de viajes de turistas no residentes en el país (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=4],decimal.mark=",")`% en relación al año anterior) y `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(as.numeric(emisivo_turistas)/1000000,2)],big.mark=".",decimal.mark=",")` millones de viajes de turistas residentes al exterior (`r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`% en relación al año anterior). 
 
 ```{r}
 #
+#En el total del año `r anio` se registraron `r format(turismo_internacional_ficha[medio_transporte == #"TOTAL" & periodo == paste0("Acumulado #",anio),round(as.numeric(receptivo_turistas)/1000000,2)],big.mark=".",decimal.mark=",")` millones de #viajes de turistas no residentes en el país (`r format(turismo_internacional_ficha[medio_transporte == #"TOTAL" & periodo == paste0("Acumulado ",anio),round(100*as.numeric(.SD),1),.SDcols=4],decimal.mark=",")`% #en relación al año anterior) y `r format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo #== paste0("Acumulado ",anio),round(as.numeric(emisivo_turistas)/1000000,2)],big.mark=".",decimal.mark=",")#` millones de viajes de turistas residentes al exterior (`r #format(turismo_internacional_ficha[medio_transporte == "TOTAL" & periodo == paste0("Acumulado #",anio),round(100*as.numeric(.SD),1),.SDcols=6],decimal.mark=",")`% en relación al año anterior). 
+
+
 ### 1) TURISMO INTERNACIONAL ####
 # tabla_1 - Turistas internacional ####
 turistas_internacional_tabla <- turismo_internacional_ficha[c(5,6,1,2,7,8,3,4),] %>%
-  #filter(periodo != "Acumulado 2021") %>% #Sólo para enero
+  #filter(periodo != "Acumulado 2024") %>% #Sólo para enero
   janitor::clean_names()  %>% 
   mutate(across(-c(medio_transporte, periodo), .fns = as.numeric)) %>%
   group_by(medio_transporte) 
@@ -347,7 +349,7 @@ tabla2 <- tabla_paises_limitrofes %>% bind_rows(tabla_paises  %>% select(-limitr
   mutate(across(.cols=3:10,as.numeric),
          pais_agrupado=ifelse(pais_agrupado %in% c("Total Países Limítrofes","EE.UU. y Canadá","Resto de América","Europa","Resto del mundo"),toupper(pais_agrupado),pais_agrupado)) %>% 
   group_by(pais_agrupado) %>% 
-  #filter(periodo != "Acumulado 2021") %>% #Solo para enero
+  #filter(periodo != "Acumulado 2024") %>% #Solo para enero
   gt(rowname_col = "periodo") %>% 
   #cols_move_to_start("pais_agrup") %>%
   fmt_number(columns = c(3, 4, 7, 8), decimals = 0, sep_mark = ".", dec_mark = ",") %>% 
