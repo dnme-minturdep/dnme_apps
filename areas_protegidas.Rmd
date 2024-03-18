@@ -23,8 +23,8 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2024-01-01"
-mes <- "enero"
+fecha <- "2024-02-01"
+mes <- "febrero"
 anio <- "2024"
 
 #parques <- c("el leoncito", "sierra de las quijadas")
@@ -564,13 +564,16 @@ months <- data.frame(Mes = c("enero","febrero","marzo","abril","mayo","junio",
                      "julio","agosto","septiembre","octubre","noviembre","diciembre"),
                      month = seq(1,12))
 
+### AJUSTÉ TOMBO Y MARQUES EN FEBRERO 2023 PARA VARACIONES
 chubut <-  read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/base_trabajo/bases_chubut.csv") %>% 
   filter(Mes != "total") %>% 
   mutate(Mes = ifelse(Mes=="setiembre", "septiembre", Mes)) %>% 
   left_join(months) %>% 
   mutate(indice_tiempo = as.Date(paste(anio,month,"01",sep = "-")),
          residencia = ifelse(residencia == "no_residentes", "No residentes", "Residentes"),
-         provincia = "Chubut")
+         provincia = "Chubut",
+         visitantes = ifelse(area_protegida %in% c("Punta Tombo","Punta Marqués") &
+                               Mes == mes & anio == 2023, 0, visitantes))
 
 sanjuan <-read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/Base_parq_prov_ischigualasto.xlsx") %>% 
   rename(indice_tiempo = 1, visitantes = 2) %>% 
