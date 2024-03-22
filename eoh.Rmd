@@ -37,10 +37,10 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2023-12-01")
-mes <- "Diciembre"
+fecha <- as.Date("2024-01-01")
+mes <- "Enero"
 #trimestre <- "2do"
-anio <- "2023"
+anio <- "2024"
 
 # PALETAS Y FUENTES
 # Paleta colores Presidencia
@@ -188,7 +188,7 @@ tabla1_A <- tabla1 %>%
 
 #Selecciono acumulados 
 acumulados <- tabla1_A %>% select(1,2, 11:16) %>%
-  mutate(indice_tiempo = "Acum. 2023") %>% 
+  mutate(indice_tiempo = "Acum. 2024") %>% 
   rename(pernoctes = acum_pernoctes,
          var_ia_pernoctes = var_ia_acum_pernoctes,
          viajeros = acum_viajeros,
@@ -202,6 +202,13 @@ tablafinal_ficha <- tabla1_A %>% select(indice_tiempo, origen_viajeros, pernocte
                             estadia, var_ia_estadia) %>%  rbind(acumulados) %>% 
   mutate(pernoctes = pernoctes/1000000,
          viajeros = viajeros/1000000)
+
+# En febrero no correr esto
+
+tablafinal_ficha <- tablafinal_ficha %>% 
+  filter(indice_tiempo!="Acum. 2024") 
+
+
 ```
 
 ```{r}
@@ -801,8 +808,8 @@ check <- nrow(tabla3_A[tabla3_A$estadia_total == sort(tabla3_A$estadia_total, na
 pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/pernoctes-viajeros-y-estadia-media-por-localidad.csv", encoding = "UTF-8")
 
 #Localidades que no corresponde mostrar datos (AD HOC,INDEC)
-localidades_sin_datos <- c("Las Grutas","Santa Rosa","Viedma")
-localidades_insuficiencia <- c("Calafate","Las Grutas")
+localidades_sin_datos <- c("Corrientes","Valle de Uco")
+localidades_insuficiencia <- c("La Angostura","Calafate","Las Grutas","Neuquén")
 
 #Tabla localidades
 tabla4 <- pernoctaciones_localidad %>% 
