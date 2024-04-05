@@ -258,7 +258,7 @@ bza_acum <- ing_acum-eg_acum
 
 
 ```
- + En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (+`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_eg_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-4)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)` y `r var_ing_acum_ia_2 %>% round(1)`% vs mismo período de `r as.character(anio_datos-4)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones.
+ + En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones.
 
 
 
@@ -1032,7 +1032,7 @@ g10 <- tabla10 %>% ggplot(aes(fecha, prop_mulc_bp,
     strip.placement = "outside")
 ```
 
-+ En cuanto a los egresos, en el tercer trimestre de 2023, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1)` millones de egresos totales asociados al turismo, según la BP. Por su lado, el Mercado de Cambios registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1)` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1)`% de los egresos registrados por la BP.
++ En cuanto a los egresos, en el cuarto trimestre de 2023, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1)` millones de egresos totales asociados al turismo, según la BP. Por su lado, el Mercado de Cambios registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1)` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1)`% de los egresos registrados por la BP.
 
 *NOTA: En el caso de los egresos, también se debe cumplir la misma condición (egresos por turismo a través del mercado oficial de cambios-MULC-siempre deberían ser menores, o al menos iguales, al total de egresos por turismo de la Argentina según la Balanza de Pagos), sin embargo, nuevamente existen trimestres, a partir del año 2020, en donde esto no se cumple . Se debe a que, además de las diferencias metodológicas de ambas fuentes -registro de transacciones vs. estimación a partir de encuestas de demanda-, sucede que el componente turístico del MULC incluye pagos con tarjeta realizados por residentes en Argentina a residentes en el exterior y que pueden no ser gastos turísticos. Ejemplos de esto podrían ser los pagos de servicios de streaming. Por lo tanto, en los casos en que el ratio MULC/BP es mayor al 100% se evidencia que los gastos con tarjeta por motivos no turísticos aumentaron la componente "viajes y otros gastos con tarjeta" del MULC por encima de los gastos del turismo emisivo registrado por la BP. En los trimestres comprendidos en la pandemia por COVID-19, esta situación se refleja aún más debido a la reducción cercana al 100% i.a. del turismo emisivo.*
 
