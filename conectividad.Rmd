@@ -32,10 +32,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 ```{r carga base}
 
-base_total <- read_file_srv("/srv/DataDNMYE/aerocomercial/anac/base_anac_agrupada_diaria.parquet") %>%     rename(anio_local = Año,
-         mes_local = month,
-         dia_local = Dia,
-         clasificacion_vuelo = ClasificacionVuelo)
+base_total <- read_file_srv("/srv/DataDNMYE/aerocomercial/anac/base_anac_agrupada_diaria.parquet")
+
 
 publicacion_mes_anio <- strftime(Sys.Date(), '%B %Y')
 
