@@ -23,8 +23,8 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2024-02-01"
-mes <- "febrero"
+fecha <- "2024-03-01"
+mes <- "marzo"
 anio <- "2024"
 
 #parques <- c("el leoncito", "sierra de las quijadas")
@@ -130,7 +130,8 @@ tabla.1.mes <- data_tabla_1 %>%
   select("anio","month",period,total,n_no_residentes,n_residentes,var.n_no_residentes,var.n_residentes,var.total) %>%
   mutate(part.res = n_residentes/total,
          part.no.res = n_no_residentes/total,
-         periodo = paste0(mes," ",anio))  #SOLO ENERO
+         periodo = paste0(mes," ",anio))   #SOLO ENERO
+
 tabla.1.acum <-  data_tabla_1 %>%
   select("anio","month",period,total.acum,acum_residentes,acum_no_residentes,
          var.acum_no_residentes,var.acum_residentes,var.tot.acum) %>% 
