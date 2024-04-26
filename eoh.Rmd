@@ -37,8 +37,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2024-01-01")
-mes <- "Enero"
+fecha <- as.Date("2024-02-01")
+mes <- "Febrero"
 #trimestre <- "2do"
 anio <- "2024"
 
@@ -202,11 +202,6 @@ tablafinal_ficha <- tabla1_A %>% select(indice_tiempo, origen_viajeros, pernocte
                             estadia, var_ia_estadia) %>%  rbind(acumulados) %>% 
   mutate(pernoctes = pernoctes/1000000,
          viajeros = viajeros/1000000)
-
-# En febrero no correr esto
-
-tablafinal_ficha <- tablafinal_ficha %>% 
-  filter(indice_tiempo!="Acum. 2024") 
 
 
 ```
@@ -808,8 +803,8 @@ check <- nrow(tabla3_A[tabla3_A$estadia_total == sort(tabla3_A$estadia_total, na
 pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/pernoctes-viajeros-y-estadia-media-por-localidad.csv", encoding = "UTF-8")
 
 #Localidades que no corresponde mostrar datos (AD HOC,INDEC)
-localidades_sin_datos <- c("Corrientes","Valle de Uco")
-localidades_insuficiencia <- c("La Angostura","Calafate","Las Grutas","Neuquén")
+localidades_sin_datos <- c("Corrientes","Valle de Uco","Las Grutas")
+localidades_insuficiencia <- c("La Angostura","Calafate")
 
 #Tabla localidades
 tabla4 <- pernoctaciones_localidad %>% 
