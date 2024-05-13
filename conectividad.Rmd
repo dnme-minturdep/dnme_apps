@@ -38,7 +38,7 @@ base_total <- read_file_srv("/srv/DataDNMYE/aerocomercial/anac/base_anac_agrupad
 publicacion_mes_anio <- strftime(Sys.Date(), '%B %Y')
 
 datos_mes_anio <- strftime(max(base_total$Fecha), '%B')
-  
+
 datos_mes_anio_bis <- strftime(max(base_total$Fecha), '%d-%m-%Y')
 
 ```
@@ -89,10 +89,10 @@ colores_aero <- c("Aerolíneas Argentinas" = dnmye_colores("cian"),
 
 ```{r}
 vuelos_mes <- cabotaje %>%
-    group_by(anio_local, mes_local) %>%
-    summarise(frecuencias = sum(vuelos, na.rm = T)) %>%
-    mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local)),
-           frecuencias = round(frecuencias, 0)) %>%
+  group_by(anio_local, mes_local) %>%
+  summarise(frecuencias = sum(vuelos, na.rm = T)) %>%
+  mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local)),
+         frecuencias = round(frecuencias, 0)) %>%
   ungroup() %>%
   filter(anio_local %in% c(max(year(fecha)), max(year(fecha))-1)) %>%
   filter(mes_local <= month(max(fecha))) %>%
@@ -114,10 +114,10 @@ vuelos_mes_2019 <- cabotaje %>%
   pull
 
 var_2019_vuelos <- if_else((((vuelos_mes %>% select(frecuencias) %>% pull)/vuelos_mes_2019)-1)*100 < 0,
-                                  paste0(round((((vuelos_mes %>% select(frecuencias) %>% pull)/vuelos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
-                                        "% menos"),
-                                  paste0(round((((vuelos_mes %>% select(frecuencias) %>% pull)/vuelos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
-                                        "% más"))
+                           paste0(round((((vuelos_mes %>% select(frecuencias) %>% pull)/vuelos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+                                  "% menos"),
+                           paste0(round((((vuelos_mes %>% select(frecuencias) %>% pull)/vuelos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
+                                  "% más"))
 
 vuelos_mes_total <- vuelos_mes %>% 
   select(frecuencias) %>% 
@@ -139,24 +139,24 @@ vuelos_acumulados_total <- vuelos_mes %>%
   pull %>%
   format(., big.mark = ".")
 
-variacion_interanual_acum <- if_else(vuelos_mes$acum_anual > 0,
+variacion_interanual_acum <- if_else(vuelos_mes$var_anual_acum > 0,
                                      paste0(format(round(vuelos_mes$var_anual_acum, 2),
                                                    decimal.mark = ","),
                                             "% ",
                                             "más"),
-                                paste0(format(round(vuelos_mes$var_anual_acum, 2),
-                                              decimal.mark = ","),
-                                       "%",
-                                       "menos"))
+                                     paste0(format(round(vuelos_mes$var_anual_acum, 2),
+                                                   decimal.mark = ","),
+                                            "%",
+                                            "menos"))
 
 ```
 
 ```{r}
 pasajeros_mes <- cabotaje %>%
-    group_by(anio_local, mes_local) %>%
-    summarise(pasajeros = sum(pax_ad, na.rm = T)) %>%
-    mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local)),
-           pasajeros = round(pasajeros, 0)) %>%
+  group_by(anio_local, mes_local) %>%
+  summarise(pasajeros = sum(pax_ad, na.rm = T)) %>%
+  mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local)),
+         pasajeros = round(pasajeros, 0)) %>%
   ungroup() %>%
   filter(anio_local %in% c(max(year(fecha)), max(year(fecha))-1)) %>%
   filter(mes_local <= month(max(fecha))) %>% 
@@ -178,10 +178,10 @@ pasajeros_mes_2019 <- cabotaje %>%
   pull
 
 var_2019_pasajeros <- if_else((((pasajeros_mes %>% select(pasajeros) %>% pull)/pasajeros_mes_2019)-1)*100 < 0,
-                                  paste0(round((((pasajeros_mes %>% select(pasajeros) %>% pull)/pasajeros_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
-                                        "% menos"),
-                                  paste0(round((((pasajeros_mes %>% select(pasajeros) %>% pull)/pasajeros_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
-                                        "% más"))
+                              paste0(round((((pasajeros_mes %>% select(pasajeros) %>% pull)/pasajeros_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+                                     "% menos"),
+                              paste0(round((((pasajeros_mes %>% select(pasajeros) %>% pull)/pasajeros_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
+                                     "% más"))
 
 pasajeros_mes_total <- pasajeros_mes %>% 
   select(pasajeros) %>% 
@@ -190,37 +190,37 @@ pasajeros_mes_total <- pasajeros_mes %>%
 
 
 variacion_interanual_pasajeros <- if_else(pasajeros_mes$var_ia > 0,
-                                paste0(format(round(pasajeros_mes$var_ia, 2),
-                                              decimal.mark = ","),
-                                       "% ",
-                                       "más"),
-                                paste0(format(round(pasajeros_mes$var_ia, 2),
-                                              decimal.mark = ","),
-                                       "% ",
-                                       "menos"))
+                                          paste0(format(round(pasajeros_mes$var_ia, 2),
+                                                        decimal.mark = ","),
+                                                 "% ",
+                                                 "más"),
+                                          paste0(format(round(pasajeros_mes$var_ia, 2),
+                                                        decimal.mark = ","),
+                                                 "% ",
+                                                 "menos"))
 
 pasajeros_acumulados_total <- pasajeros_mes %>% 
   select(acum_anual) %>% 
   pull %>%
   format(., big.mark = ".")
 
-variacion_interanual_acum_pasajeros <- if_else(pasajeros_mes$acum_anual > 0,
-                                     paste0(format(round(pasajeros_mes$var_anual_acum, 2),
-                                                   decimal.mark = ","),
-                                            "% ",
-                                            "más"),
-                                paste0(format(round(pasajeros_mes$var_anual_acum, 2),
-                                              decimal.mark = ","),
-                                       "% ",
-                                       "menos"))
+variacion_interanual_acum_pasajeros <- if_else(pasajeros_mes$var_anual_acum > 0,
+                                               paste0(format(round(pasajeros_mes$var_anual_acum, 2),
+                                                             decimal.mark = ","),
+                                                      "% ",
+                                                      "más"),
+                                               paste0(format(round(pasajeros_mes$var_anual_acum, 2),
+                                                             decimal.mark = ","),
+                                                      "% ",
+                                                      "menos"))
 ```
 
 ```{r}
 asientos_mes <- cabotaje %>%
-    group_by(anio_local, mes_local) %>%
-    summarise(asientos = sum(asientos_pax, na.rm = T)) %>%
-    mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local)),
-           asientos = round(asientos, 0)) %>%
+  group_by(anio_local, mes_local) %>%
+  summarise(asientos = sum(asientos_pax, na.rm = T)) %>%
+  mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local)),
+         asientos = round(asientos, 0)) %>%
   ungroup() %>%
   filter(anio_local %in% c(max(year(fecha)), max(year(fecha))-1)) %>%
   filter(mes_local <= month(max(fecha))) %>% 
@@ -242,10 +242,10 @@ asientos_mes_2019 <- cabotaje %>%
   pull
 
 var_2019_asientos <- if_else((((asientos_mes %>% select(asientos) %>% pull)/asientos_mes_2019)-1)*100 < 0,
-                                  paste0(round((((asientos_mes %>% select(asientos) %>% pull)/asientos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
-                                        "% menos"),
-                                  paste0(round((((asientos_mes %>% select(asientos) %>% pull)/asientos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
-                                        "% más"))
+                             paste0(round((((asientos_mes %>% select(asientos) %>% pull)/asientos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+                                    "% menos"),
+                             paste0(round((((asientos_mes %>% select(asientos) %>% pull)/asientos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
+                                    "% más"))
 
 asientos_mes_total <- asientos_mes %>% 
   select(asientos) %>% 
@@ -254,29 +254,29 @@ asientos_mes_total <- asientos_mes %>%
 
 
 variacion_interanual_asientos <- if_else(asientos_mes$var_ia > 0,
-                                paste0("crecimiento de ",
-                                       format(round(asientos_mes$var_ia, 2),
-                                              decimal.mark = ","),
-                                       "% "),
-                                paste0("decrecimiento de ",
-                                       format(round(asientos_mes$var_ia, 2),
-                                              decimal.mark = ","),
-                                       "%"))
+                                         paste0("crecimiento de ",
+                                                format(round(asientos_mes$var_ia, 2),
+                                                       decimal.mark = ","),
+                                                "% "),
+                                         paste0("decrecimiento de ",
+                                                format(round(asientos_mes$var_ia, 2),
+                                                       decimal.mark = ","),
+                                                "%"))
 
 asientos_acumulados_total <- asientos_mes %>% 
   select(acum_anual) %>% 
   pull %>%
   format(., big.mark = ".")
 
-variacion_interanual_acum_asientos <- if_else(asientos_mes$acum_anual > 0,
-                                     paste0(format(round(asientos_mes$var_anual_acum, 2),
-                                                   decimal.mark = ","),
-                                            "% ",
-                                            "más"),
-                                paste0(format(round(asientos_mes$var_anual_acum, 2),
-                                              decimal.mark = ","),
-                                       "% ",
-                                       "menos"))
+variacion_interanual_acum_asientos <- if_else(asientos_mes$var_anual_acum > 0,
+                                              paste0(format(round(asientos_mes$var_anual_acum, 2),
+                                                            decimal.mark = ","),
+                                                     "% ",
+                                                     "más"),
+                                              paste0(format(round(asientos_mes$var_anual_acum, 2),
+                                                            decimal.mark = ","),
+                                                     "% ",
+                                                     "menos"))
 ```
 
 ```{r}
@@ -286,10 +286,10 @@ internacional <- base_total %>%
 
 ```{r, include=FALSE}
 int_vuelos_mes <- internacional %>%
-    group_by(anio_local, mes_local) %>%
-    summarise(frecuencias = sum(vuelos, na.rm = T)) %>%
-    mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local)),
-           frecuencias = round(frecuencias, 0)) %>%
+  group_by(anio_local, mes_local) %>%
+  summarise(frecuencias = sum(vuelos, na.rm = T)) %>%
+  mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local)),
+         frecuencias = round(frecuencias, 0)) %>%
   ungroup() %>%
   filter(anio_local %in% c(max(year(fecha)), max(year(fecha))-1)) %>%
   filter(mes_local <= month(max(fecha))) %>% 
@@ -311,10 +311,10 @@ int_vuelos_mes_2019 <- internacional %>%
   pull
 
 int_var_2019_vuelos <- if_else((((int_vuelos_mes %>% select(frecuencias) %>% pull)/int_vuelos_mes_2019)-1)*100 < 0,
-                                  paste0(round((((int_vuelos_mes %>% select(frecuencias) %>% pull)/int_vuelos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
-                                        "% menos"),
-                                  paste0(round((((int_vuelos_mes %>% select(frecuencias) %>% pull)/int_vuelos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
-                                        "% más"))
+                               paste0(round((((int_vuelos_mes %>% select(frecuencias) %>% pull)/int_vuelos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+                                      "% menos"),
+                               paste0(round((((int_vuelos_mes %>% select(frecuencias) %>% pull)/int_vuelos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
+                                      "% más"))
 
 int_vuelos_mes_total <- int_vuelos_mes %>% 
   select(frecuencias) %>% 
@@ -323,14 +323,14 @@ int_vuelos_mes_total <- int_vuelos_mes %>%
 
 
 int_variacion_interanual <- if_else(int_vuelos_mes$var_ia > 0,
-                                paste0("un crecimiento interanual de ",
-                                       format(round(int_vuelos_mes$var_ia, 2),
-                                              decimal.mark = ","),
-                                       "%"),
-                                paste0("un decrecimiento interanual de ",
-                                       format(round(int_vuelos_mes$var_ia, 2),
-                                              decimal.mark = ","),
-                                       "%"))
+                                    paste0("un crecimiento interanual de ",
+                                           format(round(int_vuelos_mes$var_ia, 2),
+                                                  decimal.mark = ","),
+                                           "%"),
+                                    paste0("un decrecimiento interanual de ",
+                                           format(round(int_vuelos_mes$var_ia, 2),
+                                                  decimal.mark = ","),
+                                           "%"))
 
 int_vuelos_acumulados_total <- int_vuelos_mes %>% 
   select(acum_anual) %>% 
@@ -338,22 +338,22 @@ int_vuelos_acumulados_total <- int_vuelos_mes %>%
   format(., big.mark = ".")
 
 int_variacion_interanual_acum <- if_else(int_vuelos_mes$acum_anual > 0,
-                                     paste0(format(round(int_vuelos_mes$var_anual_acum, 2),
-                                                   decimal.mark = ","),
-                                            "% ",
-                                            "más"),
-                                paste0(format(round(int_vuelos_mes$var_anual_acum, 2),
-                                              decimal.mark = ","),
-                                       "%",
-                                       "menos"))
+                                         paste0(format(round(int_vuelos_mes$var_anual_acum, 2),
+                                                       decimal.mark = ","),
+                                                "% ",
+                                                "más"),
+                                         paste0(format(round(int_vuelos_mes$var_anual_acum, 2),
+                                                       decimal.mark = ","),
+                                                "%",
+                                                "menos"))
 ```
 
 ```{r}
 int_asientos_mes <- internacional %>%
-    group_by(anio_local, mes_local) %>%
-    summarise(asientos = sum(asientos_pax, na.rm = T)) %>%
-    mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local)),
-           asientos = round(asientos, 0)) %>%
+  group_by(anio_local, mes_local) %>%
+  summarise(asientos = sum(asientos_pax, na.rm = T)) %>%
+  mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local)),
+         asientos = round(asientos, 0)) %>%
   ungroup() %>%
   filter(anio_local %in% c(max(year(fecha)), max(year(fecha))-1)) %>%
   filter(mes_local <= month(max(fecha))) %>% 
@@ -375,9 +375,9 @@ int_asientos_mes_2019 <- internacional %>%
   pull
 
 int_var_2019_asientos <- if_else((((int_asientos_mes %>% select(asientos) %>% pull)/int_asientos_mes_2019)-1)*100 < 0,
-                                  paste0(round((((int_asientos_mes %>% select(asientos) %>% pull)/int_asientos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+                                 paste0(round((((int_asientos_mes %>% select(asientos) %>% pull)/int_asientos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
                                         "% menos"),
-                                  paste0(round((((int_asientos_mes %>% select(asientos) %>% pull)/int_asientos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
+                                 paste0(round((((int_asientos_mes %>% select(asientos) %>% pull)/int_asientos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
                                         "% más"))
 
 int_asientos_mes_total <- int_asientos_mes %>% 
@@ -386,14 +386,14 @@ int_asientos_mes_total <- int_asientos_mes %>%
   format(., big.mark = ".")
 
 int_variacion_interanual_asientos <- if_else(int_asientos_mes$var_ia > 0,
-                                paste0("crecimiento de ",
-                                       format(round(int_asientos_mes$var_ia, 2),
-                                              decimal.mark = ","),
-                                       "% "),
-                                paste0("decrecimiento de ",
-                                       format(round(int_asientos_mes$var_ia, 2),
-                                              decimal.mark = ","),
-                                       "%"))
+                                             paste0("crecimiento de ",
+                                                    format(round(int_asientos_mes$var_ia, 2),
+                                                           decimal.mark = ","),
+                                                    "% "),
+                                             paste0("decrecimiento de ",
+                                                    format(round(int_asientos_mes$var_ia, 2),
+                                                           decimal.mark = ","),
+                                                    "%"))
 
 int_asientos_acumulados_total <- int_asientos_mes %>% 
   select(acum_anual) %>% 
@@ -401,20 +401,20 @@ int_asientos_acumulados_total <- int_asientos_mes %>%
   format(., big.mark = ".")
 
 int_variacion_interanual_acum_asientos <- if_else(int_asientos_mes$acum_anual > 0,
-                                     paste0(format(round(int_asientos_mes$var_anual_acum, 2),
-                                                   decimal.mark = ","),
-                                            "% "),
-                                paste0(format(round(int_asientos_mes$var_anual_acum, 2),
-                                              decimal.mark = ","),
-                                       "% "))
+                                                  paste0(format(round(int_asientos_mes$var_anual_acum, 2),
+                                                                decimal.mark = ","),
+                                                         "% "),
+                                                  paste0(format(round(int_asientos_mes$var_anual_acum, 2),
+                                                                decimal.mark = ","),
+                                                         "% "))
 ```
 
 ```{r}
 int_pasajeros_mes <- internacional %>%
-    group_by(anio_local, mes_local) %>%
-    summarise(pasajeros = sum(pax_ad, na.rm = T)) %>%
-    mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local)),
-           pasajeros = round(pasajeros, 0)) %>%
+  group_by(anio_local, mes_local) %>%
+  summarise(pasajeros = sum(pax_ad, na.rm = T)) %>%
+  mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local)),
+         pasajeros = round(pasajeros, 0)) %>%
   ungroup() %>%
   filter(anio_local %in% c(max(year(fecha)), max(year(fecha))-1)) %>%
   filter(mes_local <= month(max(fecha))) %>% 
@@ -437,9 +437,9 @@ int_pasajeros_mes_2019 <- internacional %>%
 
 int_var_2019_pasajeros <- if_else((((int_pasajeros_mes %>% select(pasajeros) %>% pull)/int_pasajeros_mes_2019)-1)*100 < 0,
                                   paste0(round((((int_pasajeros_mes %>% select(pasajeros) %>% pull)/int_pasajeros_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
-                                        "% menos"),
+                                         "% menos"),
                                   paste0(round((((int_pasajeros_mes %>% select(pasajeros) %>% pull)/int_pasajeros_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
-                                        "% más"))
+                                         "% más"))
 
 int_pasajeros_mes_total <- int_pasajeros_mes %>% 
   select(pasajeros) %>% 
@@ -448,14 +448,14 @@ int_pasajeros_mes_total <- int_pasajeros_mes %>%
 
 
 int_variacion_interanual_pasajeros <- if_else(int_pasajeros_mes$var_ia > 0,
-                                paste0(format(round(int_pasajeros_mes$var_ia, 2),
-                                              decimal.mark = ","),
-                                       "% ",
-                                       "más"),
-                                paste0(format(round(int_pasajeros_mes$var_ia, 2),
-                                              decimal.mark = ","),
-                                       "% ",
-                                       "menos"))
+                                              paste0(format(round(int_pasajeros_mes$var_ia, 2),
+                                                            decimal.mark = ","),
+                                                     "% ",
+                                                     "más"),
+                                              paste0(format(round(int_pasajeros_mes$var_ia, 2),
+                                                            decimal.mark = ","),
+                                                     "% ",
+                                                     "menos"))
 
 int_pasajeros_acumulados_total <- int_pasajeros_mes %>% 
   select(acum_anual) %>% 
@@ -1282,11 +1282,11 @@ graf_7 <- cabotaje %>%
             alpha = 0.6)+
   geom_point(aes(color = empresa_agrup_def,
                  text = paste("Fecha:",
-                          format(fecha,"%b-%y <br>"),
-                          glue::glue("{empresa_agrup_def}"), 
-                          "<br> Total:",
-                          format(frecuencias,
-                                                           big.mark=".", decimal.mark = ",", digits=0))),
+                              format(fecha,"%b-%y <br>"),
+                              glue::glue("{empresa_agrup_def}"), 
+                              "<br> Total:",
+                              format(frecuencias,
+                                     big.mark=".", decimal.mark = ",", digits=0))),
              stat = "identity",
              size = 1.5,
              alpha = 0.7)+
@@ -1811,7 +1811,7 @@ freq_ciudad_dest_24 %>%
     locations = cells_body(
       columns = situacion,
       rows = as.numeric(posicion_24) < as.numeric(posicion_23))) %>% 
-    sub_missing(
+  sub_missing(
     columns = everything(),
     rows = everything(),
     missing_text = "-")
@@ -1971,7 +1971,7 @@ graf_4 <- cabotaje %>%
                           format(fecha,"%b-%y"),
                           "<br> Total:",
                           format(total_rutas,
-                                                           big.mark=".", decimal.mark = ",", digits=0)))) +
+                                 big.mark=".", decimal.mark = ",", digits=0)))) +
   geom_segment(aes(xend = fecha,
                    y = 0,
                    yend = total_rutas),
@@ -2291,10 +2291,10 @@ comp_aereas_numero <- internacional %>%
 comp_numero_cabotaje <- comp_aereas_numero[1,2] %>% pull
 
 comp_numero_cabotaje_diferencia <- if_else((comp_aereas_numero[1,3] %>% pull)>0,
-                                            paste0((comp_aereas_numero[1,3] %>% pull),
-                                                   " más"),
-                                            paste0((comp_aereas_numero[1,3] %>% pull)*(-1),
-                                                   " menos"))
+                                           paste0((comp_aereas_numero[1,3] %>% pull),
+                                                  " más"),
+                                           paste0((comp_aereas_numero[1,3] %>% pull)*(-1),
+                                                  " menos"))
 
 comp_numero_cabotaje_anio_prev <-(comp_aereas_numero[1,2] %>% pull) - (comp_aereas_numero[1,3] %>% pull)
 ```
@@ -2316,7 +2316,7 @@ graf_12 <- internacional %>%
                           format(fecha,"%b-%y"),
                           "<br> Total:",
                           format(total_aerolineas,
-                                                           big.mark=".", decimal.mark = ",", digits=0)))) +
+                                 big.mark=".", decimal.mark = ",", digits=0)))) +
   geom_segment(aes(xend = fecha,
                    y = 0,
                    yend = total_aerolineas),
@@ -2378,10 +2378,10 @@ int_rutas_aereas_numero <- internacional %>%
 int_rutas_numero_cabotaje <- int_rutas_aereas_numero[1,2] %>% pull
 
 int_rutas_numero_cabotaje_diferencia <- if_else((int_rutas_aereas_numero[1,3] %>% pull)>0,
-                                            paste0((int_rutas_aereas_numero[1,3] %>% pull),
-                                                   " más"),
-                                            paste0((int_rutas_aereas_numero[1,3] %>% pull)*(-1),
-                                                   " menos"))
+                                                paste0((int_rutas_aereas_numero[1,3] %>% pull),
+                                                       " más"),
+                                                paste0((int_rutas_aereas_numero[1,3] %>% pull)*(-1),
+                                                       " menos"))
 
 int_rutas_numero_cabotaje_anio_prev <-(int_rutas_aereas_numero[1,2] %>% pull) - (int_rutas_aereas_numero[1,3] %>% pull)
 ```
@@ -2396,13 +2396,13 @@ graf_13 <-  internacional %>%
   group_by(anio_local, mes_local) %>% 
   summarise(total_rutas = n_distinct(ruta_nombre)) %>% 
   mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local))) %>% 
-ggplot(aes(x = fecha,
+  ggplot(aes(x = fecha,
              y = total_rutas,
              text = paste("Fecha:",
                           format(fecha,"%b-%y"),
                           "<br> Total:",
                           format(total_rutas,
-                                                           big.mark=".", decimal.mark = ",", digits=0)))) +
+                                 big.mark=".", decimal.mark = ",", digits=0)))) +
   geom_segment(aes(xend = fecha,
                    y = 0,
                    yend = total_rutas),
@@ -2432,11 +2432,11 @@ ggplot(aes(x = fecha,
   scale_x_date(date_breaks = "4 month", 
                date_labels = "%b-%y")+
   labs(title = "Cantidad de rutas aéreas internacionales",
-    subtitle = "Con al menos 4 frecuencias mensuales",
-    y = "",
-    x = "",
-    color = "",
-    caption = "Fuente: MINTURDEP en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
+       subtitle = "Con al menos 4 frecuencias mensuales",
+       y = "",
+       x = "",
+       color = "",
+       caption = "Fuente: MINTURDEP en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
   theme_minimal() +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45,
@@ -3411,7 +3411,7 @@ int_rank_locs <- internacional %>%
   summarise(vuelos = sum(vuelos, na.rm = T)) %>% 
   arrange(-vuelos) %>% 
   top_n(3) 
-  
+
 int_primer_rank_loc <- int_rank_locs[1,1] %>% pull
 int_segun_rank_loc <- int_rank_locs[2,1] %>% pull
 int_tercer_rank_loc <- int_rank_locs[3,1] %>% pull
@@ -3486,14 +3486,14 @@ vuelos_int %>%
     subtitle = glue::glue("{str_to_title(strftime(max(base_total$Fecha), '%B'))}")) %>% 
   tab_source_note(
     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>%   cols_label(
-    destino_localidad_etiqueta = md("**Ciudad**"),
-    posicion_24 = md("**2024**"),
-    situacion = "",
-    posicion_23 = md("**2023**"),
-    frecuencias_24 = md("**2024**"),
-    frecuencias_23 = md("**2023**"),
-    variacion = md("**v.a. %**"),
-    participacion_24 = md("**Participación 2024 (%)**")) %>% 
+      destino_localidad_etiqueta = md("**Ciudad**"),
+      posicion_24 = md("**2024**"),
+      situacion = "",
+      posicion_23 = md("**2023**"),
+      frecuencias_24 = md("**2024**"),
+      frecuencias_23 = md("**2023**"),
+      variacion = md("**v.a. %**"),
+      participacion_24 = md("**Participación 2024 (%)**")) %>% 
   cols_align(
     align = "center",
     columns = everything())  %>% 
@@ -4180,7 +4180,7 @@ socoso_aero_total %>%
     cuota_2022 = md("**2022**"),
     cuota_2023 = md("**2023**"),
     cuota_2024 = md("**2024**"),
-    ) %>% 
+  ) %>% 
   cols_align(
     align = "center",
     columns = c(2:9))  %>% 
@@ -4208,7 +4208,7 @@ socoso_aero_total %>%
 rutas_ranking <- cabotaje %>% 
   filter(anio_local == year(max(cabotaje$Fecha)) & mes_local == month(max(cabotaje$Fecha))) %>% 
   mutate(ruta_clasificacion = case_when(str_detect(ruta_nombre, "Ciudad de Buenos Aires|Ezeiza") ~ "Del AMBA",
-                                                     T ~ "Federales")) %>%
+                                        T ~ "Federales")) %>%
   group_by(ruta_nombre, ruta_clasificacion) %>% 
   summarise(total = sum(vuelos, na.rm = T)) %>% 
   mutate(total = round(total, 0)) 
@@ -4227,7 +4227,7 @@ rutas_ranking_federales <- rutas_ranking %>%
 
 
 portenias <- ggplot(rutas_ranking_portenias,
-       aes(x = fct_reorder(ruta_nombre, total), y = total)) +
+                    aes(x = fct_reorder(ruta_nombre, total), y = total)) +
   geom_bar(stat = "identity", fill = dnmye_colores("cian"), width = 0.65) +
   geom_label(aes(label = total),
              hjust = -0.25) +
@@ -4243,7 +4243,7 @@ portenias <- ggplot(rutas_ranking_portenias,
   coord_flip()
 
 federales <- ggplot(rutas_ranking_federales,
-       aes(x = fct_reorder(ruta_nombre, total), y = total)) +
+                    aes(x = fct_reorder(ruta_nombre, total), y = total)) +
   geom_bar(stat = "identity", fill = dnmye_colores("cian"), width = 0.65) +
   geom_label(aes(label = total),
              hjust = -0.25) +
@@ -4390,8 +4390,8 @@ cowplot::plot_grid(titulo, cuadro, ncol = 1, rel_heights = c(0.1, 0.75))
 
 ```{r}
 valores_vacios <- data.table::data.table(anio_local = 2020,
-                             mes_local = 4:8,
-                             total_rutas = 0)
+                                         mes_local = 4:8,
+                                         total_rutas = 0)
 
 rutas_federales <- cabotaje %>%
   filter(!str_detect(ruta_nombre, "Ezeiza|El Palomar|Ciudad de Buenos Aires")) %>%
@@ -4402,13 +4402,13 @@ rutas_federales <- cabotaje %>%
   summarise(total_rutas = n_distinct(ruta_nombre)) %>% 
   bind_rows(valores_vacios) %>% 
   mutate(fecha = lubridate::my(paste0(mes_local,"-", anio_local))) %>% 
- ggplot(aes(x = fecha,
+  ggplot(aes(x = fecha,
              y = total_rutas,
              text = paste("Fecha:",
                           format(fecha,"%b-%y"),
                           "<br> Total:",
                           format(total_rutas,
-                                                           big.mark=".", decimal.mark = ",", digits=0)))) +
+                                 big.mark=".", decimal.mark = ",", digits=0)))) +
   geom_segment(aes(xend = fecha,
                    y = 0,
                    yend = total_rutas),
@@ -4503,7 +4503,7 @@ pasajeros_totales_cabotaje_mes_2019 <- pasajeros_totales_cabotaje %>%
   ungroup() %>% 
   select(oaci,
          pasajeros_mes_2019)
-  
+
 pasajeros_totales_cabotaje_mes <- pasajeros_totales_cabotaje_mes %>% 
   full_join(pasajeros_totales_cabotaje_mes_2019, by = "oaci") %>% 
   full_join(pasajeros_totales_cabotaje_mes_previo, by = "oaci") %>% 
@@ -4527,7 +4527,7 @@ pasajeros_totales_cabotaje_acumulado <- pasajeros_totales_cabotaje %>%
   mutate(anio_local = paste0("anio_", anio_local)) %>% 
   pivot_wider(names_from = anio_local,
               values_from = pasajeros_acumulados)
-  
+
 aeropuertos <- read_file_srv("aerocomercial/libros_de_codigos/ANAC/aeropuertos_nuevos.xlsx", col_types = "text") %>% 
   mutate(aeropuerto_etiqueta_anac = case_when(is.na(aeropuerto_etiqueta_anac) ~ nombre_ingles,
                                               T ~ aeropuerto_etiqueta_anac),
@@ -4558,9 +4558,9 @@ tabla <- pasajeros_totales_cabotaje_acumulado %>%
             pasajeros_mes_2019 = sum(pasajeros_mes_2019, na.rm = T),
             pasajeros_mes_previo = sum(pasajeros_mes_previo, na.rm = T),
             pasajeros_mes_anio_previo = sum(pasajeros_mes_anio_previo, na.rm = T)) %>%
-    janitor::adorn_totals(where = "row",
+  janitor::adorn_totals(where = "row",
                         na.rm = T) %>% 
-    mutate(across(.cols = 2:13,
+  mutate(across(.cols = 2:13,
                 ~ replace_na(., 0)),
          variacion_mes = (pasajeros_mes_actual/pasajeros_mes_previo) - 1,
          variacion_mes = if_else(!is.finite(variacion_mes),
@@ -4570,7 +4570,7 @@ tabla <- pasajeros_totales_cabotaje_acumulado %>%
          variacion_anual = if_else(!is.finite(variacion_anual),
                                    0,
                                    variacion_anual)) %>%
-    arrange(-anio_2024)  
+  arrange(-anio_2024)  
 
 tabla_grande <- tabla %>% 
   select(-ends_with("_previo")) %>% 
