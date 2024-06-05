@@ -1,0 +1,1390 @@
+---
+title: "Conectividad Terrestre"
+description: "Resumen de datos de flujo terrestre, en base a los registros de servicios regulares interurbanos de buses de media y larga distancia de la Comisión Nacional Reguladora del Transporte (CNRT)."
+output:
+  distill::distill_article:
+    self_contained: TRUE
+draft: false
+params:
+  memoria: false
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, message = F, warning = F, 
+                      fig.align = 'left', fig.width = 10,fig.height = 6)
+
+library(tidyverse)
+library(comunicacion)
+library(lubridate)
+library(gt)
+library(plotly)
+library(networkD3)
+library(herramientas)
+library(htmlwidgets)
+library(htmltools)
+library(treemapify)
+options(scipen = 999)
+
+Sys.setlocale(locale = "es_AR.UTF-8")
+
+```
+
+```{r carga base}
+
+# Base Actual
+base_total <- read_file_srv("cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-04-30.parquet") # Actualizar
+
+# Base Año Previo
+base_vieja <- read_file_srv("cnrt/base_de_trabajo/base_final/cnrt_total_historica_2023-01-01_a_2023-12-31.parquet")
+
+# Filtramos mismo periodo
+base_vieja <- base_vieja %>% 
+  filter(mes <= max(base_total$mes))
+
+
+# Variables Fecha
+publicacion_mes_anio <- strftime(Sys.Date(), '%B %Y')
+
+datos_mes_anio <- strftime(max(base_total$fecha), '%B')
+
+datos_mes_anio_bis <- strftime(max(base_total$fecha), '%d-%m-%Y')
+
+```
+
+```{r Regiones}
+# Regiones Tramos
+base_total <- base_total %>%
+  mutate(region_destino = case_when(provincia_destino == "Buenos Aires" ~ "Buenos Aires",
+                                    provincia_destino == "Ciudad Autónoma de Buenos Aires" ~ "Ciudad Autónoma de Buenos Aires",
+                                    provincia_destino == "Córdoba" ~ "Córdoba",
+                                    provincia_destino == "Tierra del Fuego, Antártida e Islas del Atlántico Sur" ~ "Patagonia",
+                                    provincia_destino == "Santa Cruz" ~ "Patagonia",
+                                    provincia_destino == "Chubut" ~ "Patagonia",
+                                    provincia_destino == "Neuquén" ~ "Patagonia",
+                                    provincia_destino == "Río Negro" ~ "Patagonia",
+                                    provincia_destino == "La Pampa" ~ "Patagonia",
+                                    provincia_destino == "Mendoza" ~ "Cuyo",
+                                    provincia_destino == "San Juan" ~ "Cuyo",
+                                    provincia_destino == "San Luis" ~ "Cuyo",
+                                    provincia_destino == "La Rioja" ~ "Norte",
+                                    provincia_destino == "Catamarca" ~ "Norte",
+                                    provincia_destino == "Salta" ~ "Norte",
+                                    provincia_destino == "Jujuy" ~ "Norte",
+                                    provincia_destino == "Santiago del Estero" ~ "Norte",
+                                    provincia_destino == "Tucumán" ~ "Norte",
+                                    provincia_destino == "Santa Fe" ~ "Litoral",
+                                    provincia_destino == "Chaco" ~ "Litoral",
+                                    provincia_destino == "Formosa" ~ "Litoral",
+                                    provincia_destino == "Misiones" ~ "Litoral",
+                                    provincia_destino == "Corrientes" ~ "Litoral",
+                                    provincia_destino == "Entre Ríos" ~ "Litoral",
+                                    T ~ "No hay info"),
+         region_origen = case_when(provincia_origen == "Buenos Aires" ~ "Buenos Aires",
+                                   provincia_origen == "Ciudad Autónoma de Buenos Aires" ~ "Ciudad Autónoma de Buenos Aires",
+                                   provincia_origen == "Córdoba" ~ "Córdoba",
+                                   provincia_origen == "Tierra del Fuego, Antártida e Islas del Atlántico Sur" ~ "Patagonia",
+                                   provincia_origen == "Santa Cruz" ~ "Patagonia",
+                                   provincia_origen == "Chubut" ~ "Patagonia",
+                                   provincia_origen == "Neuquén" ~ "Patagonia",
+                                   provincia_origen == "Río Negro" ~ "Patagonia",
+                                   provincia_origen == "La Pampa" ~ "Patagonia",
+                                   provincia_origen == "Mendoza" ~ "Cuyo",
+                                   provincia_origen == "San Juan" ~ "Cuyo",
+                                   provincia_origen == "San Luis" ~ "Cuyo",
+                                   provincia_origen == "La Rioja" ~ "Norte",
+                                   provincia_origen == "Catamarca" ~ "Norte",
+                                   provincia_origen == "Salta" ~ "Norte",
+                                   provincia_origen == "Jujuy" ~ "Norte",
+                                   provincia_origen == "Santiago del Estero" ~ "Norte",
+                                   provincia_origen == "Tucumán" ~ "Norte",
+                                   provincia_origen == "Santa Fe" ~ "Litoral",
+                                   provincia_origen == "Chaco" ~ "Litoral",
+                                   provincia_origen == "Formosa" ~ "Litoral",
+                                   provincia_origen == "Misiones" ~ "Litoral",
+                                   provincia_origen == "Corrientes" ~ "Litoral",
+                                   provincia_origen == "Entre Ríos" ~ "Litoral",
+                                   T ~ "No hay info"))
+
+```
+
+
+```{r VIAJES}
+# Viajes mensuales
+viajes_mes <- base_total %>%
+  group_by(anio, mes) %>%
+  summarise(viajes = n_distinct(id_servicio)) %>%
+  ungroup() %>% 
+  group_by(anio) %>% 
+  mutate(viajes_anio = sum(viajes)) %>% 
+  ungroup() %>%
+  slice_max(mes)
+
+# Viajes mensuales - año previo
+viajes_mes_anio_pasado <- base_vieja %>%
+  group_by(anio, mes) %>%
+  summarise(viajes = n_distinct(id_servicio)) %>%
+  ungroup() %>% 
+  group_by(anio) %>% 
+  mutate(viajes_anio = sum(viajes)) %>% 
+  ungroup() %>%
+  slice_max(mes)
+
+# Variaciòn interanual
+variacion_interanual <- if_else((viajes_mes %>% select(viajes) %>% pull)/(viajes_mes_anio_pasado %>% select(viajes) %>% pull) - 1 < 0,
+                           paste0(round(((viajes_mes %>% select(viajes) %>% pull)/(viajes_mes_anio_pasado %>% select(viajes) %>% pull)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+                                  "% menos"),
+                           paste0(round(((viajes_mes %>% select(viajes) %>% pull)/(viajes_mes_anio_pasado %>% select(viajes) %>% pull)-1)*100, 2) %>% format(., decimal.mark = ","),
+                                  "% mas"))
+
+# Viajes mensuales
+viajes_mes_total <- viajes_mes %>% 
+  select(viajes) %>% 
+  pull %>%
+  format(., big.mark = ".")
+
+# variacion_interanual <- if_else(vuelos_mes$var_ia > 0,
+#                                 paste0("un crecimiento de ",
+#                                        format(round(vuelos_mes$var_ia, 2),
+#                                               decimal.mark = ","),
+#                                        "%"),
+#                                 paste0("un decrecimiento de ",
+#                                        format(round(vuelos_mes$var_ia, 2),
+#                                               decimal.mark = ","),
+#                                        "%"))
+
+# Acumulado anual
+viajes_acumulados_total <- viajes_mes %>% 
+  select(viajes_anio) %>% 
+  pull %>%
+  format(., big.mark = ".")
+
+# Variación acumulado anual
+variacion_interanual_acum <- if_else((viajes_mes %>% select(viajes_anio) %>% pull)/(viajes_mes_anio_pasado %>% select(viajes_anio) %>% pull) - 1 < 0,
+                           paste0(round(((viajes_mes %>% select(viajes_anio) %>% pull)/(viajes_mes_anio_pasado %>% select(viajes_anio) %>% pull)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+                                  "% menos"),
+                           paste0(round(((viajes_mes %>% select(viajes_anio) %>% pull)/(viajes_mes_anio_pasado %>% select(viajes_anio) %>% pull)-1)*100, 2) %>% format(., decimal.mark = ","),
+                                  "% mas"))
+```
+
+```{r PASAJEROS}
+# Pasajeros mensuales
+pasajeros_mes <- base_total %>%
+  group_by(anio, mes) %>%
+  summarise(pasajeros_mes = sum(pasajeros, na.rm = T)) %>% # POr que da distinto al tablero?
+  ungroup() %>% 
+  group_by(anio) %>% 
+  mutate(pasajeros_anio = sum(pasajeros_mes)) %>% 
+  ungroup() %>%
+  slice_max(mes)
+
+# Pasajeros mes - año previo
+pasajeros_mes_anio_pasado <- base_vieja %>%
+  group_by(anio, mes) %>%
+  summarise(pasajeros_mes = sum(pasajeros, na.rm = T)) %>% # POr que da distinto al tablero?
+  ungroup() %>% 
+  group_by(anio) %>% 
+  mutate(pasajeros_anio = sum(pasajeros_mes)) %>% 
+  ungroup() %>%
+  slice_max(mes)
+
+# Variación interanual
+var_ia_pasajeros <- if_else((pasajeros_mes %>% select(pasajeros_mes) %>% pull)/(pasajeros_mes_anio_pasado %>% select(pasajeros_mes) %>% pull) - 1 < 0,
+                           paste0(round(((pasajeros_mes %>% select(pasajeros_mes) %>% pull)/(pasajeros_mes_anio_pasado %>% select(pasajeros_mes) %>% pull)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+                                  "% menos"),
+                           paste0(round(((pasajeros_mes %>% select(pasajeros_mes) %>% pull)/(pasajeros_mes_anio_pasado %>% select(pasajeros_mes) %>% pull)-1)*100, 2) %>% format(., decimal.mark = ","),
+                                  "% mas"))
+
+# pasajeros mensuales
+pasajeros_mes_total <- pasajeros_mes %>% 
+  select(pasajeros_mes) %>% 
+  pull %>%
+  format(., big.mark = ".")
+
+# variacion_interanual <- if_else(vuelos_mes$var_ia > 0,
+#                                 paste0("un crecimiento de ",
+#                                        format(round(vuelos_mes$var_ia, 2),
+#                                               decimal.mark = ","),
+#                                        "%"),
+#                                 paste0("un decrecimiento de ",
+#                                        format(round(vuelos_mes$var_ia, 2),
+#                                               decimal.mark = ","),
+#                                        "%"))
+
+# Acumulado anual
+pasajeros_acumulados_total <- pasajeros_mes %>% 
+  select(pasajeros_anio) %>% 
+  pull %>%
+  format(., big.mark = ".")
+
+# Variación acumulado anual
+variacion_interanual_acum_pasajeros <- if_else((pasajeros_mes %>% select(pasajeros_anio) %>% pull)/(pasajeros_mes_anio_pasado %>% select(pasajeros_anio) %>% pull) - 1 < 0,
+                           paste0(round(((pasajeros_mes %>% select(pasajeros_anio) %>% pull)/(pasajeros_mes_anio_pasado %>% select(pasajeros_anio) %>% pull)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+                                  "% menos"),
+                           paste0(round(((pasajeros_mes %>% select(pasajeros_anio) %>% pull)/(pasajeros_mes_anio_pasado %>% select(pasajeros_anio) %>% pull)-1)*100, 2) %>% format(., decimal.mark = ","),
+                                  "% mas"))
+```
+
+```{r ASIENTOS}
+# Asientos mensuales
+asientos_mes <- base_total %>%
+  distinct(id_servicio, .keep_all = T) %>% 
+  group_by(anio, mes) %>%
+  summarise(asientos_mes = sum(cantidad_asientos_ruta, na.rm = T)) %>% # POr que da distinto al tablero?
+  ungroup() %>% 
+  group_by(anio) %>% 
+  mutate(asientos_anio = sum(asientos_mes)) %>% 
+  ungroup() %>%
+  slice_max(mes)
+
+# asientos mes - año previo
+asientos_mes_anio_pasado <- base_vieja %>%
+  distinct(id_servicio, .keep_all = T) %>%
+  group_by(anio, mes) %>%
+  summarise(asientos_mes = sum(cantidad_asientos_ruta, na.rm = T)) %>% # POr que da distinto al tablero?
+  ungroup() %>% 
+  group_by(anio) %>% 
+  mutate(asientos_anio = sum(asientos_mes)) %>% 
+  ungroup() %>%
+  slice_max(mes)
+
+# Variaciòn interanual
+var_ia_asientos <- if_else((asientos_mes %>% select(asientos_mes) %>% pull)/(asientos_mes_anio_pasado %>% select(asientos_mes) %>% pull) - 1 < 0,
+                           paste0(round(((asientos_mes %>% select(asientos_mes) %>% pull)/(asientos_mes_anio_pasado %>% select(asientos_mes) %>% pull)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+                                  "% menos"),
+                           paste0(round(((asientos_mes %>% select(asientos_mes) %>% pull)/(asientos_mes_anio_pasado %>% select(asientos_mes) %>% pull)-1)*100, 2) %>% format(., decimal.mark = ","),
+                                  "% mas"))
+
+# asientos mensuales
+asientos_mes_total <- asientos_mes %>% 
+  select(asientos_mes) %>% 
+  pull %>%
+  format(., big.mark = ".")
+
+# variacion_interanual <- if_else(vuelos_mes$var_ia > 0,
+#                                 paste0("un crecimiento de ",
+#                                        format(round(vuelos_mes$var_ia, 2),
+#                                               decimal.mark = ","),
+#                                        "%"),
+#                                 paste0("un decrecimiento de ",
+#                                        format(round(vuelos_mes$var_ia, 2),
+#                                               decimal.mark = ","),
+#                                        "%"))
+
+# Acumulado anual
+asientos_acumulados_total <- asientos_mes %>% 
+  select(asientos_anio) %>% 
+  pull %>%
+  format(., big.mark = ".")
+
+# Variación acumulado anual
+variacion_interanual_acum_asientos <- if_else((asientos_mes %>% select(asientos_anio) %>% pull)/(asientos_mes_anio_pasado %>% select(asientos_anio) %>% pull) - 1 < 0,
+                           paste0(round(((asientos_mes %>% select(asientos_anio) %>% pull)/(asientos_mes_anio_pasado %>% select(asientos_anio) %>% pull)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+                                  "% menos"),
+                           paste0(round(((asientos_mes %>% select(asientos_anio) %>% pull)/(asientos_mes_anio_pasado %>% select(asientos_anio) %>% pull)-1)*100, 2) %>% format(., decimal.mark = ","),
+                                  "% mas"))
+```
+
+**(Publicado en `r publicacion_mes_anio` con datos actualizados al `r datos_mes_anio_bis`)**
+
+El reporte mensual que aquí presentamos se basa en el *[Documento de Trabajo N°14: "Conectividad Terrestre. Diagnóstico turístico del mercado interurbano de pasajeros."](https://tableros.yvera.tur.ar/recursos/biblioteca/conectividad_terrestre.pdf)* que analiza el flujo de pasajeros en servicios regulares de buses de media y larga distancia al interior del país entre enero de 2019 y octubre de 2023. En este marco, el actual trabajo busca continuar con la publicación periódica de estadísticas que muestren la evolución de los indicadores luego de la crisis pandémica y la posterior recuperación del sector.
+
+En el mes de **`r datos_mes_anio`**, fueron contabilizados **`r viajes_mes_total` viajes** de buses de media y larga distancia en todo el país, lo que representa un **`r variacion_interanual` frente a un año atrás**[^2]. En total, en el acumulado anual, se realizaron `r viajes_acumulados_total` servicios regulares, un `r variacion_interanual_acum` si se compara con el mismo período del año previo.
+
+[^2]: Para ver la serie temporal completa de viajes, asientos y pasajeros totales, acceder al [tablero de conectividad terrestre](https://tableros.yvera.tur.ar/conectividad_terrestre/).
+
+En el mismo mes, fueron transportados **`r pasajeros_mes_total` pasajeros**, un **`r var_ia_pasajeros`** con respecto a `r datos_mes_anio` del año previo. En el acumulado anual, ello significa que viajaron hasta el momento `r pasajeros_acumulados_total` personas por el país, un `r variacion_interanual_acum_pasajeros` en comparación al mismo intervalo del año anterior.
+
+Con respecto al número de **asientos** disponibles en servicios regulares, en `r datos_mes_anio`, fueron ofrecidos **`r asientos_mes_total` asientos**, lo que supone un **`r var_ia_asientos`** contra un año atrás, y, en lo que va del año, `r asientos_acumulados_total` asientos, `r variacion_interanual_acum_asientos` frente al mismo período previo.
+
+```{r}
+# Gráfico - Pasajeros.
+base_total_agrupada_region_pasajeros <- base_total %>% 
+    filter(mes == month(max(fecha))) %>%
+  group_by(region_origen, region_destino) %>% 
+  summarise(total = sum(pasajeros)) %>% 
+  ungroup()
+
+base_total_agrupada_region_texto <- base_total_agrupada_region_pasajeros %>%
+  group_by(region_destino) %>%
+  summarise(total = sum(total))
+
+# Región 1 
+# Etiqueta
+region_1 <- (base_total_agrupada_region_texto %>% slice_max(total))[1,1] %>% pull
+# Valores
+region_1_total <- (base_total_agrupada_region_texto %>% slice_max(total))[1,2] %>% pull %>% format(., big.mark = ".")
+
+# Región 2
+# Etiqueta
+region_2 <- (base_total_agrupada_region_texto %>% slice_max(n = 2, total) %>% slice_tail())[1,1] %>% pull
+# Valores
+region_2_total <- (base_total_agrupada_region_texto %>% slice_max(n = 2, total)%>% slice_tail())[1,2] %>% pull %>% format(., big.mark = ".")
+
+# Región 3
+# Etiqueta
+region_3 <- (base_total_agrupada_region_texto %>% slice_max(n = 3, total) %>% slice_tail())[1,1] %>% pull
+# Valores
+region_3_total <- (base_total_agrupada_region_texto %>% slice_max(n = 3, total)%>% slice_tail())[1,2] %>% pull %>% format(., big.mark = ".")
+```
+
+En lo respectivo a las regiones turísticas, **el `r region_1` fue la que más pasajeros recibió** durante el mes de `r datos_mes_anio` (**`r region_1_total`** en total). A la misma, le siguieron las regiones `r region_2` y `r region_3`, con `r region_2_total` y `r region_3_total` pasajeros, respectivamente.
+
+```{r Sankey x región}
+# VER
+# Título visualización
+# Etiqueta eje izq
+
+
+# base_total_agrupada_region <- base_total %>% 
+#   filter(mes == month(max(fecha))) %>% 
+#   group_by(region_origen, region_destino) %>% 
+#   summarise(total = n()) %>% 
+#   ungroup()
+# 
+# base_total_agrupada_region_texto <- base_total_agrupada_region %>% 
+#   group_by(region_destino) %>% 
+#   summarise(total = sum(total)) 
+#
+# # Gráfico - Viajes.
+# colnames(base_total_agrupada_region) <- c("source", "target", "value")
+# base_total_agrupada_region$target <- paste(base_total_agrupada_region$target, " ", sep="")
+# 
+# nodos <- data.frame(name=c(as.character(base_total_agrupada_region$source), as.character(base_total_agrupada_region$target)) %>% unique())
+# 
+# base_total_agrupada_region$IDsource = match(base_total_agrupada_region$source, nodos$name)-1
+# base_total_agrupada_region$IDtarget = match(base_total_agrupada_region$target, nodos$name)-1
+# 
+# ColourScal ='d3.scaleOrdinal() .range(["#EE3D8F", "#F7941E", "#FFD100", "#D7DF23", "#50B8B1", "#9283BE", "#37BBED", "#50535C", "#AAAAAA", "#E7E7E7"])'
+# 
+# sankeyNetwork(Links = base_total_agrupada_region,
+#               Nodes = nodos,
+#               Source = "IDsource",
+#               Target = "IDtarget",
+#               Value = "value",
+#               NodeID = "name",
+#               sinksRight = T,
+#               colourScale = ColourScal,
+#               nodeWidth = 40,
+#               fontSize = 13,
+#               nodePadding = 20)
+
+colnames(base_total_agrupada_region_pasajeros) <- c("source", "target", "value")
+
+base_total_agrupada_region_pasajeros$target <- paste(base_total_agrupada_region_pasajeros$target, " ", sep="")
+
+nodos <- data.frame(name=c(as.character(base_total_agrupada_region_pasajeros$source), 
+                           as.character(base_total_agrupada_region_pasajeros$target)) %>%
+                      unique())
+
+base_total_agrupada_region_pasajeros$IDsource = match(base_total_agrupada_region_pasajeros$source, nodos$name) - 1
+
+base_total_agrupada_region_pasajeros$IDtarget = match(base_total_agrupada_region_pasajeros$target, nodos$name) - 1
+
+# Seteo la paleta
+ColourScal ='d3.scaleOrdinal() .range(["#EE3D8F", "#F7941E", "#FFD100", "#D7DF23", "#50B8B1", "#9283BE", "#37BBED", "#50535C", "#AAAAAA", "#E7E7E7"])'
+
+sankey <- sankeyNetwork(Links = base_total_agrupada_region_pasajeros,
+              Nodes = nodos,
+              Source = "IDsource",
+              Target = "IDtarget",
+              Value = "value",
+              NodeID = "name",
+              sinksRight = T,
+              colourScale = ColourScal,
+              nodeWidth = 40,
+              fontSize = 13,
+              nodePadding = 20)
+
+
+sankey <- htmlwidgets::prependContent(sankey, htmltools::tags$h1("Flujo de pasajeros entre regiones turísticas"))
+
+sankey
+
+```
+
+```{r}
+cnrt <- arrow::open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/")
+
+graf_7 <- cnrt %>% 
+  mutate(region_destino = case_when(provincia_destino == "Buenos Aires" ~ "Buenos Aires",
+                                    provincia_destino == "Ciudad Autónoma de Buenos Aires" ~ "Ciudad Autónoma de Buenos Aires",
+                                    provincia_destino == "Córdoba" ~ "Córdoba",
+                                    provincia_destino == "Tierra del Fuego, Antártida e Islas del Atlántico Sur" ~ "Patagonia",
+                                    provincia_destino == "Santa Cruz" ~ "Patagonia",
+                                    provincia_destino == "Chubut" ~ "Patagonia",
+                                    provincia_destino == "Neuquén" ~ "Patagonia",
+                                    provincia_destino == "Río Negro" ~ "Patagonia",
+                                    provincia_destino == "La Pampa" ~ "Patagonia",
+                                    provincia_destino == "Mendoza" ~ "Cuyo",
+                                    provincia_destino == "San Juan" ~ "Cuyo",
+                                    provincia_destino == "San Luis" ~ "Cuyo",
+                                    provincia_destino == "La Rioja" ~ "Norte",
+                                    provincia_destino == "Catamarca" ~ "Norte",
+                                    provincia_destino == "Salta" ~ "Norte",
+                                    provincia_destino == "Jujuy" ~ "Norte",
+                                    provincia_destino == "Santiago del Estero" ~ "Norte",
+                                    provincia_destino == "Tucumán" ~ "Norte",
+                                    provincia_destino == "Santa Fe" ~ "Litoral",
+                                    provincia_destino == "Chaco" ~ "Litoral",
+                                    provincia_destino == "Formosa" ~ "Litoral",
+                                    provincia_destino == "Misiones" ~ "Litoral",
+                                    provincia_destino == "Corrientes" ~ "Litoral",
+                                    provincia_destino == "Entre Ríos" ~ "Litoral",
+                                    T ~ "No hay info"),
+         region_origen = case_when(provincia_origen == "Buenos Aires" ~ "Buenos Aires",
+                                   provincia_origen == "Ciudad Autónoma de Buenos Aires" ~ "Ciudad Autónoma de Buenos Aires",
+                                   provincia_origen == "Córdoba" ~ "Córdoba",
+                                   provincia_origen == "Tierra del Fuego, Antártida e Islas del Atlántico Sur" ~ "Patagonia",
+                                   provincia_origen == "Santa Cruz" ~ "Patagonia",
+                                   provincia_origen == "Chubut" ~ "Patagonia",
+                                   provincia_origen == "Neuquén" ~ "Patagonia",
+                                   provincia_origen == "Río Negro" ~ "Patagonia",
+                                   provincia_origen == "La Pampa" ~ "Patagonia",
+                                   provincia_origen == "Mendoza" ~ "Cuyo",
+                                   provincia_origen == "San Juan" ~ "Cuyo",
+                                   provincia_origen == "San Luis" ~ "Cuyo",
+                                   provincia_origen == "La Rioja" ~ "Norte",
+                                   provincia_origen == "Catamarca" ~ "Norte",
+                                   provincia_origen == "Salta" ~ "Norte",
+                                   provincia_origen == "Jujuy" ~ "Norte",
+                                   provincia_origen == "Santiago del Estero" ~ "Norte",
+                                   provincia_origen == "Tucumán" ~ "Norte",
+                                   provincia_origen == "Santa Fe" ~ "Litoral",
+                                   provincia_origen == "Chaco" ~ "Litoral",
+                                   provincia_origen == "Formosa" ~ "Litoral",
+                                   provincia_origen == "Misiones" ~ "Litoral",
+                                   provincia_origen == "Corrientes" ~ "Litoral",
+                                   provincia_origen == "Entre Ríos" ~ "Litoral",
+                                   T ~ "No hay info"),
+         fecha = floor_date(fecha, unit = "month")) %>% 
+  group_by(fecha, region_destino) %>%
+  summarise(
+    pasajeros = sum(pasajeros, na.rm = T),
+    # asientos = min(cantidad_asientos_ruta),
+    # tramos = n_distinct(id_servicio)
+  ) %>% 
+    collect() %>% 
+  ggplot(aes(x = fecha,
+                y = pasajeros,
+                color = region_destino),
+         alpha = 0.6,
+         size = 1.25) +
+  geom_line() +
+  geom_point(aes(text = paste("Fecha:",
+                              format(fecha,"%b-%y <br>"),
+                              glue::glue("{region_destino}"), 
+                              "<br> Total:",
+                              format(pasajeros,
+                                     big.mark=".", decimal.mark = ",", digits=0)))) +
+  scale_y_continuous(limits = c(0, 1000000),
+                     breaks = seq(0, 1000000, 100000),
+                     labels = function(x) format(x, big.mark = ".")) +
+  scale_x_date(date_breaks = "3 month", 
+               date_labels = "%b-%y") +
+  scale_color_dnmye() +
+  guides(col = guide_legend(ncol = 2))+
+  theme_minimal() +
+    theme(legend.position = "bottom",
+          axis.text.x = element_text(angle = 45,
+                                   hjust = 1,
+                                   vjust = 1)) +
+  labs(title = "Pasajeros por región turística de destino",
+       subtitle = "Serie histórica",
+       y = "Total",
+       x = "",
+       color = "")
+
+ggplotly(graf_7, tooltip = "text") %>%
+  layout(legend = list(orientation = 'h',
+                       x = -0.05, y = -0.2))  
+
+```
+
+```{r}
+# library(treemap)
+# library(treemapify)
+# 
+# # Generamos base - viajes
+# base_total_treemap <- base_total %>% 
+#   filter(mes == month(max(fecha))) %>%
+#   group_by(provincia_destino, localidad_destino) %>% 
+#   summarise(total = n()) %>% 
+#   mutate(total_acum = sum(total, na.rm = T),
+#          pct = total/total_acum,
+#          localidad_destino = case_when(pct < 0.025 ~ "Otras Localidades",
+#                                        T ~ localidad_destino)) %>% 
+#   ungroup() %>% 
+#   group_by(provincia_destino, localidad_destino) %>% 
+#   summarise(total = sum(total))
+# 
+# treemap(base_total_treemap,
+#         index = c("provincia_destino",
+#                   "localidad_destino"),
+#         vSize="total",
+#         type="index",
+#         title = "Viajes por provincia")
+# 
+# ggplot(base_total_treemap,
+#        aes(area = total,
+#                    fill = provincia_destino,
+#                    subgroup = provincia_destino,
+#                    label = localidad_destino)) +
+#   geom_treemap(place = "centre") +
+#   geom_treemap_text(colour = "white",
+#                     place = "centre",
+#                     size = 15) +
+#   geom_treemap_subgroup_border(colour = "black") +
+# paletteer::scale_fill_paletteer_d("khroma::soil") +
+#   labs(title = "Cantidad de viajes por destino",
+#        subtitle = glue::glue("Servicios regulares - {str_to_title(datos_mes_anio)}")) +
+#   theme(legend.position = "none")
+
+```
+
+```{r Provincias}
+# Destino ruta o destino original? Destino original cuenta varias veces el mismo tryaecto
+# Ej ruta caba - rosario -> caba - el talar, caba - san nicolas, el talar - san nicolar, caba - rosario, el talar - rosario, san nicolas -  rosarios
+
+# # Por Viajes
+# rank_provs <- base_total %>% 
+#   filter(mes == max(mes)) %>%
+#   group_by(provincia_destino) %>% 
+#   summarise(viajes = n_distinct(id_servicio)) %>%
+#   arrange(-viajes) %>% 
+#   top_n(3) 
+# 
+# # 1° Prov
+# primer_rank_prov <- rank_provs[1,1] %>% pull
+# # 2° Prov
+# segun_rank_prov <- rank_provs[2,1] %>% pull
+# # 3° Prov
+# tercer_rank_prov <- rank_provs[3,1] %>% pull
+
+
+# Por pasajeros
+rank_provs <- base_total %>% 
+  filter(mes == max(mes)) %>%
+  group_by(provincia_destino) %>% 
+  summarise(pasajeros = sum(pasajeros, na.rm = T)) %>%
+  slice_max(n = 3, pasajeros)
+
+# 1° Prov
+primer_rank_prov <- rank_provs[1,1] %>% pull
+primer_rank_prov_tot <- rank_provs[1,2] %>% pull %>% format(., big.mark = ".")
+# 2° Prov
+segun_rank_prov <- rank_provs[2,1] %>% pull
+segun_rank_prov_tot <- rank_provs[2,2] %>% pull %>% format(., big.mark = ".")
+# 3° Prov
+tercer_rank_prov <- rank_provs[3,1] %>% pull
+tercer_rank_prov_tot <- rank_provs[3,2] %>% pull %>% format(., big.mark = ".")
+
+```
+
+Las provincias de **`r primer_rank_prov`, `r segun_rank_prov` y `r tercer_rank_prov`** son aquellas a las que más pasajeros arribaron durante el último mes en buses de media y larga distancia. Las mismas contabilizaron `r primer_rank_prov_tot`, `r segun_rank_prov_tot` y `r tercer_rank_prov_tot`, respectivamente.
+
+```{r Treemap}
+# Generamos base - pasajeros
+base_total_treemap <- base_total %>% 
+  filter(mes == month(max(fecha))) %>%
+  group_by(provincia_destino, localidad_destino) %>% 
+  summarise(total = sum(pasajeros, na.rm = T)) %>% 
+  mutate(total_acum = sum(total, na.rm = T),
+         pct = total/total_acum,
+         localidad_destino = case_when(pct < 0.05 ~ "Otras Localidades",
+                                       T ~ localidad_destino)) %>% 
+  ungroup() %>% 
+  group_by(provincia_destino, localidad_destino) %>% 
+  summarise(total = sum(total))
+
+# library(treemap)
+# treemap(base_total_treemap,
+#         index = c("provincia_destino",
+#                   "localidad_destino"),
+#         vSize = "total",
+#         type = "index",
+#         title = "Pasajeros por destino",
+#         border.col = "black",
+#         border.lwds = c(7,2),
+#         bg.labels = 0,
+#         fontsize.labels=c(0,10),
+#         palette = paletteer::paletteer_d("khroma::soil"))
+
+
+ggplot(base_total_treemap,
+       aes(area = total,
+                   fill = provincia_destino,
+                   subgroup = provincia_destino,
+                   label = paste(localidad_destino,
+                                 paste(round(total/1000, 0), "mil"),
+                                 sep = "\n"))) +
+  geom_treemap(place = "centre",
+               start = "topleft",
+               color = "black") +
+  geom_treemap_text(place = "centre",
+                    size = 15,
+                    start = "topleft") +
+  geom_treemap_subgroup_border(colour = "black",
+                               start = "topleft") +
+  paletteer::scale_fill_paletteer_d("khroma::soil") +
+  labs(title = "Cantidad de pasajeros por destino",
+       subtitle = glue::glue("Servicios regulares - {str_to_title(datos_mes_anio)}"),
+       caption = 'Nota: "Otras localidades" incluye todos aquellos destinos que no superan el 5% de los pasajeros provinciales.') +
+  theme(legend.position = "none")
+
+```
+
+```{r Localidades}
+# Localidades por viaje
+# rank_locs <- base_total %>% 
+#   filter(mes == max(mes)) %>%
+#   group_by(localidad_destino) %>% 
+#   summarise(viajes = n_distinct(id_servicio)) %>%
+#   arrange(-viajes) %>% 
+#   top_n(3) 
+# 
+# primer_rank_loc <- rank_locs[1,1] %>% pull
+# segun_rank_loc <- rank_locs[2,1] %>% pull
+# tercer_rank_loc <- rank_locs[3,1] %>% pull
+
+# Localidades por pasajeros-
+rank_locs <- base_total %>% 
+  filter(mes == max(mes)) %>%
+  group_by(localidad_destino) %>% 
+  summarise(pasajeros = sum(pasajeros, na.rm = T)) %>%
+  slice_max(n = 3, pasajeros)
+
+# 1° Localidad
+primer_rank_loc <- rank_locs[1,1] %>% pull
+primer_rank_loc_tot <- rank_locs[1,2] %>% pull %>% format(., big.mark = ".")
+# 2° Localidad
+segun_rank_loc <- rank_locs[2,1] %>% pull
+segun_rank_loc_tot <- rank_locs[2,2] %>% pull %>% format(., big.mark = ".")
+# 3° Localidad
+tercer_rank_loc <- rank_locs[3,1] %>% pull
+tercer_rank_loc_tot <- rank_locs[3,2] %>% pull %>% format(., big.mark = ".")
+```
+
+Por su parte, a nivel urbano, **`r primer_rank_loc`, `r segun_rank_loc` y `r tercer_rank_loc`** son aquellas localidades del país que más pasajeros recibieron en el período en cuestión. En total, `r primer_rank_loc_tot`, `r segun_rank_loc_tot` y `r tercer_rank_loc_tot` personas arribaron a dichos destinos.
+
+```{r Localidades por viajes}
+# freq_ciudad_dest_24 <- base_total %>% 
+#   filter(mes == max(mes)) %>% 
+#   group_by(localidad_destino) %>% 
+#   summarise(frecuencias_24 = n_distinct(id_servicio)) %>% 
+#   ungroup() %>% 
+#   arrange(desc(frecuencias_24)) %>% 
+#   mutate(posicion_24 = 1:n(),
+#          participacion_24 = frecuencias_24/sum(frecuencias_24, na.rm = T))
+# 
+# freq_ciudad_dest_23 <- base_vieja %>% 
+#   filter(mes == max(mes)) %>% 
+#   group_by(localidad_destino) %>% 
+#   summarise(frecuencias_23 = n_distinct(id_servicio)) %>% 
+#   ungroup() %>% 
+#   arrange(desc(frecuencias_23)) %>% 
+#   mutate(posicion_23 = 1:n(),
+#          participacion_23 = frecuencias_23/sum(frecuencias_23, na.rm = T))
+# 
+# freq_ciudad_dest_24 <- freq_ciudad_dest_24 %>% 
+#   full_join(freq_ciudad_dest_23, by = "localidad_destino") %>%
+#   mutate(variacion = (frecuencias_24 - frecuencias_23)/frecuencias_23,
+#          localidad_destino = case_when(posicion_24 >= 20 ~ "Resto",
+#                                                 T ~ localidad_destino)) %>%
+#   group_by(localidad_destino) %>% 
+#   summarise(frecuencias_24 = sum(frecuencias_24, na.rm = T),
+#             frecuencias_23 = sum(frecuencias_23, na.rm = T),
+#             posicion_24 = first(posicion_24),
+#             posicion_23 = first(posicion_23)) %>% 
+#   mutate(variacion = (frecuencias_24-frecuencias_23)/frecuencias_23,
+#          participacion_24 = frecuencias_24/sum(frecuencias_24, na.rm = T),
+#          posicion_24 = case_when(localidad_destino == "Resto" ~ "-",
+#                                  T ~ as.character(posicion_24)),
+#          posicion_23 = case_when(localidad_destino == "Resto" ~ "-",
+#                                  T ~ as.character(posicion_23))) %>%
+#   arrange(-frecuencias_24)
+# 
+# resto <- freq_ciudad_dest_24 %>% 
+#   filter(localidad_destino == "Resto") %>% 
+#   mutate(situacion = "-")
+# 
+# freq_ciudad_dest_24 <- freq_ciudad_dest_24 %>% 
+#   filter(localidad_destino != "Resto") %>% 
+#   mutate(situacion = case_when(as.numeric(posicion_24) < as.numeric(posicion_23) ~ "▲",
+#                                as.numeric(posicion_24) > as.numeric(posicion_23) ~ "▼",
+#                                T ~ "=")) %>% 
+#   rbind(resto) %>% 
+#   drop_na(posicion_24) %>% 
+#   mutate(across(.cols = contains("frecuencias"), ~ round(., 0)),
+#          posicion_23 = if_else(is.na(posicion_23),
+#                                "-",
+#                                posicion_23))
+# 
+# col_order <- c("localidad_destino",
+#                "posicion_24",
+#                "situacion",
+#                "posicion_23",
+#                "frecuencias_24",
+#                "frecuencias_23",
+#                "variacion",
+#                "participacion_24")
+# 
+# freq_ciudad_dest_24 <- freq_ciudad_dest_24[, col_order]
+# 
+# freq_ciudad_dest_24[sapply(freq_ciudad_dest_24, is.infinite)] <- NA
+# 
+# freq_ciudad_dest_24 %>%
+#   gt() %>% 
+#   tab_header(
+#     title = md("__DESTINOS POR SERVICIOS REGULARES__"),
+#     subtitle = md(glue::glue("{str_to_title(strftime(max(base_total$fecha), '%B'))}"))) %>%  
+#   tab_source_note(
+#     source_note = md("**Fuente:** MINTURDEP en base a información de CNRT.")) %>% 
+#   cols_label(
+#     localidad_destino = md("**Ciudad**"),
+#     posicion_23 = md("**2023**"),
+#     situacion = md(""),
+#     posicion_24 = md("**2024**"),
+#     frecuencias_23 = md("**2023**"),
+#     frecuencias_24 = md("**2024**"),
+#     variacion = md("**v.a. %**"),
+#     participacion_24 = md("**Participación 2024 (%)**")) %>% 
+#   cols_align(
+#     align = "center",
+#     columns = everything()) %>% 
+#   opt_table_font(
+#     font = list(
+#       google_font(name = "Encode Sans"))) %>% 
+#   fmt_percent(columns = c("variacion","participacion_24"), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+#   tab_spanner(
+#     label = "Posición",
+#     columns = c("posicion_23", "situacion", "posicion_24")) %>% 
+#   tab_spanner(
+#     label = "Frecuencias",
+#     columns = c("frecuencias_23", "frecuencias_24")
+#   ) %>% 
+#   tab_style(
+#     style = list(
+#       cell_text(weight = "bold")),
+#     locations = cells_column_spanners(spanners = everything())
+#   ) %>%
+#   tab_style(
+#     style = list(
+#       cell_text(color = "#EE3D8F"),
+#       cell_text(weight  = "bold")
+#     ),
+#     locations = cells_body(
+#       columns = variacion,
+#       rows = variacion < 0)
+#   ) %>% 
+#   tab_style(
+#     style = list(
+#       cell_text(color = "#50B8B1"),
+#       cell_text(weight =  "bold")
+#     ),
+#     locations = cells_body(
+#       columns = variacion,
+#       rows = variacion > 0)) %>%
+#   tab_style(
+#     style = list(
+#       cell_text(color = "#EE3D8F"),
+#       cell_text(weight  = "bold")
+#     ),
+#     locations = cells_body(
+#       columns = situacion,
+#       rows = as.numeric(posicion_24) > as.numeric(posicion_23))
+#   ) %>% 
+#   tab_style(
+#     style = list(
+#       cell_text(color = "#50B8B1"),
+#       cell_text(weight =  "bold")
+#     ),
+#     locations = cells_body(
+#       columns = situacion,
+#       rows = as.numeric(posicion_24) < as.numeric(posicion_23))) %>% 
+#   sub_missing(
+#     columns = everything(),
+#     rows = everything(),
+#     missing_text = "-")
+```
+
+```{r Localidades por pasajeros}
+freq_ciudad_dest_24 <- base_total %>% 
+  filter(mes == max(mes)) %>% 
+  group_by(localidad_destino) %>% 
+  summarise(pasajeros_24 = sum(pasajeros, na.rm = T)) %>% 
+  ungroup() %>% 
+  arrange(desc(pasajeros_24)) %>% 
+  mutate(posicion_24 = 1:n(),
+         participacion_24 = pasajeros_24/sum(pasajeros_24, na.rm = T))
+
+freq_ciudad_dest_23 <- base_vieja %>% 
+  filter(mes == max(mes)) %>% 
+  group_by(localidad_destino) %>% 
+  summarise(pasajeros_23 = sum(pasajeros, na.rm = T)) %>% 
+  ungroup() %>% 
+  arrange(desc(pasajeros_23)) %>% 
+  mutate(posicion_23 = 1:n(),
+         participacion_23 = pasajeros_23/sum(pasajeros_23, na.rm = T))
+
+freq_ciudad_dest_24 <- freq_ciudad_dest_24 %>% 
+  full_join(freq_ciudad_dest_23, by = "localidad_destino") %>%
+  mutate(variacion = (pasajeros_24 - pasajeros_23)/pasajeros_23,
+         localidad_destino = case_when(posicion_24 >= 20 ~ "Resto",
+                                                T ~ localidad_destino)) %>%
+  group_by(localidad_destino) %>% 
+  summarise(pasajeros_24 = sum(pasajeros_24, na.rm = T),
+            pasajeros_23 = sum(pasajeros_23, na.rm = T),
+            posicion_24 = first(posicion_24),
+            posicion_23 = first(posicion_23)) %>% 
+  mutate(variacion = (pasajeros_24 - pasajeros_23)/pasajeros_23,
+         participacion_24 = pasajeros_24/sum(pasajeros_24, na.rm = T),
+         posicion_24 = case_when(localidad_destino == "Resto" ~ "-",
+                                 T ~ as.character(posicion_24)),
+         posicion_23 = case_when(localidad_destino == "Resto" ~ "-",
+                                 T ~ as.character(posicion_23))) %>%
+  arrange(-pasajeros_24)
+
+resto <- freq_ciudad_dest_24 %>% 
+  filter(localidad_destino == "Resto") %>% 
+  mutate(situacion = "-")
+
+freq_ciudad_dest_24 <- freq_ciudad_dest_24 %>% 
+  filter(localidad_destino != "Resto") %>% 
+  mutate(situacion = case_when(as.numeric(posicion_24) < as.numeric(posicion_23) ~ "▲",
+                               as.numeric(posicion_24) > as.numeric(posicion_23) ~ "▼",
+                               T ~ "=")) %>% 
+  rbind(resto) %>% 
+  drop_na(posicion_24) %>% 
+  mutate(across(.cols = contains("pasajeros"), ~ round(., 0)),
+         posicion_23 = if_else(is.na(posicion_23),
+                               "-",
+                               posicion_23))
+
+col_order <- c("localidad_destino",
+               "posicion_24",
+               "situacion",
+               "posicion_23",
+               "pasajeros_24",
+               "pasajeros_23",
+               "variacion",
+               "participacion_24")
+
+freq_ciudad_dest_24 <- freq_ciudad_dest_24[, col_order]
+
+freq_ciudad_dest_24[sapply(freq_ciudad_dest_24, is.infinite)] <- NA
+
+freq_ciudad_dest_24 %>%
+  gt() %>% 
+  tab_header(
+    title = md("__DESTINOS POR CANTIDAD DE PASAJEROS__"),
+    subtitle = md(glue::glue("{str_to_title(strftime(max(base_total$fecha), '%B'))}"))) %>%  
+  tab_source_note(
+    source_note = md("**Fuente:** DNMyE en base a información de CNRT.")) %>% 
+  cols_label(
+    localidad_destino = md("**Ciudad**"),
+    posicion_23 = md("**2023**"),
+    situacion = md(""),
+    posicion_24 = md("**2024**"),
+    pasajeros_23 = md("**2023**"),
+    pasajeros_24 = md("**2024**"),
+    variacion = md("**v.a. %**"),
+    participacion_24 = md("**Participación 2024 (%)**")) %>% 
+  cols_align(
+    align = "center",
+    columns = everything()) %>% 
+  opt_table_font(
+    font = list(
+      google_font(name = "Encode Sans"))) %>% 
+  fmt_number(columns = c("pasajeros_23", "pasajeros_24"), sep_mark = ".", decimals = 0) %>% 
+  fmt_percent(columns = c("variacion","participacion_24"), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  tab_spanner(
+    label = "Posición",
+    columns = c("posicion_23", "situacion", "posicion_24")) %>% 
+  tab_spanner(
+    label = "Pasajeros",
+    columns = c("pasajeros_23", "pasajeros_24")
+  ) %>% 
+  tab_style(
+    style = list(
+      cell_text(weight = "bold")),
+    locations = cells_column_spanners(spanners = everything())
+  ) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#EE3D8F"),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = variacion,
+      rows = variacion < 0)
+  ) %>% 
+  tab_style(
+    style = list(
+      cell_text(color = "#50B8B1"),
+      cell_text(weight =  "bold")
+    ),
+    locations = cells_body(
+      columns = variacion,
+      rows = variacion > 0)) %>%
+  tab_style(
+    style = list(
+      cell_text(color = "#EE3D8F"),
+      cell_text(weight  = "bold")
+    ),
+    locations = cells_body(
+      columns = situacion,
+      rows = as.numeric(posicion_24) > as.numeric(posicion_23))
+  ) %>% 
+  tab_style(
+    style = list(
+      cell_text(color = "#50B8B1"),
+      cell_text(weight =  "bold")
+    ),
+    locations = cells_body(
+      columns = situacion,
+      rows = as.numeric(posicion_24) < as.numeric(posicion_23))) %>% 
+  sub_missing(
+    columns = everything(),
+    rows = everything(),
+    missing_text = "-")
+```
+
+```{r}
+rutas_base <- base_total %>%
+  filter(mes == max(mes)) %>%
+  mutate(par_origen_destino = paste0(pmin(localidad_origen, localidad_destino),
+                              " - ",
+                              pmax(localidad_origen, localidad_destino))) %>%
+  group_by(par_origen_destino, tramo_clasificacion) %>%
+  summarise(total = n()) %>% # que cuente las veces que se repite o que haga n_distinct(id) para que sume solo los servicios únicos?
+  ungroup() %>% 
+  slice_max(n = 20, total)
+
+# 1° Ruta
+primer_rank_ruta <- rutas_base[1,1] %>% pull
+primer_rank_ruta_tot <- rutas_base[1,3] %>% pull %>% format(., big.mark = ".")
+# 2° Ruta
+segun_rank_ruta <- (rutas_base %>% filter(tramo_clasificacion == "Intrafederales"))[1,1] %>% pull
+segun_rank_ruta_tot <- (rutas_base %>% filter(tramo_clasificacion == "Intrafederales"))[1,3] %>% pull %>% format(., big.mark = ".")
+# 3° Ruta
+n_ruta_portenias <- (rutas_base %>%
+  group_by(tramo_clasificacion) %>%
+  summarise(total = n()) %>% 
+  arrange(desc(tramo_clasificacion)))[1,2] %>% pull
+
+n_ruta_federales <- (rutas_base %>%
+  group_by(tramo_clasificacion) %>%
+  summarise(total = n()) %>% 
+  arrange(desc(tramo_clasificacion)))[2,2] %>% pull
+```
+
+**La ruta con más servicios en ambos sentidos es `r primer_rank_ruta`**, con `r primer_rank_ruta_tot` número de frecuencias. Entre las rutas que no unen la Capital Federal, la que muestra más servicios es **`r segun_rank_ruta`**, con `r segun_rank_ruta_tot` viajes. En el top 20 de rutas con más servicios del país `r n_ruta_portenias` son porteñas y `r n_ruta_federales` son federales.
+
+```{r}
+rutas_base %>% 
+  ggplot(aes(x = fct_reorder(par_origen_destino, total), y = total, fill = tramo_clasificacion)) +
+  geom_bar(stat = "identity") +
+  geom_label(aes(label = total),
+             fill = "white",
+             hjust = -0.1,
+             size = 3.5,
+             show.legend = F) +
+  scale_fill_dnmye() +
+  scale_y_continuous(limits = c(0, 4000),
+                     breaks = seq(0, 4000, 500))+
+  labs(title = "Top 20: Rutas más transitadas",
+       subtitle = "Abril 2023",
+       x = "",
+       y = "Viajes",
+       fill = "",
+       caption = "Nota: Los números representan viajes totales en ambos sentidos")+
+  theme_minimal()+
+  coord_flip() +
+  theme(legend.position = "bottom")
+
+```
+
+```{r}
+base_total_pasajeros <- base_total %>%
+  filter(mes == max(mes)) %>%
+  mutate(par_origen_destino = paste0(pmin(localidad_origen, localidad_destino),
+                              " - ",
+                              pmax(localidad_origen, localidad_destino))) %>%
+  group_by(par_origen_destino, tramo_clasificacion) %>%
+  summarise(total = sum(pasajeros, na.rm = T)) %>%
+  ungroup() %>% 
+  slice_max(n = 20, total)
+
+# 1° Ruta
+primer_rank_ruta_pasajeros <- base_total_pasajeros[1,1] %>% pull
+primer_rank_ruta_tot_pasajeros <- base_total_pasajeros[1,3] %>% pull %>% format(., big.mark = ".")
+# 2° Ruta
+segun_rank_ruta_pasajeros <- (base_total_pasajeros %>% filter(tramo_clasificacion == "Intrafederales"))[1,1] %>% pull
+segun_rank_ruta_tot_pasajeros <- (base_total_pasajeros %>% filter(tramo_clasificacion == "Intrafederales"))[1,3] %>% pull %>% format(., big.mark = ".")
+# 3° Ruta
+n_ruta_portenias_pasajeros <- (base_total_pasajeros %>%
+  group_by(tramo_clasificacion) %>%
+  summarise(total = n()) %>% 
+  arrange(desc(tramo_clasificacion)))[1,2] %>% pull
+
+n_ruta_federales_pasajeros <- (base_total_pasajeros %>%
+  group_by(tramo_clasificacion) %>%
+  summarise(total = n()) %>% 
+  arrange(desc(tramo_clasificacion)))[2,2] %>% pull
+```
+
+Con respecto al número de pasajeros, **la ruta más transitada del mes es `r primer_rank_ruta_pasajeros`**, con `r primer_rank_ruta_tot_pasajeros` pasajeros totales. Para con las rutas intrafederales, la más utilizada es **`r segun_rank_ruta_pasajeros`**, con `r segun_rank_ruta_tot_pasajeros` usuarios. En total, del top 20 de rutas con más pasajeros del país, `r n_ruta_portenias_pasajeros` son porteñas y `r n_ruta_federales_pasajeros` son federales.
+
+```{r}
+base_total_pasajeros %>% 
+ggplot(aes(x = fct_reorder(par_origen_destino, total), y = total, fill = tramo_clasificacion)) +
+  geom_bar(stat = "identity") +
+  geom_label(aes(label = format(total, big.mark = ".")),
+             fill = "white",
+             hjust = -0.1,
+             size = 3.5,
+        show.legend = F) +
+  scale_fill_dnmye() +
+  scale_y_continuous(limits = c(0, 40000),
+                     breaks = seq(0, 40000, 5000),
+                     labels = function(x) format(x, 
+                                                 big.mark = "."))+
+  labs(title = "Top 20: Rutas más transitadas",
+       subtitle = "Abril 2023",
+       x = "",
+       y = "Pasajeros",
+       fill = "",
+       caption = "Nota: Los números representan la suma de pasajeros en ambos sentidos")+
+  theme_minimal()+
+  coord_flip() +
+  theme(legend.position = "bottom")
+```
+
+
+```{r RUTAS}
+
+# Rutas más frecuentes (con 4 o más frecuencias mensuales)
+rutas_aereas_numero <- read_file_srv("/srv/DataDNMYE/cnrt/recursos/rutas_por_mes_clasificadas.csv")
+
+# Rutas Federales
+rutas_numero_federales <- (rutas_aereas_numero %>% filter(fecha == max(fecha)))[1,2] %>% pull
+
+# Rutas Porteñas
+rutas_numero_portenias <- (rutas_aereas_numero %>% filter(fecha == max(fecha)))[2,2] %>% pull
+
+# Rutas Totales
+rutas_numero_total <- rutas_numero_federales + rutas_numero_portenias
+
+# Rutas Totales
+rutas_aereas_numero_tot <- rutas_aereas_numero %>% 
+  group_by(fecha) %>% 
+  summarise(total_rutas = sum(total_rutas, na.rm = T)) %>% 
+  filter(year(fecha) >= max(year(fecha)) -1) %>% 
+  filter(month(fecha) == month(max(fecha))) %>% 
+  ungroup() %>% 
+  mutate(var = round((total_rutas/lag(total_rutas) - 1)*100, 2))
+
+# Rutas totales 2023
+rutas_numero_total_previo <- rutas_aereas_numero_tot[1,2] %>% pull
+
+# Diferencias porcentual N Rutas anio actual vs previo
+rutas_numero_cabotaje_diferencia <- if_else((rutas_aereas_numero_tot[2,3] %>% pull)>0,
+                                            paste0((rutas_aereas_numero_tot[2,3] %>% pull),
+                                                   "% más"),
+                                            paste0((rutas_aereas_numero_tot[2,3] %>% pull)*(-1),
+                                                   "% menos"))
+
+```
+
+A **`r datos_mes_anio`**, existían en el país **`r rutas_numero_total` rutas con 4 o más frecuencias mensuales**, `r rutas_numero_cabotaje_diferencia` con respecto al mismo mes del año pasado (`r rutas_numero_total_previo`). De dicho total, `r rutas_numero_federales` eran federales y `r rutas_numero_portenias` eran porteñas.
+
+```{r}
+
+# VER
+graf_4 <- 
+  rutas_aereas_numero %>% 
+  ggplot(aes(x = fecha,
+             y = total_rutas,
+             text = paste("Fecha:",
+                          format(fecha,"%b-%y"),
+                          "<br> Total:",
+                          format(total_rutas,
+                                 big.mark=".",
+                                 decimal.mark = ",",
+                                 digits=0)))) +
+  geom_segment(aes(xend = fecha,
+                   y = 0,
+                   yend = total_rutas),
+               color = dnmye_colores("cian"))+
+  geom_point(color = dnmye_colores("cian"),
+             size = 1.25,
+             fill = alpha(dnmye_colores("cian"), 0.3),
+             alpha = 0.7,
+             shape = 21,
+             stroke = 2) + 
+  geom_point(data = rutas_aereas_numero %>% 
+                filter(month(fecha) == month(max(fecha))),
+             color = dnmye_colores("rosa"),
+             size = 1,
+             fill = alpha(dnmye_colores("rosa"), 0.3),
+             alpha = 0.7,
+             shape = 21,
+             stroke = 1.75) + 
+  scale_y_continuous(limits = c(0, 1000),
+                     breaks = seq(0, 1000, 250))+
+  scale_x_date(date_breaks = "4 month", 
+               date_labels = "%b-%y")+
+  scale_fill_dnmye(palette = "cualitativa", reverse = -1)+
+  labs(title = "Cantidad de rutas",
+       subtitle = "Con al menos 4 frecuencias mensuales",
+       y = "",
+       x = "",
+       color = "",
+       caption = glue::glue("Fuente: MINTURDEP en base a información de CNRT\n Nota: En rojo, los meses de {datos_mes_anio}.")) +
+  theme_minimal() +
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 45,
+                                   hjust = 1,
+                                   vjust = 1)) +
+  facet_grid(ruta_clasificacion ~ .)
+
+ggplotly(graf_4, tooltip = "text") %>% 
+  layout(title = list(text = paste0("Cantidad de rutas",
+                                    '<br>',
+                                    '<sup>',
+                                    "Con 4 o más frecuencias mensuales",'</sup>')))
+```
+
+```{r}
+# pasajeros_totales_cabotaje <- cabotaje %>% 
+#   select(anio_local, mes_local, origen_oaci, destino_oaci, pax_ad) %>%
+#   pivot_longer(cols = c(origen_oaci, destino_oaci),
+#                names_to = "variable",
+#                values_to = "oaci") %>%
+#   filter(oaci != "EGYP") %>% 
+#   group_by(anio_local, mes_local, oaci) %>% 
+#   summarise(pasajeros = sum(pax_ad, na.rm = T)) %>% 
+#   mutate(pasajeros = round(pasajeros))
+# 
+# pasajeros_totales_cabotaje_mes <- pasajeros_totales_cabotaje %>% 
+#   ungroup() %>% 
+#   filter(anio_local == max(anio_local)) %>% 
+#   filter(mes_local == max(mes_local)) %>% 
+#   rename(pasajeros_mes_actual = pasajeros) %>% 
+#   ungroup() %>% 
+#   select(oaci,
+#          pasajeros_mes_actual)
+# 
+# pasajeros_totales_cabotaje_mes_previo <- pasajeros_totales_cabotaje %>% 
+#   ungroup() %>% 
+#   filter(anio_local == max(anio_local)) %>% 
+#   filter(mes_local == max(mes_local) - 1) %>% 
+#   rename(pasajeros_mes_previo = pasajeros) %>% 
+#   ungroup() %>% 
+#   select(oaci,
+#          pasajeros_mes_previo)
+# 
+# pasajeros_totales_cabotaje_mes_anio_previo <- pasajeros_totales_cabotaje %>% 
+#   ungroup() %>% 
+#   filter(anio_local == max(anio_local) - 1) %>% 
+#   filter(mes_local == month(max(base_total$Fecha))) %>%
+#   rename(pasajeros_mes_anio_previo = pasajeros) %>% 
+#   ungroup() %>% 
+#   select(oaci,
+#          pasajeros_mes_anio_previo)
+# 
+# pasajeros_totales_cabotaje_mes_2019 <- pasajeros_totales_cabotaje %>% 
+#   ungroup() %>% 
+#   filter(anio_local == 2019) %>% 
+#   filter(mes_local == month(max(base_total$Fecha))) %>%
+#   rename(pasajeros_mes_2019 = pasajeros) %>% 
+#   ungroup() %>% 
+#   select(oaci,
+#          pasajeros_mes_2019)
+# 
+# pasajeros_totales_cabotaje_mes <- pasajeros_totales_cabotaje_mes %>% 
+#   full_join(pasajeros_totales_cabotaje_mes_2019, by = "oaci") %>% 
+#   full_join(pasajeros_totales_cabotaje_mes_previo, by = "oaci") %>% 
+#   full_join(pasajeros_totales_cabotaje_mes_anio_previo, by = "oaci") %>% 
+#   mutate(across(.cols = everything(.),
+#                 ~ replace_na(., 0)),
+#          variacion_mes = (pasajeros_mes_actual/pasajeros_mes_previo) - 1,
+#          variacion_mes = if_else(!is.finite(variacion_mes),
+#                                  0,
+#                                  variacion_mes),
+#          variacion_anual = (pasajeros_mes_actual/pasajeros_mes_anio_previo) - 1,
+#          variacion_anual = if_else(!is.finite(variacion_anual),
+#                                    0,
+#                                    variacion_anual))
+# 
+# pasajeros_totales_cabotaje_acumulado <- pasajeros_totales_cabotaje %>% 
+#   ungroup() %>% 
+#   filter(mes_local <= month(max(base_total$Fecha))) %>% 
+#   group_by(anio_local, oaci) %>% 
+#   summarise(pasajeros_acumulados = sum(pasajeros, na.rm = T)) %>% 
+#   mutate(anio_local = paste0("anio_", anio_local)) %>% 
+#   pivot_wider(names_from = anio_local,
+#               values_from = pasajeros_acumulados)
+# 
+# aeropuertos <- read_file_srv("aerocomercial/libros_de_codigos/ANAC/aeropuertos_nuevos.xlsx", col_types = "text") %>% 
+#   mutate(aeropuerto_etiqueta_anac = case_when(is.na(aeropuerto_etiqueta_anac) ~ nombre_ingles,
+#                                               T ~ aeropuerto_etiqueta_anac),
+#          localidad_etiqueta_indec = case_when(is.na(localidad_etiqueta_indec) ~ localidad_ingles,
+#                                               T ~ localidad_etiqueta_indec)) %>% 
+#   select(codigo_oaci,
+#          aeropuerto = aeropuerto_etiqueta_anac,
+#          localidad = localidad_etiqueta_indec,
+#          provincia)
+# 
+# tabla <- pasajeros_totales_cabotaje_acumulado %>% 
+#   left_join(pasajeros_totales_cabotaje_mes, by = "oaci") %>% 
+#   left_join(aeropuertos, by = c("oaci" = "codigo_oaci")) %>% 
+#   arrange(-anio_2024) %>% 
+#   mutate(ranking = row_number(),
+#          localidad = case_when(ranking >= 40 ~ "Resto",
+#                                T ~ localidad)) %>% 
+#   group_by(localidad) %>% 
+#   summarise(anio_2017 = sum(anio_2017, na.rm = T),
+#             anio_2018 = sum(anio_2018, na.rm = T),
+#             anio_2019 = sum(anio_2019, na.rm = T),
+#             anio_2020 = sum(anio_2020, na.rm = T),
+#             anio_2021 = sum(anio_2021, na.rm = T),
+#             anio_2022 = sum(anio_2022, na.rm = T),
+#             anio_2023 = sum(anio_2023, na.rm = T),
+#             anio_2024 = sum(anio_2024, na.rm = T),
+#             pasajeros_mes_actual = sum(pasajeros_mes_actual, na.rm = T),
+#             pasajeros_mes_2019 = sum(pasajeros_mes_2019, na.rm = T),
+#             pasajeros_mes_previo = sum(pasajeros_mes_previo, na.rm = T),
+#             pasajeros_mes_anio_previo = sum(pasajeros_mes_anio_previo, na.rm = T)) %>%
+#   janitor::adorn_totals(where = "row",
+#                         na.rm = T) %>% 
+#   mutate(across(.cols = 2:13,
+#                 ~ replace_na(., 0)),
+#          variacion_mes = (pasajeros_mes_actual/pasajeros_mes_previo) - 1,
+#          variacion_mes = if_else(!is.finite(variacion_mes),
+#                                  0,
+#                                  variacion_mes),
+#          variacion_anual = (pasajeros_mes_actual/pasajeros_mes_anio_previo) - 1,
+#          variacion_anual = if_else(!is.finite(variacion_anual),
+#                                    0,
+#                                    variacion_anual)) %>%
+#   arrange(-anio_2024)  
+# 
+# tabla_grande <- tabla %>% 
+#   select(-ends_with("_previo")) %>% 
+#   gt() %>% 
+#   tab_header(
+#     title = md("__PASAJEROS TOTALES EN VUELOS DE CABOTAJE POR AEROPUERTO__")) %>%  
+#   tab_source_note(
+#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#   cols_label(
+#     localidad = md("**Aeropuerto**"),
+#     anio_2017 = md("2017"),
+#     anio_2018 = md("2018"),
+#     anio_2019 = md("2019"),
+#     anio_2020 = md("2020"),
+#     anio_2021 = md("2021"),
+#     anio_2022 = md("2022"),
+#     anio_2023 = md("2023"),
+#     anio_2024 = md("2024"),
+#     pasajeros_mes_2019 = md("2019"),
+#     pasajeros_mes_actual = md("2024"),
+#     variacion_mes = md("Mensual"),
+#     variacion_anual = md("Anual")) %>% 
+#   cols_align(
+#     align = "center",
+#     columns = c(2:13))  %>% 
+#   opt_table_font(
+#     font = list(
+#       google_font(name = "Encode Sans"))) %>% 
+#   fmt_percent(columns = c(9:13), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+#   fmt_missing(
+#     columns = everything(),
+#     rows = everything(),
+#     missing_text = "-") %>%
+#   data_color(
+#     columns = contains("variacion"),
+#     apply_to = "text",
+#     colors = scales::col_bin(
+#       bins = c(-Inf, 0, Inf),
+#       palette = c(dnmye_colores("rosa"), dnmye_colores("azul verde")),
+#     )
+#   ) %>% 
+#   tab_spanner(
+#     label = "Variación",
+#     columns = c(variacion_mes, variacion_anual)) %>% 
+#   tab_spanner(
+#     label = glue::glue("Pasajeros {str_to_title(strftime(max(base_total$Fecha), '%B'))}"),
+#     columns = c(pasajeros_mes_actual,
+#                 pasajeros_mes_2019)) %>% 
+#   tab_spanner(
+#     label = glue::glue("Acumulado Período {str_to_title(month(1, , label = T, abbr = T))}","-","{str_to_title(month(max(base_total$Fecha), label = T, abbr = T))}"),
+#     columns = starts_with("anio")) %>% 
+#   tab_style(style = cell_text(weight = "bold"),
+#             locations = cells_column_spanners()) %>%
+#   comunicacion::gt_theme_dnmye(var_total = localidad) %>% 
+#   fmt_number(columns = c(starts_with("anio"),
+#                          starts_with("pasajeros")), 
+#              sep_mark = ".", 
+#              decimals = 0)
+# 
+# # gtsave(tabla,
+# #        "tabla_aeropuertos.png", vwidth = 2000)
+# 
+# tabla %>% 
+#   select(-ends_with("_previo")) %>% 
+#   select(-c(anio_2017, anio_2018, anio_2020, anio_2021, anio_2022)) %>% 
+#   gt() %>% 
+#   tab_header(
+#     title = md("__PASAJEROS TOTALES EN VUELOS DE CABOTAJE POR AEROPUERTO__")) %>%  
+#   tab_source_note(
+#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#   cols_label(
+#     localidad = md("**Aeropuerto**"),
+#     anio_2024 = md("2024"),
+#     anio_2023 = md("2023"),
+#     anio_2019 = md("2019"),
+#     pasajeros_mes_2019 = md("2019"),
+#     pasajeros_mes_actual = md("2024"),
+#     variacion_mes = md("Mensual"),
+#     variacion_anual = md("Anual")) %>% 
+#   cols_align(
+#     align = "center",
+#     columns = c(2:8))  %>% 
+#   opt_table_font(
+#     font = list(
+#       google_font(name = "Encode Sans"))) %>% 
+#   fmt_percent(columns = c(7:8), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+#   fmt_missing(
+#     columns = everything(),
+#     rows = everything(),
+#     missing_text = "-") %>%
+#   data_color(
+#     columns = contains("variacion"),
+#     apply_to = "text",
+#     colors = scales::col_bin(
+#       bins = c(-Inf, 0, Inf),
+#       palette = c(dnmye_colores("rosa"), dnmye_colores("azul verde")),
+#     )
+#   ) %>% 
+#   tab_spanner(
+#     label = "Variación",
+#     columns = c(variacion_mes, variacion_anual)) %>% 
+#   tab_spanner(
+#     label = glue::glue("Pasajeros {str_to_title(strftime(max(base_total$Fecha), '%B'))}"),
+#     columns = c(pasajeros_mes_actual,
+#                 pasajeros_mes_2019)) %>% 
+#   tab_spanner(
+#     label = glue::glue("Acumulado Período {str_to_title(month(1, , label = T, abbr = T))}","-","{str_to_title(month(max(base_total$Fecha), label = T, abbr = T))}"),
+#     columns = starts_with("anio")) %>% 
+#   tab_style(style = cell_text(weight = "bold"),
+#             locations = cells_column_spanners()) %>%
+#   comunicacion::gt_theme_dnmye(var_total = localidad) %>% 
+#   fmt_number(columns = c(starts_with("anio"),
+#                          starts_with("pasajeros")), 
+#              sep_mark = ".", 
+#              decimals = 0)
+
+```
+
