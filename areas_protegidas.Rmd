@@ -23,8 +23,8 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2024-03-01"
-mes <- "marzo"
+fecha <- "2024-04-01"
+mes <- "abril"
 anio <- "2024"
 
 #parques <- c("el leoncito", "sierra de las quijadas")
@@ -451,7 +451,7 @@ data_tabla_2 <- data_tabla_2 %>%
   ) %>%
   tab_source_note(
     source_note = md(
-      "**Fuente**: Dirección Nacional de Mercados y Estadística, Subsecretaría de Turismo en base a la informacion suministrada por la Dirección de Mercadeo de la Dirección Nacional de Uso Público, APN")
+      "**Fuente**: Dirección Nacional de Mercados y Estadística, Subsecretaría de Turismo en base a la informacion suministrada por la Dirección Nacional de Uso Público, APN")
   ) %>%
   #   tab_source_note(
   #   source_note = md(
@@ -572,9 +572,10 @@ chubut <-  read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provi
   left_join(months) %>% 
   mutate(indice_tiempo = as.Date(paste(anio,month,"01",sep = "-")),
          residencia = ifelse(residencia == "no_residentes", "No residentes", "Residentes"),
-         provincia = "Chubut",
-         visitantes = ifelse(area_protegida %in% c("Punta Tombo","Punta Marqués") &
-                               Mes == mes & anio == 2023, 0, visitantes))
+         provincia = "Chubut"
+         # visitantes = ifelse(area_protegida %in% c("Punta Tombo","Punta Marqués") &
+         #                       Mes == mes & anio == 2023, 0, visitantes)
+         )
 
 sanjuan <-read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/Base_parq_prov_ischigualasto.xlsx") %>% 
   rename(indice_tiempo = 1, visitantes = 2) %>% 
