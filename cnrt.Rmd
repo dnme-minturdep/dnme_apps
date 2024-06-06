@@ -22,7 +22,6 @@ library(plotly)
 library(networkD3)
 library(herramientas)
 library(htmlwidgets)
-library(htmltools)
 library(treemapify)
 options(scipen = 999)
 
@@ -328,7 +327,9 @@ region_3 <- (base_total_agrupada_region_texto %>% slice_max(n = 3, total) %>% sl
 region_3_total <- (base_total_agrupada_region_texto %>% slice_max(n = 3, total)%>% slice_tail())[1,2] %>% pull %>% format(., big.mark = ".")
 ```
 
-En lo respectivo a las regiones turísticas, **el `r region_1` fue la que más pasajeros recibió** durante el mes de `r datos_mes_anio` (**`r region_1_total`** en total). A la misma, le siguieron las regiones `r region_2` y `r region_3`, con `r region_2_total` y `r region_3_total` pasajeros, respectivamente.
+En lo respectivo a las regiones turísticas[^3], **el `r region_1` fue la que más pasajeros recibió** durante el mes de `r datos_mes_anio` (**`r region_1_total`** en total). A la misma, le siguieron las regiones `r region_2` y `r region_3`, con `r region_2_total` y `r region_3_total` pasajeros, respectivamente.
+
+[^3]: Las regiones turísticas son Buenos Aires (Buenos Aires), Ciudad Autónoma de Buenos Aires (Ciudad Autónoma de Buenos Aires), Córdoba (Córdoba), Cuyo (Mendoza, San Juan y San Luis), Litoral (Chaco, Corrientes, Entre Ríos, Formosa, Misiones y Santa Fe), Norte (Catamarca, Jujuy, La Rioja, Salta, Santiago del Estero y Tucumán) y Patagonia (Chubut, La Pampa, Neuquén, Río Negro, Santa Cruz y Tierra del Fuego, Antártida e Islas del Atlántico Sur).
 
 ```{r Sankey x región}
 # VER
@@ -397,7 +398,8 @@ sankey <- sankeyNetwork(Links = base_total_agrupada_region_pasajeros,
               nodePadding = 20)
 
 
-sankey <- htmlwidgets::prependContent(sankey, htmltools::tags$h1("Flujo de pasajeros entre regiones turísticas"))
+sankey <- htmlwidgets::prependContent(sankey, htmltools::tags$h1("Flujo de pasajeros entre regiones turísticas",
+                                                                 style = "font-size: 20px"))
 
 sankey
 
@@ -581,7 +583,7 @@ tercer_rank_prov_tot <- rank_provs[3,2] %>% pull %>% format(., big.mark = ".")
 
 ```
 
-Las provincias de **`r primer_rank_prov`, `r segun_rank_prov` y `r tercer_rank_prov`** son aquellas a las que más pasajeros arribaron durante el último mes en buses de media y larga distancia. Las mismas contabilizaron `r primer_rank_prov_tot`, `r segun_rank_prov_tot` y `r tercer_rank_prov_tot`, respectivamente.
+Los distritos de **`r primer_rank_prov`, `r segun_rank_prov` y `r tercer_rank_prov`** son aquellos a los que más pasajeros arribaron durante el último mes en buses de media y larga distancia. Las mismas contabilizaron `r primer_rank_prov_tot`, `r segun_rank_prov_tot` y `r tercer_rank_prov_tot`, respectivamente.
 
 ```{r Treemap}
 # Generamos base - pasajeros
@@ -628,7 +630,7 @@ ggplot(base_total_treemap,
                                start = "topleft") +
   paletteer::scale_fill_paletteer_d("khroma::soil") +
   labs(title = "Cantidad de pasajeros por destino",
-       subtitle = glue::glue("Servicios regulares - {str_to_title(datos_mes_anio)}"),
+       subtitle = glue::glue("Servicios regulares por provincia - {str_to_title(datos_mes_anio)}"),
        caption = 'Nota: "Otras localidades" incluye todos aquellos destinos que no superan el 5% de los pasajeros provinciales.') +
   theme(legend.position = "none")
 
@@ -665,7 +667,7 @@ tercer_rank_loc <- rank_locs[3,1] %>% pull
 tercer_rank_loc_tot <- rank_locs[3,2] %>% pull %>% format(., big.mark = ".")
 ```
 
-Por su parte, a nivel urbano, **`r primer_rank_loc`, `r segun_rank_loc` y `r tercer_rank_loc`** son aquellas localidades del país que más pasajeros recibieron en el período en cuestión. En total, `r primer_rank_loc_tot`, `r segun_rank_loc_tot` y `r tercer_rank_loc_tot` personas arribaron a dichos destinos.
+Por su parte, a nivel urbano, **`r primer_rank_loc`, `r segun_rank_loc` y `r tercer_rank_loc`** son aquellas localidades del país que más pasajeros recibieron en el período en cuestión. En total, `r primer_rank_loc_tot`, `r segun_rank_loc_tot` y `r tercer_rank_loc_tot` personas arribaron respectivamente.
 
 ```{r Localidades por viajes}
 # freq_ciudad_dest_24 <- base_total %>% 
@@ -979,7 +981,7 @@ n_ruta_federales <- (rutas_base %>%
   arrange(desc(tramo_clasificacion)))[2,2] %>% pull
 ```
 
-**La ruta con más servicios en ambos sentidos es `r primer_rank_ruta`**, con `r primer_rank_ruta_tot` número de frecuencias. Entre las rutas que no unen la Capital Federal, la que muestra más servicios es **`r segun_rank_ruta`**, con `r segun_rank_ruta_tot` viajes. En el top 20 de rutas con más servicios del país `r n_ruta_portenias` son porteñas y `r n_ruta_federales` son federales.
+**La ruta con más servicios en ambos sentidos es `r primer_rank_ruta`**, con `r primer_rank_ruta_tot` número de frecuencias. Entre las rutas que no unen la Capital Federal con otros destinos del país, la que muestra más servicios es **`r segun_rank_ruta`**, con `r segun_rank_ruta_tot` viajes. En el top 20 de rutas con más servicios del país `r n_ruta_portenias` son porteñas y `r n_ruta_federales` son federales.
 
 ```{r}
 rutas_base %>% 
@@ -994,9 +996,9 @@ rutas_base %>%
   scale_y_continuous(limits = c(0, 4000),
                      breaks = seq(0, 4000, 500))+
   labs(title = "Top 20: Rutas más transitadas",
-       subtitle = "Abril 2023",
+       subtitle = glue::glue("Viajes - {str_to_sentence(datos_mes_anio)}"),
        x = "",
-       y = "Viajes",
+       y = "Total",
        fill = "",
        caption = "Nota: Los números representan viajes totales en ambos sentidos")+
   theme_minimal()+
@@ -1051,9 +1053,9 @@ ggplot(aes(x = fct_reorder(par_origen_destino, total), y = total, fill = tramo_c
                      labels = function(x) format(x, 
                                                  big.mark = "."))+
   labs(title = "Top 20: Rutas más transitadas",
-       subtitle = "Abril 2023",
+       subtitle = glue::glue("Pasajeros - {str_to_sentence(datos_mes_anio)}"),
        x = "",
-       y = "Pasajeros",
+       y = "Total",
        fill = "",
        caption = "Nota: Los números representan la suma de pasajeros en ambos sentidos")+
   theme_minimal()+
@@ -1097,7 +1099,7 @@ rutas_numero_cabotaje_diferencia <- if_else((rutas_aereas_numero_tot[2,3] %>% pu
 
 ```
 
-A **`r datos_mes_anio`**, existían en el país **`r rutas_numero_total` rutas con 4 o más frecuencias mensuales**, `r rutas_numero_cabotaje_diferencia` con respecto al mismo mes del año pasado (`r rutas_numero_total_previo`). De dicho total, `r rutas_numero_federales` eran federales y `r rutas_numero_portenias` eran porteñas.
+Hasta **`r datos_mes_anio`**, existían en el país **`r rutas_numero_total` rutas con 4 o más frecuencias mensuales**, `r rutas_numero_cabotaje_diferencia` con respecto al mismo mes del año pasado (`r rutas_numero_total_previo`). De dicho total, `r rutas_numero_federales` eran federales y `r rutas_numero_portenias` eran porteñas.
 
 ```{r}
 
