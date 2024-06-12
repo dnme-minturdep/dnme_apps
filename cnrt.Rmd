@@ -399,7 +399,29 @@ sankey <- sankeyNetwork(Links = base_total_agrupada_region_pasajeros,
 
 
 sankey <- htmlwidgets::prependContent(sankey, htmltools::tags$h1("Flujo de pasajeros entre regiones turísticas",
-                                                                 style = "font-size: 20px"))
+                                                                 style = "font-size: 20px;
+                                                                 height: -10%"))
+
+
+# # create left-right label 
+# leftTx <-  htmltools::tags$div( 
+#          style="max-width: 30vw; height: 100%; 
+#                  display: flex; align-items: center; 
+#                  justify-content: center;", 
+#          htmltools::tags$p("ORIGEN"))
+# 
+# rightTx <-  htmltools::tags$div( 
+#          style="max-width: 30vw; height: 100%; 
+#                  display: flex; align-items: center; 
+#                  justify-content: center;", 
+#          htmltools::tags$p("DESTINO"))
+#  
+# # final output with label. combineWidget
+# # can be use by manipulateWidget.
+# sankey <- htmltools::combineWidgets(
+#                       leftCol = leftTx,
+#                       rightCol = rightTx,
+#                       nrow = 1)
 
 sankey
 
