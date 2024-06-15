@@ -12,7 +12,7 @@ params:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = F, message = F, warning = F, 
-                      fig.align = 'left', fig.width = 10,fig.height = 6)
+                      fig.align = 'left', fig.width = 10, fig.height = 6)
 
 library(tidyverse)
 library(comunicacion)
@@ -23,6 +23,9 @@ library(networkD3)
 library(herramientas)
 library(htmlwidgets)
 library(treemapify)
+library(leaflet)
+library(htmltools)
+library(sf)
 options(scipen = 999)
 
 Sys.setlocale(locale = "es_AR.UTF-8")
@@ -32,7 +35,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ```{r carga base}
 
 # Base Actual
-base_total <- read_file_srv("cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-04-30.parquet") # Actualizar
+base_total <- read_file_srv("cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-05-31.parquet") # Actualizar
 
 # Base Año Previo
 base_vieja <- read_file_srv("cnrt/base_de_trabajo/base_final/cnrt_total_historica_2023-01-01_a_2023-12-31.parquet")
@@ -1124,8 +1127,6 @@ rutas_numero_cabotaje_diferencia <- if_else((rutas_aereas_numero_tot[2,3] %>% pu
 Hasta **`r datos_mes_anio`**, existían en el país **`r rutas_numero_total` rutas con 4 o más frecuencias mensuales**, `r rutas_numero_cabotaje_diferencia` con respecto al mismo mes del año pasado (`r rutas_numero_total_previo`). De dicho total, `r rutas_numero_federales` eran federales y `r rutas_numero_portenias` eran porteñas.
 
 ```{r}
-
-# VER
 graf_4 <- 
   rutas_aereas_numero %>% 
   ggplot(aes(x = fecha,
@@ -1179,6 +1180,87 @@ ggplotly(graf_4, tooltip = "text") %>%
                                     '<sup>',
                                     "Con 4 o más frecuencias mensuales",'</sup>')))
 ```
+
+```{r}
+# De dónde sale lo que viene? Ver
+
+# Cargamos las geometrías de las rutas más importantes.
+rutas <- read_file_srv("cnrt/base_de_trabajo/rutas_shape.geojson") 
+
+# Unimos con el dataset de rutas más concurridas del mes.
+base_total_pasajeros <- rutas %>% 
+  left_join(base_total_pasajeros,
+            by = "par_origen_destino") %>% 
+  filter(!is.na(tramo_clasificacion))
+
+# Levantamos las coordenadas de las localidades.
+locs <- read_file_srv("cnrt/base_de_trabajo/localidades_cord.csv") 
+
+locs <- locs %>% 
+  filter(localidad %in% base_total_pasajeros$dst | localidad %in% base_total_pasajeros$src)
+```
+
+
+```{r, fig.cap= "Los trayectos son ilustrativos.", fig.align = 'left'}
+# Editamoas paleta
+colores_rutas <- c("Porteñas" = dnmye_colores("cian"),
+                   "Intrafederales" = dnmye_colores("rosa"))
+
+pal <- colorFactor(colores_rutas, levels = base_total_pasajeros$tramo_clasificacion)
+
+# Editamos título
+tag.map.title <- tags$style(HTML("
+  .leaflet-control.map-title {
+    transform: translate(-50%,20%);
+    position: fixed !important;
+    left: 50%;
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    background: rgba(255,255,255,0.75);
+    font-weight: bold;
+    font-size: 28px;
+  }
+"))
+
+title <- tags$div(
+  tag.map.title, HTML(glue::glue("Rutas más transitadas de {datos_mes_anio}"))
+)
+
+
+# Visualizamos.
+leaflet(width = 700) %>%
+  geoAr::addArgTiles() %>%
+  addPolylines(data = base_total_pasajeros %>% sf::st_jitter(factor = 0.0005),
+               popup = ~ paste(paste("Ruta: ", src, " - ", dst),
+                               paste0("Pasajeros: ", format(total, big.mark = ".")),
+                               sep = "<br/>"),
+               color = ~pal(tramo_clasificacion),
+               smoothFactor = 1,
+               opacity = 0.75,
+               highlightOptions = highlightOptions(color = dnmye_colores("cian"),
+                                                   weight = 2,
+                                                   bringToFront = TRUE)) %>%
+  addCircleMarkers(data = locs,
+                   lat = ~lat,
+                   lng = ~lon,
+                   color = dnmye_colores("gris oscuro"),
+                   stroke = FALSE,
+                   fillOpacity = 0.75,
+                   popup = ~ localidad,
+                   radius = 5) %>%
+  addLegend(
+    data = base_total_pasajeros,
+    pal = pal,
+    values = ~tramo_clasificacion,
+    position = "bottomleft",
+    title = "Ruta:",
+    opacity = 0.9) %>%
+  addControl(title, position = "topleft", className="map-title")
+
+
+```
+
 
 ```{r}
 # pasajeros_totales_cabotaje <- cabotaje %>% 
