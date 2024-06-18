@@ -522,7 +522,7 @@ En el mes de **`r datos_mes_anio`**, se estimaron **`r vuelos_mes_total` vuelos 
 #        y = "Cantidad",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC\n Nota: En rojo, los meses de abril.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC\n Nota: En rojo, los meses de abril.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -580,7 +580,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Cantidad",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -630,7 +630,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Promedio mensual",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
 #   theme_minimal() +
 #   theme(legend.position = "none",
 #         axis.text.x = element_text(angle = 45,
@@ -665,7 +665,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Frecuencias aéreas totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -703,7 +703,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Pasajeros totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -749,7 +749,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Frecuencias aéreas totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -794,7 +794,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Pasajeros totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -840,7 +840,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Total",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -887,7 +887,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -932,7 +932,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #     title = md("__VUELOS DE CABOTAJE POR PROVINCIA DE DESTINO__"),
 #     subtitle = md("__Marzo__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     destino_provincia_etiqueta = md("**Provincia**"),
 #     cuota_2017 = md("**2017**"),
@@ -989,7 +989,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #     title = md("__PASAJEROS POR PROVINCIA DE DESTINO__"),
 #     subtitle = md("__Marzo__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     destino_provincia_etiqueta = md("**Provincia**"),
 #     cuota_2017 = md("**2017**"),
@@ -1055,7 +1055,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #     subtitle = md("__Marzo__"),
 #   ) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     empresa_agrup_def = md("**Ciudad**"),
 #     cuota_2017 = md("**2017**"),
@@ -1125,7 +1125,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #     subtitle = "Sobre el total de pasajeros en el mes",
 #   ) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     empresa_agrup_def = md("**Aerolínea**"),
 #     cuota_2017 = md("**2017**"),
@@ -1195,7 +1195,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #     subtitle = md("__Marzo__"),
 #   ) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     empresa_agrup_def = md("**Ciudad**"),
 #     cuota_2017 = md("**2017**"),
@@ -1301,7 +1301,7 @@ graf_7 <- cabotaje %>%
        y = "",
        x = "",
        color = "",
-       caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+       caption = "Fuente: DNMyE en base a información de ANAC.") +
   theme_minimal() +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45,
@@ -1634,7 +1634,7 @@ herfintal_prov_empre %>%
 #     title = md("__VUELOS DE CABOTAJE POR REGIÓN, PROVINCIA Y CIUDAD__"),
 #     subtitle = "2023") %>%
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     provincia = md("**Provincia**"),
 #     localidad = md("**Localidad**"),
@@ -1748,7 +1748,7 @@ freq_ciudad_dest_24 %>%
     title = md("__DESTINOS POR VUELOS DE CABOTAJE__"),
     subtitle = md(glue::glue("{str_to_title(strftime(max(base_total$Fecha), '%B'))}"))) %>%  
   tab_source_note(
-    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+    source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
   cols_label(
     destino_localidad_etiqueta = md("**Ciudad**"),
     posicion_23 = md("**2023**"),
@@ -1840,7 +1840,7 @@ freq_ciudad_dest_24 %>%
 #     title = md("__RANKING DE VUELOS DE CABOTAJE POR CIUDAD DE DESTINO__"),
 #     subtitle = md("__Marzo 2023__") ) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     destino_localidad_etiqueta = md("**Ciudad**"),
 #     `Aerolíneas Argentinas` = md("**Aerolíneas Argentinas**"),
@@ -2006,7 +2006,7 @@ graf_4 <- cabotaje %>%
        y = "",
        x = "",
        color = "",
-       caption = "Fuente: MINTURDEP en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
+       caption = "Fuente: DNMyE en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
   theme_minimal() +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45,
@@ -2102,7 +2102,7 @@ ggplotly(graf_4, tooltip = "text") %>%
 #     title = md("__RUTAS AÉREAS DEL INTERIOR__"),
 #     subtitle = "Marzo 2023") %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   tab_source_note(
 #     source_note = md("Comprende rutas aéreas que no conenctan con el AMBA")) %>% 
 #   cols_label(
@@ -2171,7 +2171,7 @@ En lo que respecta al mercado internacional, en **`r datos_mes_anio`**, se reali
 #        y = "Frecuencias totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2227,7 +2227,7 @@ Para con al número de **asientos** disponibles en vuelos internacionales, **`r 
 #        y = "Total",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2262,7 +2262,7 @@ Para con al número de **asientos** disponibles en vuelos internacionales, **`r 
 #        y = "Promedio mensual",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2351,7 +2351,7 @@ graf_12 <- internacional %>%
        y = "",
        x = "",
        color = "",
-       caption = "Fuente: MINTURDEP en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
+       caption = "Fuente: DNMyE en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
   theme_minimal() +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45,
@@ -2436,7 +2436,7 @@ graf_13 <-  internacional %>%
        y = "",
        x = "",
        color = "",
-       caption = "Fuente: MINTURDEP en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
+       caption = "Fuente: DNMyE en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
   theme_minimal() +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45,
@@ -2509,7 +2509,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #        x = "",
 #        color = "",
 #        fill = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2553,7 +2553,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #        x = "",
 #        color = "",
 #        fill = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2592,7 +2592,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #        y =  "Pasajeros totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2631,7 +2631,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #        y =  "Asientos totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2674,7 +2674,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #        y =  "Factor de ocupación",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: MINTURDEP en base a información de ANAC.") +
+#        caption = "Fuente: DNMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2749,7 +2749,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #     title = md("__FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES A ARGENTINA POR CONTINENTE DE ORIGEN__"),
 #     subtitle = "Marzo 2023") %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     mes_local = md("**Mes**"),
 #     africa_23 = md("**África**"),
@@ -2856,7 +2856,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #     title = md("__FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES DESDE ARGENTINA POR CONTINENTE DE DESTINO__"),
 #     subtitle = "Marzo 2023") %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     mes_local = md("**Mes**"),
 #     africa_23 = md("**África**"),
@@ -3003,7 +3003,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #     title = md("__FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES POR CONTINENTE Y PAÍS DE ORIGEN__"),
 #     subtitle = md("__MARZO__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     origen_pais_etiqueta = md("**País**"),
 #     empresa_agrup_def = md("**Companía Aérea**"),
@@ -3074,7 +3074,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #     title = md("__FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES POR CONTINENTE Y PAÍS DE DESTINO__"),
 #     subtitle = md("__MARZO__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     destino_pais_etiqueta = md("**País**"),
 #     empresa_agrup_def = md("**Companía Aérea**"),
@@ -3332,7 +3332,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #     title = md("__RANKING DE FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES POR CIUDAD DE ORIGEN__"),
 #     subtitle = "ABRIL") %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     origen_localidad_etiqueta = md("**Ciudad**"),
 #     posicion_23 = md("**2023**"),
@@ -3485,7 +3485,7 @@ vuelos_int %>%
     title = md("__RANKING DE DESTINOS POR VUELOS INTERNACIONALES__"),
     subtitle = glue::glue("{str_to_title(strftime(max(base_total$Fecha), '%B'))}")) %>% 
   tab_source_note(
-    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>%   cols_label(
+    source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>%   cols_label(
       destino_localidad_etiqueta = md("**Ciudad**"),
       posicion_24 = md("**2024**"),
       situacion = "",
@@ -3854,7 +3854,7 @@ aerolineas_int %>%
     title = md("__RANKING DE COMPAÑÍAS AÉREAS POR VUELOS\nINTERNACIONALES AL PAÍS__"),
     subtitle = glue::glue("{str_to_title(strftime(max(base_total$Fecha), '%B %Y'))}")) %>% 
   tab_source_note(
-    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+    source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
   cols_label(
     empresa_agrup_def = md("**Compañía Aérea**"),
     posicion_24 = md("**2024**"),
@@ -3977,7 +3977,7 @@ aerolineas_int %>%
 #     title = md("__ÍNDICE DE HERFINDAHL Y PORCENTAJE DE LOS VUELOS INTERNACIONALES POR PAÍS DE ORIGEN__"),
 #     subtitle = md("__MARZO__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     origen_pais_etiqueta = md("**País**"),
 #     cuota_2017 = md("**2017**"),
@@ -4040,7 +4040,7 @@ aerolineas_int %>%
 #     title = md("__ÍNDICE DE HERFINDAHL Y PARTICIPACIÓN PORCENTUAL DE PASAJEROS TRANSPORTADOS SEGÚN PAÍS DE ORIGEN__"),
 #     subtitle = md("__MARZO__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     origen_pais_etiqueta = md("**País**"),
 #     cuota_2017 = md("**2017**"),
@@ -4101,7 +4101,7 @@ aerolineas_int %>%
 #   tab_header(
 #     title = md("__ÍNDICE DE HERFINDAHL Y PARTICIPACIÓN PORCENTUAL DE VUELOS SEGÚN AEROLÍNEAS__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     empresa_agrup_def = md("**Ciudad**"),
 #     cuota_2022 = md("**2022**"),
@@ -4167,7 +4167,7 @@ socoso_aero_total %>%
     title = md("__CUOTA DE MERCADO DE CABOTAJE POR AEROLÍNEA__"),
     subtitle = glue::glue("Sobre el total de pasajeros - {str_to_title(strftime(max(base_total$Fecha), '%B'))}")) %>% 
   tab_source_note(
-    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+    source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
   tab_source_note(
     source_note = md("**Nota:** El índice de Herfindahl se obtiene sumando las cuotas de mercado de cada actor elevadas al cuadrado.")) %>% 
   cols_label(
@@ -4351,7 +4351,7 @@ cowplot::plot_grid(titulo, cuadro, ncol = 1, rel_heights = c(0.1, 0.75))
 #     title = md("__RUTAS AÉREAS DEL INTERIOR__"),
 #     subtitle = "Marzo 2023") %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
 #   tab_source_note(
 #     source_note = md("Comprende rutas aéreas que no conenctan con el AMBA")) %>% 
 #   cols_label(
@@ -4445,7 +4445,7 @@ rutas_federales <- cabotaje %>%
        y = "",
        x = "",
        color = "",
-       caption = "Fuente: MINTURDEP en base a información de ANAC.\n Comprende rutas aéreas que no conenctan con el AMBA.\n Nota: En rojo, los meses de abril,") +
+       caption = "Fuente: DNMyE en base a información de ANAC.\n Comprende rutas aéreas que no conenctan con el AMBA.\n Nota: En rojo, los meses de abril,") +
   theme_minimal() +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45,
@@ -4578,7 +4578,7 @@ tabla_grande <- tabla %>%
   tab_header(
     title = md("__PASAJEROS TOTALES EN VUELOS DE CABOTAJE POR AEROPUERTO__")) %>%  
   tab_source_note(
-    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+    source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
   cols_label(
     localidad = md("**Aeropuerto**"),
     anio_2017 = md("2017"),
@@ -4640,7 +4640,7 @@ tabla %>%
   tab_header(
     title = md("__PASAJEROS TOTALES EN VUELOS DE CABOTAJE POR AEROPUERTO__")) %>%  
   tab_source_note(
-    source_note = md("**Fuente:** MINTURDEP en base a información de ANAC.")) %>% 
+    source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
   cols_label(
     localidad = md("**Aeropuerto**"),
     anio_2024 = md("2024"),
