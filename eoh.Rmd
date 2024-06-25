@@ -803,8 +803,10 @@ check <- nrow(tabla3_A[tabla3_A$estadia_total == sort(tabla3_A$estadia_total, na
 pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/pernoctes-viajeros-y-estadia-media-por-localidad.csv", encoding = "UTF-8")
 
 #Localidades que no corresponde mostrar datos (AD HOC,INDEC)
-localidades_sin_datos <- c("Corrientes","Puerto Iguazú","Neuquén","Las Grutas")
-localidades_insuficiencia <- c("Las Grutas","Calafate")
+
+localidades_sin_datos <- c("Corrientes")#Localidades años anterior
+
+localidades_insuficiencia <- c("x")#Para localidades de este año
 
 #Tabla localidades
 tabla4 <- pernoctaciones_localidad %>% 
