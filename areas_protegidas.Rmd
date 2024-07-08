@@ -148,6 +148,8 @@ tabla.1.acum <-  data_tabla_1 %>%
 <br> 
 En el mes de `r mes` se registraron `r format(round(pull(tabla.1.mes[tabla.1.mes$period == fecha,"total"]),0),big.mark=".")` visitas a Parques Nacionales, con `r format(round(pull(tabla.1.mes[tabla.1.mes$period == fecha,"n_residentes"]),0),big.mark=".")` visitas de residentes y `r format(round(pull(tabla.1.mes[tabla.1.mes$period == fecha,"n_no_residentes"]),0),big.mark=".")` de no residentes.
 
+**Nota: No se recibió información de visitas de los PN Los Glaciares, Los Cardones, Pre Delta y Pizarro**
+
 
 <br>
 ```{r}
@@ -592,7 +594,8 @@ data_tabla_2 <- data_tabla_2 %>%
   fmt_missing(columns = 1:10,
               missing_text = "///") %>% 
   sub_zero(columns = 1:10, zero_text = "-") %>% 
-  tab_source_note(glue("///: Dato que no corresponde mostrar debido a la naturaleza de las cosas.")) 
+  tab_source_note(glue("///: Dato que no corresponde mostrar debido a la naturaleza de las cosas.")) %>% 
+    tab_source_note("El PN Perito Moreno se cierra a la visita desde fines de abril a principios de octubre.")
     #tab_source_note("Nota: entre el 22 y 30 de mayo los parques nacionales se cerraron a las visitas (según DI-2021-95-APN-DNO#APNAC) en adhesión a las medidas nacionales (Decreto 334/2021).")
 ```
 
