@@ -23,10 +23,10 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2024-04-01"
-mes <- "abril"
+fecha <- "2024-05-01"
+mes <- "mayo"
 anio <- "2024"
-
+parques_sin_dato <- c("los glaciares","los cardones","predelta")
 #parques <- c("el leoncito", "sierra de las quijadas")
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
@@ -99,6 +99,9 @@ tabla_parques <- parques_nacionales %>%
 
 ```{r}
 data_tabla_1 <- tabla_parques %>% 
+  mutate(visitantes = ifelse(parque_nacional %in% parques_sin_dato &
+                               Mes == str_to_sentence(.GlobalEnv$mes) & anio == as.numeric(.GlobalEnv$anio)-1,
+                             0, visitantes)) %>% 
   group_by(anio,month,residencia) %>% 
   summarise(n = sum(visitantes,na.rm = T)) %>% ungroup() %>% 
   arrange(anio,month) %>% 
@@ -263,8 +266,41 @@ En el mes de `r mes` se registraron `r format(round(pull(tabla.1.mes[tabla.1.mes
 
 
 ```{r}
+data_grafico_1 <- tabla_parques %>% 
+  group_by(anio,month,residencia) %>% 
+  summarise(n = sum(visitantes,na.rm = T)) %>% ungroup() %>% 
+  arrange(anio,month) %>% 
+  group_by(anio,residencia) %>% 
+  mutate(acum = cumsum(n)) %>% ungroup() %>%
+  group_by(residencia) %>% 
+  mutate(var.n = n/lag(n,12)-1,var.acum = acum/lag(acum,12)-1) %>% 
+  mutate(residencia = case_when(residencia == "no residentes" ~ "no_residentes",
+                                TRUE ~ residencia),
+         period = ymd(as.character(glue::glue("{anio}/{month}/01")))) %>% 
+  pivot_wider(.,names_from="residencia",values_from = c("n","acum","var.n","var.acum")) %>% 
+  mutate(total = n_no_residentes + n_residentes,
+         var.total = total/lag(total,12)-1) %>% 
+  group_by(anio) %>% 
+  mutate(total.acum = cumsum(total)) %>% ungroup() %>% 
+  mutate(var.tot.acum = total.acum/lag(total.acum,12)-1) %>% 
+  mutate(
+    var.total = case_when(
+      is.infinite(var.total) ~ `is.na<-`(var.total),
+      TRUE ~ var.total),
+     var.n_no_residentes = case_when(
+      is.infinite(var.n_no_residentes) ~ `is.na<-`(var.n_no_residentes),
+      TRUE ~ var.n_no_residentes),
+     var.n_residentes = case_when(
+      is.infinite(var.n_residentes) ~ `is.na<-`(var.n_residentes),
+      TRUE ~ var.n_residentes)
+    ) %>%
+  select("anio","month",period,total,n_no_residentes,n_residentes,var.n_no_residentes,var.n_residentes,var.total) %>%
+  mutate(part.res = n_residentes/total,
+         part.no.res = n_no_residentes/total,
+         periodo = paste0(mes," ",anio)) 
+
 #Gráfico1
-data_grafico_1 <- tabla.1.mes %>% select(period,total) %>% 
+data_grafico_1 <- data_grafico_1 %>% select(period,total) %>% 
   mutate(total = round(total/1000,1)) %>% 
   filter(period >= "2018-01-01" & period <= fecha)
 grafico_1 <- ggplot(data_grafico_1)  +
@@ -360,6 +396,9 @@ ggplotly(grafico_2,tooltip="text")
 ### Tabla 2 ----
 data_tabla_2 <- tabla_parques %>% 
   mutate(visitantes = coalesce(visitantes, 0)) %>% 
+   mutate(visitantes = ifelse(parque_nacional %in% parques_sin_dato &
+                               Mes == str_to_sentence(.GlobalEnv$mes) & anio == as.numeric(.GlobalEnv$anio)-1,
+                             NA_real_, visitantes)) %>%
   group_by(anio, parque_nacional, residencia) %>% 
   mutate(acumulado = cumsum(visitantes)) %>% ungroup() %>% 
   filter(anio >= 2023 & month == month(fecha)) %>% 
@@ -530,26 +569,25 @@ data_tabla_2 <- data_tabla_2 %>%
    rows = var_ia_acumulado_total > 0)
   ) %>% ## AGRUPAMIENTO DE COLUMNAS POR VARIABLE DE INTERES
   tab_header(title = toupper(glue("{mes} {anio}"))) %>% 
+      tab_spanner(
+   label = md(glue("**ACUMULADO {anio}**")),
+   columns = c(acumulado_2024_total,
+                  var_ia_acumulado_total,
+                  participacion)) %>%
   tab_spanner(
     label = md("**TOTAL**"),
-    columns = vars(visitantes_2024_total, 
-                   var_ia_visitantes_2024_tot,
-                   participacion #SOLO ENERO
+    columns = c(visitantes_2024_total, 
+                   var_ia_visitantes_2024_tot #SOLO ENERO
                    )) %>%
   tab_spanner(
     label = md("**RESIDENTES**"),
-    columns = vars(visitantes_2024_residentes,
+    columns = c(visitantes_2024_residentes,
                    var_ia_visitantes_res))  %>%
     tab_spanner(
     label = md("**NO RESIDENTES**"),
-    columns = vars(visitantes_2024_no_residentes,
+    columns = c(visitantes_2024_no_residentes,
                    var_ia_visitantes_no_res))  %>%
   #tab_header(title = "ACUMULADO 2020")
-  tab_spanner(
-   label = md(glue("**ACUMULADO {anio}**")),
-   columns = vars(acumulado_2024_total,
-                  var_ia_acumulado_total,
-                  participacion)) %>%
   tab_stubhead(label = md("**Parque Nacional**")) %>% 
   fmt_missing(columns = 1:10,
               missing_text = "///") %>% 
@@ -566,7 +604,7 @@ months <- data.frame(Mes = c("enero","febrero","marzo","abril","mayo","junio",
                      month = seq(1,12))
 
 ### AJUSTÉ TOMBO Y MARQUES EN FEBRERO 2023 PARA VARACIONES
-chubut <-  read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/base_trabajo/bases_chubut.csv") %>% 
+chubut <-  read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/insumos/base_trabajo/bases_chubut.csv") %>% 
   filter(Mes != "total") %>% 
   mutate(Mes = ifelse(Mes=="setiembre", "septiembre", Mes)) %>% 
   left_join(months) %>% 
