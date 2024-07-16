@@ -35,7 +35,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ```{r carga base}
 
 # Base Actual
-base_total <- read_file_srv("cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-05-31.parquet") # Actualizar
+base_total <- read_file_srv("cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-06-30.parquet") # Actualizar
 
 # Base Año Previo
 base_vieja <- read_file_srv("cnrt/base_de_trabajo/base_final/cnrt_total_historica_2023-01-01_a_2023-12-31.parquet")
@@ -1006,20 +1006,22 @@ n_ruta_federales <- (rutas_base %>%
   arrange(desc(tramo_clasificacion)))[2,2] %>% pull
 ```
 
-**La ruta con más servicios en ambos sentidos es `r primer_rank_ruta`**, con `r primer_rank_ruta_tot` número de frecuencias. Entre las rutas que no unen la Capital Federal con otros destinos del país, la que muestra más servicios es **`r segun_rank_ruta`**, con `r segun_rank_ruta_tot` viajes. En el top 20 de rutas con más servicios del país `r n_ruta_portenias` son porteñas y `r n_ruta_federales` son federales.
+**La ruta con más servicios en ambos sentidos es `r primer_rank_ruta`**, con `r primer_rank_ruta_tot` frecuencias. Entre las rutas que no unen la Capital Federal con otros destinos del país, la que muestra más servicios es **`r segun_rank_ruta`**, con `r segun_rank_ruta_tot` viajes. En el top 20 de rutas con más servicios del país `r n_ruta_portenias` son porteñas y `r n_ruta_federales` son federales.
 
 ```{r}
 rutas_base %>% 
   ggplot(aes(x = fct_reorder(par_origen_destino, total), y = total, fill = tramo_clasificacion)) +
   geom_bar(stat = "identity") +
-  geom_label(aes(label = total),
+  geom_label(aes(label = format(total, big.mark = ".")),
              fill = "white",
              hjust = -0.1,
              size = 3.5,
-             show.legend = F) +
+        show.legend = F) +
   scale_fill_dnmye() +
   scale_y_continuous(limits = c(0, 4000),
-                     breaks = seq(0, 4000, 500))+
+                     breaks = seq(0, 4000, 500),
+                     labels = function(x) format(x, 
+                                                 big.mark = "."))+
   labs(title = "Top 20: Rutas más transitadas",
        subtitle = glue::glue("Viajes - {str_to_sentence(datos_mes_anio)}"),
        x = "",
@@ -1073,8 +1075,8 @@ ggplot(aes(x = fct_reorder(par_origen_destino, total), y = total, fill = tramo_c
              size = 3.5,
         show.legend = F) +
   scale_fill_dnmye() +
-  scale_y_continuous(limits = c(0, 40000),
-                     breaks = seq(0, 40000, 5000),
+  scale_y_continuous(limits = c(0, 50000),
+                     breaks = seq(0, 50000, 5000),
                      labels = function(x) format(x, 
                                                  big.mark = "."))+
   labs(title = "Top 20: Rutas más transitadas",
