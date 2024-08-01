@@ -23,11 +23,11 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2024-05-01"
-mes <- "mayo"
+fecha <- "2024-06-01"
+mes <- "junio"
 anio <- "2024"
 # parques_sin_dato <- c("los glaciares","los cardones","predelta")
-parques_sin_dato <- c("pizarro","predelta", "laguna blanca")
+parques_sin_dato <- c("pizarro","predelta", "laguna blanca", "formosa", "rio pilcomayo", "colonia benitez")
 #parques <- c("el leoncito", "sierra de las quijadas")
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
@@ -575,6 +575,7 @@ data_tabla_2 <- data_tabla_2 %>%
    columns = c(acumulado_2024_total,
                   var_ia_acumulado_total,
                   participacion)) %>%
+    tab_options(column_labels.font.size = 14) %>% 
   tab_spanner(
     label = md("**TOTAL**"),
     columns = c(visitantes_2024_total, 
@@ -595,7 +596,7 @@ data_tabla_2 <- data_tabla_2 %>%
   sub_zero(columns = 1:10, zero_text = "-") %>% 
   tab_source_note(glue("///: Dato que no corresponde mostrar debido a la naturaleza de las cosas.")) %>% 
     tab_source_note("El PN Perito Moreno se cierra a la visita desde fines de abril a principios de octubre.") %>% 
-  tab_source_note("Nota: No se recibió información de visitas de los PN Pre Delta, Laguna Blanca y la RN Pizarro.")
+  tab_source_note("Nota: No se recibió información de visitas de los PN Pre Delta, Laguna Blanca, Formosa, Colonia Benítez, la RN Pizarro.")
     #tab_source_note("Nota: entre el 22 y 30 de mayo los parques nacionales se cerraron a las visitas (según DI-2021-95-APN-DNO#APNAC) en adhesión a las medidas nacionales (Decreto 334/2021).")
 ```
 
