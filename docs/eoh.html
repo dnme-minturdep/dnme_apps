@@ -2075,9 +2075,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   /* Optional: embed custom fonts here with `@import`          */
   /* This must remain at the top of this file.                 */
-  @import url('https://fonts.googleapis.com/css2?family=Encode+Sans');
-  @import url('https://fonts.googleapis.com/css2?family=Roboto');
-  @import url('https://fonts.googleapis.com/css2?family=Fira Mono');
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat');
+  @import url('https://fonts.googleapis.com/css2?family=Lora');
+  @import url('https://fonts.googleapis.com/css2?family=Fira%20Mono');
 
 
   html {
@@ -2088,16 +2088,16 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     --aside-size:      12px;
     --fig-cap-size:    13px;
     /*-- Main font colors --*/
-    --title-color:     #37BBED;
-    --heading-color:   #37BBED;
+    --title-color:     #252C4F;
+    --heading-color:   #252C4F;
     --body-color:      #383838;                    /* edited */
-    --aside-color:     #37BBED;
-    --fig-cap-color:   #37BBED;
+    --aside-color:     #252C4F;
+    --fig-cap-color:   #252C4F;
     /*-- Specify custom fonts ~~~ must be imported above   --*/
-    --heading-font:    'Encode', sans-serif;         /* edited */
+    --heading-font:    'Lora', sans-serif;         /* edited */
     --mono-font:       'Fira Mono', monospace;     /* edited */
-    --body-font:       'Roboto', sans-serif;         /* edited */
-    --navbar-font:     'Encode', sans-serif;   /* edited */
+    --body-font:       'Montserrat', sans-serif;         /* edited */
+    --navbar-font:     'Lora', sans-serif;   /* edited */
   }
 
 
@@ -2120,19 +2120,21 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     --bkgd-color:       #0F2E3D;
   }
 
-  /* PRUEBAS 
+  /* PRUEBAS
   /*-- Additional custom styles --*/
 
 
 
   .distill-site-header .logo img{
-    max-height: 50px; /* Makes logo bigger, default was 20px */
+    max-height: 30px; /* Makes logo bigger, default was 20px */
+    vertical-align: sub;
+    
   }
 
 
 
   .distill-site-header .title {
-      font-weight: 900; 
+      font-weight: 600;
   }
 
   ul > li::marker {
@@ -2145,15 +2147,15 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   h1, h2, h3, h4, h5, h6 {
     margin-top: 20px;
-    font-family: "Encode Sans";
-    letter-spacing: 2px;  
-    line-height: 2rem; /* increases, so wrapping headers don't overlap */ 
+    font-family: "Lora Sans";
+    letter-spacing: 2px;
+    line-height: 2rem; /* increases, so wrapping headers don't overlap */
 
   }
 
 
   body {
-    font-family: "Roboto";
+    font-family: "Montserrat";
     color: #1f1f1f;
   }
 
@@ -2168,21 +2170,21 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   }
 
 
-  .distill-site-header{ 
+  .distill-site-header{
     padding: 10px 0px;
     font-size: 15px;
-    font-family: 'Encode Sans', sans-serif;
+    font-family: 'Lora Sans', sans-serif;
     letter-spacing: 2px;
-    
-      
+
+
     /* background-image for fade-to-white color of navbar */
-    background-color: #37BBED;
+    background-color: #252C4F;
 
   }
 
   .distill-site-nav a {
     color: #FFFFFF;
-    background-color: #37BBED;
+    background-color: #252C4F;
     text-decoration: none;
   }
 
@@ -2195,7 +2197,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   .distill-site-footer {
     color: #f7f7f7b0;
-    background-color: #37BBED;
+    background-color: #252C4F;
     margin-top: 0px;
     padding: 50px 20px;
     font-size: 12px;
@@ -2210,6 +2212,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     border: 1px solid black;
     border-radius: 10px;
   }
+
 
     
   *,
@@ -6925,7 +6928,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <!--/radix_placeholder_site_in_header-->
 
-  <link rel="stylesheet" href="styles.css" type="text/css"/>
+  <link rel="stylesheet" href="/srv/shiny-server/recursos/dnmye/styles.css" type="text/css"/>
   <link rel="stylesheet" href="strapless.css" type="text/css"/>
 
 </head>
@@ -6944,7 +6947,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <nav class="distill-site-nav distill-site-header">
 <div class="nav-left">
 <a class="logo" href="https://www.yvera.tur.ar/sinta/">
-<img src="sinta.png" alt="Logo"/>
+<img src="https://tableros.yvera.tur.ar/recursos/logos_institucionales/sinta.png" alt="Logo"/>
 </a>
 <a href="index.html" class="title">TABLEROS y REPORTES</a>
 </div>
@@ -7009,18 +7012,18 @@ SINTA
 <h3 id="evolución-de-las-pernoctaciones">Evolución de las pernoctaciones</h3>
 <br>
 <div class="layout-chunk" data-layout="l-body">
-<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-e1155c7e50662347ac05" style="width:1152px;height:384px;"></div>
-<script type="application/json" data-for="htmlwidget-e1155c7e50662347ac05">{"x":{"data":[{"x":[17522,19885],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(190,190,190,0.7)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448,19478,19509,19539,19570,19601,19631,19662,19692,19723,19754,19783,19814,19844,19875],"y":[1,0.90000000000000002,0.90000000000000002,0.69999999999999996,0.59999999999999998,0.5,0.80000000000000004,0.69999999999999996,0.80000000000000004,0.90000000000000002,1.1000000000000001,1,1.2,1,1,0.80000000000000004,0.69999999999999996,0.69999999999999996,0.90000000000000002,0.80000000000000004,0.80000000000000004,0.90000000000000002,1.1000000000000001,1.1000000000000001,1.1000000000000001,1,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.10000000000000001,0.20000000000000001,0.29999999999999999,0.29999999999999999,0.40000000000000002,0.5,0.40000000000000002,0.40000000000000002,0.69999999999999996,0.59999999999999998,0.59999999999999998,0.69999999999999996,0.80000000000000004,0.80000000000000004,1,0.90000000000000002,0.80000000000000004,0.80000000000000004,0.69999999999999996,0.69999999999999996,1,0.80000000000000004,0.80000000000000004,0.90000000000000002,1,1,1.1000000000000001,1,0.90000000000000002,0.69999999999999996,0.59999999999999998,0.59999999999999998],"text":"","type":"scatter","mode":"lines","line":{"width":4.5354330708661417,"color":"rgba(238,61,143,0.8)","dash":"solid"},"hoveron":"points","name":"No residentes","legendgroup":"No residentes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448,19478,19509,19539,19570,19601,19631,19662,19692,19723,19754,19783,19814,19844,19875],"y":[5.0999999999999996,4.5999999999999996,3.5,2.7000000000000002,2.2999999999999998,2.1000000000000001,3.7000000000000002,3,2.8999999999999999,3.1000000000000001,2.8999999999999999,2.7000000000000002,4.7999999999999998,4.2000000000000002,3.2000000000000002,2.6000000000000001,2.2999999999999998,2.2999999999999998,3.8999999999999999,3,3,3.1000000000000001,3,2.8999999999999999,5.2000000000000002,4.5999999999999996,1.6000000000000001,0,0,0.10000000000000001,0.10000000000000001,0.10000000000000001,0.10000000000000001,0.20000000000000001,0.29999999999999999,1,2.7999999999999998,2.7999999999999998,2,1.3999999999999999,0.69999999999999996,0.59999999999999998,2.2000000000000002,2.2000000000000002,2.3999999999999999,2.7999999999999998,3,3.3999999999999999,5.5999999999999996,5.2000000000000002,3.7000000000000002,3.1000000000000001,2.2999999999999998,2.5,3.8999999999999999,3.1000000000000001,3.1000000000000001,3.5,3.2000000000000002,2.8999999999999999,5.2000000000000002,4.5,3.2999999999999998,2.7999999999999998,2.5,2.7000000000000002,3.7999999999999998,3,3.3999999999999999,3.2999999999999998,2.8999999999999999,2.8999999999999999,4.5,3.8999999999999999,3,2.1000000000000001,1.8,2.2000000000000002],"text":"","type":"scatter","mode":"lines","line":{"width":4.5354330708661417,"color":"rgba(146,131,190,0.8)","dash":"solid"},"hoveron":"points","name":"Residentes","legendgroup":"Residentes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448,19478,19509,19539,19570,19601,19631,19662,19692,19723,19754,19783,19814,19844,19875],"y":[1,0.90000000000000002,0.90000000000000002,0.69999999999999996,0.59999999999999998,0.5,0.80000000000000004,0.69999999999999996,0.80000000000000004,0.90000000000000002,1.1000000000000001,1,1.2,1,1,0.80000000000000004,0.69999999999999996,0.69999999999999996,0.90000000000000002,0.80000000000000004,0.80000000000000004,0.90000000000000002,1.1000000000000001,1.1000000000000001,1.1000000000000001,1,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.10000000000000001,0.20000000000000001,0.29999999999999999,0.29999999999999999,0.40000000000000002,0.5,0.40000000000000002,0.40000000000000002,0.69999999999999996,0.59999999999999998,0.59999999999999998,0.69999999999999996,0.80000000000000004,0.80000000000000004,1,0.90000000000000002,0.80000000000000004,0.80000000000000004,0.69999999999999996,0.69999999999999996,1,0.80000000000000004,0.80000000000000004,0.90000000000000002,1,1,1.1000000000000001,1,0.90000000000000002,0.69999999999999996,0.59999999999999998,0.59999999999999998],"text":["fecha:   ene-18 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   feb-18 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   mar-18 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   abr-18 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   may-18 <br>pernoctaciones:  0,6  m <br>origen: No residentes","fecha:   jun-18 <br>pernoctaciones:  0,5  m <br>origen: No residentes","fecha:   jul-18 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   ago-18 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   sep-18 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   oct-18 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   nov-18 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   dic-18 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   ene-19 <br>pernoctaciones:  1,2  m <br>origen: No residentes","fecha:   feb-19 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   mar-19 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   abr-19 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   may-19 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   jun-19 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   jul-19 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   ago-19 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   sep-19 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   oct-19 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   nov-19 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   dic-19 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   ene-20 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   feb-20 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   mar-20 <br>pernoctaciones:  0,5  m <br>origen: No residentes","fecha:   abr-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   may-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jun-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jul-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   ago-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   sep-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   oct-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   nov-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   dic-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   ene-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   feb-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   mar-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   abr-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   may-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jun-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jul-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   ago-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   sep-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   oct-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   nov-21 <br>pernoctaciones:  0,1  m <br>origen: No residentes","fecha:   dic-21 <br>pernoctaciones:  0,2  m <br>origen: No residentes","fecha:   ene-22 <br>pernoctaciones:  0,3  m <br>origen: No residentes","fecha:   feb-22 <br>pernoctaciones:  0,3  m <br>origen: No residentes","fecha:   mar-22 <br>pernoctaciones:  0,4  m <br>origen: No residentes","fecha:   abr-22 <br>pernoctaciones:  0,5  m <br>origen: No residentes","fecha:   may-22 <br>pernoctaciones:  0,4  m <br>origen: No residentes","fecha:   jun-22 <br>pernoctaciones:  0,4  m <br>origen: No residentes","fecha:   jul-22 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   ago-22 <br>pernoctaciones:  0,6  m <br>origen: No residentes","fecha:   sep-22 <br>pernoctaciones:  0,6  m <br>origen: No residentes","fecha:   oct-22 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   nov-22 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   dic-22 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   ene-23 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   feb-23 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   mar-23 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   abr-23 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   may-23 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   jun-23 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   jul-23 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   ago-23 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   sep-23 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   oct-23 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   nov-23 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   dic-23 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   ene-24 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   feb-24 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   mar-24 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   abr-24 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   may-24 <br>pernoctaciones:  0,6  m <br>origen: No residentes","fecha:   jun-24 <br>pernoctaciones:  0,6  m <br>origen: No residentes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(238,61,143,1)","opacity":0.80000000000000004,"size":9.4488188976377963,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(238,61,143,1)"}},"hoveron":"points","name":"No residentes","legendgroup":"No residentes","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448,19478,19509,19539,19570,19601,19631,19662,19692,19723,19754,19783,19814,19844,19875],"y":[5.0999999999999996,4.5999999999999996,3.5,2.7000000000000002,2.2999999999999998,2.1000000000000001,3.7000000000000002,3,2.8999999999999999,3.1000000000000001,2.8999999999999999,2.7000000000000002,4.7999999999999998,4.2000000000000002,3.2000000000000002,2.6000000000000001,2.2999999999999998,2.2999999999999998,3.8999999999999999,3,3,3.1000000000000001,3,2.8999999999999999,5.2000000000000002,4.5999999999999996,1.6000000000000001,0,0,0.10000000000000001,0.10000000000000001,0.10000000000000001,0.10000000000000001,0.20000000000000001,0.29999999999999999,1,2.7999999999999998,2.7999999999999998,2,1.3999999999999999,0.69999999999999996,0.59999999999999998,2.2000000000000002,2.2000000000000002,2.3999999999999999,2.7999999999999998,3,3.3999999999999999,5.5999999999999996,5.2000000000000002,3.7000000000000002,3.1000000000000001,2.2999999999999998,2.5,3.8999999999999999,3.1000000000000001,3.1000000000000001,3.5,3.2000000000000002,2.8999999999999999,5.2000000000000002,4.5,3.2999999999999998,2.7999999999999998,2.5,2.7000000000000002,3.7999999999999998,3,3.3999999999999999,3.2999999999999998,2.8999999999999999,2.8999999999999999,4.5,3.8999999999999999,3,2.1000000000000001,1.8,2.2000000000000002],"text":["fecha:   ene-18 <br>pernoctaciones:  5,1  m <br>origen: Residentes","fecha:   feb-18 <br>pernoctaciones:  4,6  m <br>origen: Residentes","fecha:   mar-18 <br>pernoctaciones:  3,5  m <br>origen: Residentes","fecha:   abr-18 <br>pernoctaciones:  2,7  m <br>origen: Residentes","fecha:   may-18 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jun-18 <br>pernoctaciones:  2,1  m <br>origen: Residentes","fecha:   jul-18 <br>pernoctaciones:  3,7  m <br>origen: Residentes","fecha:   ago-18 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   sep-18 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   oct-18 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   nov-18 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   dic-18 <br>pernoctaciones:  2,7  m <br>origen: Residentes","fecha:   ene-19 <br>pernoctaciones:  4,8  m <br>origen: Residentes","fecha:   feb-19 <br>pernoctaciones:  4,2  m <br>origen: Residentes","fecha:   mar-19 <br>pernoctaciones:  3,2  m <br>origen: Residentes","fecha:   abr-19 <br>pernoctaciones:  2,6  m <br>origen: Residentes","fecha:   may-19 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jun-19 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jul-19 <br>pernoctaciones:  3,9  m <br>origen: Residentes","fecha:   ago-19 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   sep-19 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   oct-19 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   nov-19 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   dic-19 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   ene-20 <br>pernoctaciones:  5,2  m <br>origen: Residentes","fecha:   feb-20 <br>pernoctaciones:  4,6  m <br>origen: Residentes","fecha:   mar-20 <br>pernoctaciones:  1,6  m <br>origen: Residentes","fecha:   abr-20 <br>pernoctaciones:  0,0  m <br>origen: Residentes","fecha:   may-20 <br>pernoctaciones:  0,0  m <br>origen: Residentes","fecha:   jun-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   jul-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   ago-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   sep-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   oct-20 <br>pernoctaciones:  0,2  m <br>origen: Residentes","fecha:   nov-20 <br>pernoctaciones:  0,3  m <br>origen: Residentes","fecha:   dic-20 <br>pernoctaciones:  1,0  m <br>origen: Residentes","fecha:   ene-21 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   feb-21 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   mar-21 <br>pernoctaciones:  2,0  m <br>origen: Residentes","fecha:   abr-21 <br>pernoctaciones:  1,4  m <br>origen: Residentes","fecha:   may-21 <br>pernoctaciones:  0,7  m <br>origen: Residentes","fecha:   jun-21 <br>pernoctaciones:  0,6  m <br>origen: Residentes","fecha:   jul-21 <br>pernoctaciones:  2,2  m <br>origen: Residentes","fecha:   ago-21 <br>pernoctaciones:  2,2  m <br>origen: Residentes","fecha:   sep-21 <br>pernoctaciones:  2,4  m <br>origen: Residentes","fecha:   oct-21 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   nov-21 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   dic-21 <br>pernoctaciones:  3,4  m <br>origen: Residentes","fecha:   ene-22 <br>pernoctaciones:  5,6  m <br>origen: Residentes","fecha:   feb-22 <br>pernoctaciones:  5,2  m <br>origen: Residentes","fecha:   mar-22 <br>pernoctaciones:  3,7  m <br>origen: Residentes","fecha:   abr-22 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   may-22 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jun-22 <br>pernoctaciones:  2,5  m <br>origen: Residentes","fecha:   jul-22 <br>pernoctaciones:  3,9  m <br>origen: Residentes","fecha:   ago-22 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   sep-22 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   oct-22 <br>pernoctaciones:  3,5  m <br>origen: Residentes","fecha:   nov-22 <br>pernoctaciones:  3,2  m <br>origen: Residentes","fecha:   dic-22 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   ene-23 <br>pernoctaciones:  5,2  m <br>origen: Residentes","fecha:   feb-23 <br>pernoctaciones:  4,5  m <br>origen: Residentes","fecha:   mar-23 <br>pernoctaciones:  3,3  m <br>origen: Residentes","fecha:   abr-23 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   may-23 <br>pernoctaciones:  2,5  m <br>origen: Residentes","fecha:   jun-23 <br>pernoctaciones:  2,7  m <br>origen: Residentes","fecha:   jul-23 <br>pernoctaciones:  3,8  m <br>origen: Residentes","fecha:   ago-23 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   sep-23 <br>pernoctaciones:  3,4  m <br>origen: Residentes","fecha:   oct-23 <br>pernoctaciones:  3,3  m <br>origen: Residentes","fecha:   nov-23 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   dic-23 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   ene-24 <br>pernoctaciones:  4,5  m <br>origen: Residentes","fecha:   feb-24 <br>pernoctaciones:  3,9  m <br>origen: Residentes","fecha:   mar-24 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   abr-24 <br>pernoctaciones:  2,1  m <br>origen: Residentes","fecha:   may-24 <br>pernoctaciones:  1,8  m <br>origen: Residentes","fecha:   jun-24 <br>pernoctaciones:  2,2  m <br>origen: Residentes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(146,131,190,1)","opacity":0.80000000000000004,"size":9.4488188976377963,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(146,131,190,1)"}},"hoveron":"points","name":"Residentes","legendgroup":"Residentes","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.858032378580333,"r":7.3059360730593621,"b":61.436280614362815,"l":28.891656288916565},"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.611872146118724},"title":{"text":"en millones de noches. enero 2018-junio 2024. <span style='color:#9283be'>residentes<\/span> y <span style='color:#ee3d8f'>no residentes<\/span>","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":15.940224159402243},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[17522,19885],"tickmode":"array","ticktext":["ene 18","feb 18","mar 18","abr 18","may 18","jun 18","jul 18","ago 18","sep 18","oct 18","nov 18","dic 18","ene 19","feb 19","mar 19","abr 19","may 19","jun 19","jul 19","ago 19","sep 19","oct 19","nov 19","dic 19","ene 20","feb 20","mar 20","abr 20","may 20","jun 20","jul 20","ago 20","sep 20","oct 20","nov 20","dic 20","ene 21","feb 21","mar 21","abr 21","may 21","jun 21","jul 21","ago 21","sep 21","oct 21","nov 21","dic 21","ene 22","feb 22","mar 22","abr 22","may 22","jun 22","jul 22","ago 22","sep 22","oct 22","nov 22","dic 22","ene 23","feb 23","mar 23","abr 23","may 23","jun 23","jul 23","ago 23","sep 23","oct 23","nov 23","dic 23","ene 24","feb 24","mar 24","abr 24","may 24","jun 24"],"tickvals":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448,19478,19509,19539,19570,19601,19631,19662,19692,19723,19754,19783,19814,19844,19875],"categoryorder":"array","categoryarray":["ene 18","feb 18","mar 18","abr 18","may 18","jun 18","jul 18","ago 18","sep 18","oct 18","nov 18","dic 18","ene 19","feb 19","mar 19","abr 19","may 19","jun 19","jul 19","ago 19","sep 19","oct 19","nov 19","dic 19","ene 20","feb 20","mar 20","abr 20","may 20","jun 20","jul 20","ago 20","sep 20","oct 20","nov 20","dic 20","ene 21","feb 21","mar 21","abr 21","may 21","jun 21","jul 21","ago 21","sep 21","oct 21","nov 21","dic 21","ene 22","feb 22","mar 22","abr 22","may 22","jun 22","jul 22","ago 22","sep 22","oct 22","nov 22","dic 22","ene 23","feb 23","mar 23","abr 23","may 23","jun 23","jul 23","ago 23","sep 23","oct 23","nov 23","dic 23","ene 24","feb 24","mar 24","abr 24","may 24","jun 24"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":11.955168119551683},"tickangle":-90,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.27999999999999997,5.8799999999999999],"tickmode":"array","ticktext":["0,0","0,5","1,0","1,5","2,0","2,5","3,0","3,5","4,0","4,5","5,0","5,5"],"tickvals":[0,0.50000000000000022,1,1.5,1.9999999999999998,2.5,3,3.4999999999999996,4,4.5,5,5.5],"categoryorder":"array","categoryarray":["0,0","0,5","1,0","1,5","2,0","2,5","3,0","3,5","4,0","4,5","5,0","5,5"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":11.955168119551683},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":11.689497716894984}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"71ac4e0e4dbd":{"yintercept":{},"type":"scatter"},"71ac790e2eb4":{"x":{},"y":{},"colour":{}},"71ac2eee128e":{"x":{},"y":{},"colour":{},"text":{}}},"cur_data":"71ac4e0e4dbd","visdat":{"71ac4e0e4dbd":["function (y) ","x"],"71ac790e2eb4":["function (y) ","x"],"71ac2eee128e":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-f768394444bf100dd95a" style="width:1152px;height:384px;"></div>
+<script type="application/json" data-for="htmlwidget-f768394444bf100dd95a">{"x":{"data":[{"x":[17522,19885],"y":[0,0],"text":"","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(190,190,190,0.7)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448,19478,19509,19539,19570,19601,19631,19662,19692,19723,19754,19783,19814,19844,19875],"y":[1,0.90000000000000002,0.90000000000000002,0.69999999999999996,0.59999999999999998,0.5,0.80000000000000004,0.69999999999999996,0.80000000000000004,0.90000000000000002,1.1000000000000001,1,1.2,1,1,0.80000000000000004,0.69999999999999996,0.69999999999999996,0.90000000000000002,0.80000000000000004,0.80000000000000004,0.90000000000000002,1.1000000000000001,1.1000000000000001,1.1000000000000001,1,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.10000000000000001,0.20000000000000001,0.29999999999999999,0.29999999999999999,0.40000000000000002,0.5,0.40000000000000002,0.40000000000000002,0.69999999999999996,0.59999999999999998,0.59999999999999998,0.69999999999999996,0.80000000000000004,0.80000000000000004,1,0.90000000000000002,0.80000000000000004,0.80000000000000004,0.69999999999999996,0.69999999999999996,1,0.80000000000000004,0.80000000000000004,0.90000000000000002,1,1,1.1000000000000001,1,0.90000000000000002,0.69999999999999996,0.59999999999999998,0.59999999999999998],"text":"","type":"scatter","mode":"lines","line":{"width":4.5354330708661417,"color":"rgba(238,61,143,0.8)","dash":"solid"},"hoveron":"points","name":"No residentes","legendgroup":"No residentes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448,19478,19509,19539,19570,19601,19631,19662,19692,19723,19754,19783,19814,19844,19875],"y":[5.0999999999999996,4.5999999999999996,3.5,2.7000000000000002,2.2999999999999998,2.1000000000000001,3.7000000000000002,3,2.8999999999999999,3.1000000000000001,2.8999999999999999,2.7000000000000002,4.7999999999999998,4.2000000000000002,3.2000000000000002,2.6000000000000001,2.2999999999999998,2.2999999999999998,3.8999999999999999,3,3,3.1000000000000001,3,2.8999999999999999,5.2000000000000002,4.5999999999999996,1.6000000000000001,0,0,0.10000000000000001,0.10000000000000001,0.10000000000000001,0.10000000000000001,0.20000000000000001,0.29999999999999999,1,2.7999999999999998,2.7999999999999998,2,1.3999999999999999,0.69999999999999996,0.59999999999999998,2.2000000000000002,2.2000000000000002,2.3999999999999999,2.7999999999999998,3,3.3999999999999999,5.5999999999999996,5.2000000000000002,3.7000000000000002,3.1000000000000001,2.2999999999999998,2.5,3.8999999999999999,3.1000000000000001,3.1000000000000001,3.5,3.2000000000000002,2.8999999999999999,5.2000000000000002,4.5,3.2999999999999998,2.7999999999999998,2.5,2.7000000000000002,3.7999999999999998,3,3.3999999999999999,3.2999999999999998,2.8999999999999999,2.8999999999999999,4.5,3.8999999999999999,3,2.1000000000000001,1.8,2.2000000000000002],"text":"","type":"scatter","mode":"lines","line":{"width":4.5354330708661417,"color":"rgba(146,131,190,0.8)","dash":"solid"},"hoveron":"points","name":"Residentes","legendgroup":"Residentes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448,19478,19509,19539,19570,19601,19631,19662,19692,19723,19754,19783,19814,19844,19875],"y":[1,0.90000000000000002,0.90000000000000002,0.69999999999999996,0.59999999999999998,0.5,0.80000000000000004,0.69999999999999996,0.80000000000000004,0.90000000000000002,1.1000000000000001,1,1.2,1,1,0.80000000000000004,0.69999999999999996,0.69999999999999996,0.90000000000000002,0.80000000000000004,0.80000000000000004,0.90000000000000002,1.1000000000000001,1.1000000000000001,1.1000000000000001,1,0.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.10000000000000001,0.20000000000000001,0.29999999999999999,0.29999999999999999,0.40000000000000002,0.5,0.40000000000000002,0.40000000000000002,0.69999999999999996,0.59999999999999998,0.59999999999999998,0.69999999999999996,0.80000000000000004,0.80000000000000004,1,0.90000000000000002,0.80000000000000004,0.80000000000000004,0.69999999999999996,0.69999999999999996,1,0.80000000000000004,0.80000000000000004,0.90000000000000002,1,1,1.1000000000000001,1,0.90000000000000002,0.69999999999999996,0.59999999999999998,0.59999999999999998],"text":["fecha:   ene-18 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   feb-18 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   mar-18 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   abr-18 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   may-18 <br>pernoctaciones:  0,6  m <br>origen: No residentes","fecha:   jun-18 <br>pernoctaciones:  0,5  m <br>origen: No residentes","fecha:   jul-18 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   ago-18 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   sep-18 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   oct-18 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   nov-18 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   dic-18 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   ene-19 <br>pernoctaciones:  1,2  m <br>origen: No residentes","fecha:   feb-19 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   mar-19 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   abr-19 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   may-19 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   jun-19 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   jul-19 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   ago-19 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   sep-19 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   oct-19 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   nov-19 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   dic-19 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   ene-20 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   feb-20 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   mar-20 <br>pernoctaciones:  0,5  m <br>origen: No residentes","fecha:   abr-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   may-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jun-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jul-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   ago-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   sep-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   oct-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   nov-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   dic-20 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   ene-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   feb-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   mar-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   abr-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   may-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jun-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   jul-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   ago-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   sep-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   oct-21 <br>pernoctaciones:  0,0  m <br>origen: No residentes","fecha:   nov-21 <br>pernoctaciones:  0,1  m <br>origen: No residentes","fecha:   dic-21 <br>pernoctaciones:  0,2  m <br>origen: No residentes","fecha:   ene-22 <br>pernoctaciones:  0,3  m <br>origen: No residentes","fecha:   feb-22 <br>pernoctaciones:  0,3  m <br>origen: No residentes","fecha:   mar-22 <br>pernoctaciones:  0,4  m <br>origen: No residentes","fecha:   abr-22 <br>pernoctaciones:  0,5  m <br>origen: No residentes","fecha:   may-22 <br>pernoctaciones:  0,4  m <br>origen: No residentes","fecha:   jun-22 <br>pernoctaciones:  0,4  m <br>origen: No residentes","fecha:   jul-22 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   ago-22 <br>pernoctaciones:  0,6  m <br>origen: No residentes","fecha:   sep-22 <br>pernoctaciones:  0,6  m <br>origen: No residentes","fecha:   oct-22 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   nov-22 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   dic-22 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   ene-23 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   feb-23 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   mar-23 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   abr-23 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   may-23 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   jun-23 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   jul-23 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   ago-23 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   sep-23 <br>pernoctaciones:  0,8  m <br>origen: No residentes","fecha:   oct-23 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   nov-23 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   dic-23 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   ene-24 <br>pernoctaciones:  1,1  m <br>origen: No residentes","fecha:   feb-24 <br>pernoctaciones:  1,0  m <br>origen: No residentes","fecha:   mar-24 <br>pernoctaciones:  0,9  m <br>origen: No residentes","fecha:   abr-24 <br>pernoctaciones:  0,7  m <br>origen: No residentes","fecha:   may-24 <br>pernoctaciones:  0,6  m <br>origen: No residentes","fecha:   jun-24 <br>pernoctaciones:  0,6  m <br>origen: No residentes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(238,61,143,1)","opacity":0.80000000000000004,"size":9.4488188976377963,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(238,61,143,1)"}},"hoveron":"points","name":"No residentes","legendgroup":"No residentes","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448,19478,19509,19539,19570,19601,19631,19662,19692,19723,19754,19783,19814,19844,19875],"y":[5.0999999999999996,4.5999999999999996,3.5,2.7000000000000002,2.2999999999999998,2.1000000000000001,3.7000000000000002,3,2.8999999999999999,3.1000000000000001,2.8999999999999999,2.7000000000000002,4.7999999999999998,4.2000000000000002,3.2000000000000002,2.6000000000000001,2.2999999999999998,2.2999999999999998,3.8999999999999999,3,3,3.1000000000000001,3,2.8999999999999999,5.2000000000000002,4.5999999999999996,1.6000000000000001,0,0,0.10000000000000001,0.10000000000000001,0.10000000000000001,0.10000000000000001,0.20000000000000001,0.29999999999999999,1,2.7999999999999998,2.7999999999999998,2,1.3999999999999999,0.69999999999999996,0.59999999999999998,2.2000000000000002,2.2000000000000002,2.3999999999999999,2.7999999999999998,3,3.3999999999999999,5.5999999999999996,5.2000000000000002,3.7000000000000002,3.1000000000000001,2.2999999999999998,2.5,3.8999999999999999,3.1000000000000001,3.1000000000000001,3.5,3.2000000000000002,2.8999999999999999,5.2000000000000002,4.5,3.2999999999999998,2.7999999999999998,2.5,2.7000000000000002,3.7999999999999998,3,3.3999999999999999,3.2999999999999998,2.8999999999999999,2.8999999999999999,4.5,3.8999999999999999,3,2.1000000000000001,1.8,2.2000000000000002],"text":["fecha:   ene-18 <br>pernoctaciones:  5,1  m <br>origen: Residentes","fecha:   feb-18 <br>pernoctaciones:  4,6  m <br>origen: Residentes","fecha:   mar-18 <br>pernoctaciones:  3,5  m <br>origen: Residentes","fecha:   abr-18 <br>pernoctaciones:  2,7  m <br>origen: Residentes","fecha:   may-18 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jun-18 <br>pernoctaciones:  2,1  m <br>origen: Residentes","fecha:   jul-18 <br>pernoctaciones:  3,7  m <br>origen: Residentes","fecha:   ago-18 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   sep-18 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   oct-18 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   nov-18 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   dic-18 <br>pernoctaciones:  2,7  m <br>origen: Residentes","fecha:   ene-19 <br>pernoctaciones:  4,8  m <br>origen: Residentes","fecha:   feb-19 <br>pernoctaciones:  4,2  m <br>origen: Residentes","fecha:   mar-19 <br>pernoctaciones:  3,2  m <br>origen: Residentes","fecha:   abr-19 <br>pernoctaciones:  2,6  m <br>origen: Residentes","fecha:   may-19 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jun-19 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jul-19 <br>pernoctaciones:  3,9  m <br>origen: Residentes","fecha:   ago-19 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   sep-19 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   oct-19 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   nov-19 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   dic-19 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   ene-20 <br>pernoctaciones:  5,2  m <br>origen: Residentes","fecha:   feb-20 <br>pernoctaciones:  4,6  m <br>origen: Residentes","fecha:   mar-20 <br>pernoctaciones:  1,6  m <br>origen: Residentes","fecha:   abr-20 <br>pernoctaciones:  0,0  m <br>origen: Residentes","fecha:   may-20 <br>pernoctaciones:  0,0  m <br>origen: Residentes","fecha:   jun-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   jul-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   ago-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   sep-20 <br>pernoctaciones:  0,1  m <br>origen: Residentes","fecha:   oct-20 <br>pernoctaciones:  0,2  m <br>origen: Residentes","fecha:   nov-20 <br>pernoctaciones:  0,3  m <br>origen: Residentes","fecha:   dic-20 <br>pernoctaciones:  1,0  m <br>origen: Residentes","fecha:   ene-21 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   feb-21 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   mar-21 <br>pernoctaciones:  2,0  m <br>origen: Residentes","fecha:   abr-21 <br>pernoctaciones:  1,4  m <br>origen: Residentes","fecha:   may-21 <br>pernoctaciones:  0,7  m <br>origen: Residentes","fecha:   jun-21 <br>pernoctaciones:  0,6  m <br>origen: Residentes","fecha:   jul-21 <br>pernoctaciones:  2,2  m <br>origen: Residentes","fecha:   ago-21 <br>pernoctaciones:  2,2  m <br>origen: Residentes","fecha:   sep-21 <br>pernoctaciones:  2,4  m <br>origen: Residentes","fecha:   oct-21 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   nov-21 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   dic-21 <br>pernoctaciones:  3,4  m <br>origen: Residentes","fecha:   ene-22 <br>pernoctaciones:  5,6  m <br>origen: Residentes","fecha:   feb-22 <br>pernoctaciones:  5,2  m <br>origen: Residentes","fecha:   mar-22 <br>pernoctaciones:  3,7  m <br>origen: Residentes","fecha:   abr-22 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   may-22 <br>pernoctaciones:  2,3  m <br>origen: Residentes","fecha:   jun-22 <br>pernoctaciones:  2,5  m <br>origen: Residentes","fecha:   jul-22 <br>pernoctaciones:  3,9  m <br>origen: Residentes","fecha:   ago-22 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   sep-22 <br>pernoctaciones:  3,1  m <br>origen: Residentes","fecha:   oct-22 <br>pernoctaciones:  3,5  m <br>origen: Residentes","fecha:   nov-22 <br>pernoctaciones:  3,2  m <br>origen: Residentes","fecha:   dic-22 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   ene-23 <br>pernoctaciones:  5,2  m <br>origen: Residentes","fecha:   feb-23 <br>pernoctaciones:  4,5  m <br>origen: Residentes","fecha:   mar-23 <br>pernoctaciones:  3,3  m <br>origen: Residentes","fecha:   abr-23 <br>pernoctaciones:  2,8  m <br>origen: Residentes","fecha:   may-23 <br>pernoctaciones:  2,5  m <br>origen: Residentes","fecha:   jun-23 <br>pernoctaciones:  2,7  m <br>origen: Residentes","fecha:   jul-23 <br>pernoctaciones:  3,8  m <br>origen: Residentes","fecha:   ago-23 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   sep-23 <br>pernoctaciones:  3,4  m <br>origen: Residentes","fecha:   oct-23 <br>pernoctaciones:  3,3  m <br>origen: Residentes","fecha:   nov-23 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   dic-23 <br>pernoctaciones:  2,9  m <br>origen: Residentes","fecha:   ene-24 <br>pernoctaciones:  4,5  m <br>origen: Residentes","fecha:   feb-24 <br>pernoctaciones:  3,9  m <br>origen: Residentes","fecha:   mar-24 <br>pernoctaciones:  3,0  m <br>origen: Residentes","fecha:   abr-24 <br>pernoctaciones:  2,1  m <br>origen: Residentes","fecha:   may-24 <br>pernoctaciones:  1,8  m <br>origen: Residentes","fecha:   jun-24 <br>pernoctaciones:  2,2  m <br>origen: Residentes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(146,131,190,1)","opacity":0.80000000000000004,"size":9.4488188976377963,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(146,131,190,1)"}},"hoveron":"points","name":"Residentes","legendgroup":"Residentes","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.858032378580333,"r":7.3059360730593621,"b":61.436280614362815,"l":28.891656288916565},"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.611872146118724},"title":{"text":"en millones de noches. enero 2018-junio 2024. <span style='color:#9283be'>residentes<\/span> y <span style='color:#ee3d8f'>no residentes<\/span>","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":15.940224159402243},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[17522,19885],"tickmode":"array","ticktext":["ene 18","feb 18","mar 18","abr 18","may 18","jun 18","jul 18","ago 18","sep 18","oct 18","nov 18","dic 18","ene 19","feb 19","mar 19","abr 19","may 19","jun 19","jul 19","ago 19","sep 19","oct 19","nov 19","dic 19","ene 20","feb 20","mar 20","abr 20","may 20","jun 20","jul 20","ago 20","sep 20","oct 20","nov 20","dic 20","ene 21","feb 21","mar 21","abr 21","may 21","jun 21","jul 21","ago 21","sep 21","oct 21","nov 21","dic 21","ene 22","feb 22","mar 22","abr 22","may 22","jun 22","jul 22","ago 22","sep 22","oct 22","nov 22","dic 22","ene 23","feb 23","mar 23","abr 23","may 23","jun 23","jul 23","ago 23","sep 23","oct 23","nov 23","dic 23","ene 24","feb 24","mar 24","abr 24","may 24","jun 24"],"tickvals":[17532,17563,17591,17622,17652,17683,17713,17744,17775,17805,17836,17866,17897,17928,17956,17987,18017,18048,18078,18109,18140,18170,18201,18231,18262,18293,18322,18353,18383,18414,18444,18475,18506,18536,18567,18597,18628,18659,18687,18718,18748,18779,18809,18840,18871,18901,18932,18962,18993,19024,19052,19083,19113,19144,19174,19205,19236,19266,19297,19327,19358,19389,19417,19448,19478,19509,19539,19570,19601,19631,19662,19692,19723,19754,19783,19814,19844,19875],"categoryorder":"array","categoryarray":["ene 18","feb 18","mar 18","abr 18","may 18","jun 18","jul 18","ago 18","sep 18","oct 18","nov 18","dic 18","ene 19","feb 19","mar 19","abr 19","may 19","jun 19","jul 19","ago 19","sep 19","oct 19","nov 19","dic 19","ene 20","feb 20","mar 20","abr 20","may 20","jun 20","jul 20","ago 20","sep 20","oct 20","nov 20","dic 20","ene 21","feb 21","mar 21","abr 21","may 21","jun 21","jul 21","ago 21","sep 21","oct 21","nov 21","dic 21","ene 22","feb 22","mar 22","abr 22","may 22","jun 22","jul 22","ago 22","sep 22","oct 22","nov 22","dic 22","ene 23","feb 23","mar 23","abr 23","may 23","jun 23","jul 23","ago 23","sep 23","oct 23","nov 23","dic 23","ene 24","feb 24","mar 24","abr 24","may 24","jun 24"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":11.955168119551683},"tickangle":-90,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.27999999999999997,5.8799999999999999],"tickmode":"array","ticktext":["0,0","0,5","1,0","1,5","2,0","2,5","3,0","3,5","4,0","4,5","5,0","5,5"],"tickvals":[0,0.50000000000000022,1,1.5,1.9999999999999998,2.5,3,3.4999999999999996,4,4.5,5,5.5],"categoryorder":"array","categoryarray":["0,0","0,5","1,0","1,5","2,0","2,5","3,0","3,5","4,0","4,5","5,0","5,5"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"Encode Sans Normal","size":11.955168119551683},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(229,229,229,1)","gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"Encode Sans Normal","size":11.689497716894984}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"277b5d8ef30":{"yintercept":{},"type":"scatter"},"277b69af3195":{"x":{},"y":{},"colour":{}},"277b48d1047":{"x":{},"y":{},"colour":{},"text":{}}},"cur_data":"277b5d8ef30","visdat":{"277b5d8ef30":["function (y) ","x"],"277b69af3195":["function (y) ","x"],"277b48d1047":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 <p><br></p>
 <h3 id="pernoctaciones-viajeros-y-estadía">Pernoctaciones, viajeros y estadía</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div id="bvqgdhmfzb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="lbsddyrtns" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#bvqgdhmfzb .gt_table {
+#lbsddyrtns .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: 0;
@@ -7045,7 +7048,7 @@ SINTA
   border-left-color: #D3D3D3;
 }
 
-#bvqgdhmfzb .gt_heading {
+#lbsddyrtns .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -7057,12 +7060,12 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#bvqgdhmfzb .gt_caption {
+#lbsddyrtns .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#bvqgdhmfzb .gt_title {
+#lbsddyrtns .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -7074,7 +7077,7 @@ SINTA
   border-bottom-width: 0;
 }
 
-#bvqgdhmfzb .gt_subtitle {
+#lbsddyrtns .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -7086,13 +7089,13 @@ SINTA
   border-top-width: 0;
 }
 
-#bvqgdhmfzb .gt_bottom_border {
+#lbsddyrtns .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#bvqgdhmfzb .gt_col_headings {
+#lbsddyrtns .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7107,7 +7110,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#bvqgdhmfzb .gt_col_heading {
+#lbsddyrtns .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7127,7 +7130,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#bvqgdhmfzb .gt_column_spanner_outer {
+#lbsddyrtns .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7139,15 +7142,15 @@ SINTA
   padding-right: 4px;
 }
 
-#bvqgdhmfzb .gt_column_spanner_outer:first-child {
+#lbsddyrtns .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#bvqgdhmfzb .gt_column_spanner_outer:last-child {
+#lbsddyrtns .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#bvqgdhmfzb .gt_column_spanner {
+#lbsddyrtns .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -7159,7 +7162,7 @@ SINTA
   width: 100%;
 }
 
-#bvqgdhmfzb .gt_group_heading {
+#lbsddyrtns .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7185,7 +7188,7 @@ SINTA
   text-align: left;
 }
 
-#bvqgdhmfzb .gt_empty_group_heading {
+#lbsddyrtns .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -7200,15 +7203,15 @@ SINTA
   vertical-align: middle;
 }
 
-#bvqgdhmfzb .gt_from_md > :first-child {
+#lbsddyrtns .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#bvqgdhmfzb .gt_from_md > :last-child {
+#lbsddyrtns .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#bvqgdhmfzb .gt_row {
+#lbsddyrtns .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7227,7 +7230,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#bvqgdhmfzb .gt_stub {
+#lbsddyrtns .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7240,7 +7243,7 @@ SINTA
   padding-right: 5px;
 }
 
-#bvqgdhmfzb .gt_stub_row_group {
+#lbsddyrtns .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7254,11 +7257,11 @@ SINTA
   vertical-align: top;
 }
 
-#bvqgdhmfzb .gt_row_group_first td {
+#lbsddyrtns .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#bvqgdhmfzb .gt_summary_row {
+#lbsddyrtns .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7268,16 +7271,16 @@ SINTA
   padding-right: 5px;
 }
 
-#bvqgdhmfzb .gt_first_summary_row {
+#lbsddyrtns .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#bvqgdhmfzb .gt_first_summary_row.thick {
+#lbsddyrtns .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#bvqgdhmfzb .gt_last_summary_row {
+#lbsddyrtns .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7287,7 +7290,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#bvqgdhmfzb .gt_grand_summary_row {
+#lbsddyrtns .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7297,7 +7300,7 @@ SINTA
   padding-right: 5px;
 }
 
-#bvqgdhmfzb .gt_first_grand_summary_row {
+#lbsddyrtns .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7307,11 +7310,11 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#bvqgdhmfzb .gt_striped {
+#lbsddyrtns .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#bvqgdhmfzb .gt_table_body {
+#lbsddyrtns .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7320,7 +7323,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#bvqgdhmfzb .gt_footnotes {
+#lbsddyrtns .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7334,7 +7337,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#bvqgdhmfzb .gt_footnote {
+#lbsddyrtns .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -7343,7 +7346,7 @@ SINTA
   padding-right: 5px;
 }
 
-#bvqgdhmfzb .gt_sourcenotes {
+#lbsddyrtns .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7357,7 +7360,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#bvqgdhmfzb .gt_sourcenote {
+#lbsddyrtns .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -7365,64 +7368,64 @@ SINTA
   padding-right: 5px;
 }
 
-#bvqgdhmfzb .gt_left {
+#lbsddyrtns .gt_left {
   text-align: left;
 }
 
-#bvqgdhmfzb .gt_center {
+#lbsddyrtns .gt_center {
   text-align: center;
 }
 
-#bvqgdhmfzb .gt_right {
+#lbsddyrtns .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#bvqgdhmfzb .gt_font_normal {
+#lbsddyrtns .gt_font_normal {
   font-weight: normal;
 }
 
-#bvqgdhmfzb .gt_font_bold {
+#lbsddyrtns .gt_font_bold {
   font-weight: bold;
 }
 
-#bvqgdhmfzb .gt_font_italic {
+#lbsddyrtns .gt_font_italic {
   font-style: italic;
 }
 
-#bvqgdhmfzb .gt_super {
+#lbsddyrtns .gt_super {
   font-size: 65%;
 }
 
-#bvqgdhmfzb .gt_footnote_marks {
+#lbsddyrtns .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#bvqgdhmfzb .gt_asterisk {
+#lbsddyrtns .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#bvqgdhmfzb .gt_indent_1 {
+#lbsddyrtns .gt_indent_1 {
   text-indent: 5px;
 }
 
-#bvqgdhmfzb .gt_indent_2 {
+#lbsddyrtns .gt_indent_2 {
   text-indent: 10px;
 }
 
-#bvqgdhmfzb .gt_indent_3 {
+#lbsddyrtns .gt_indent_3 {
   text-indent: 15px;
 }
 
-#bvqgdhmfzb .gt_indent_4 {
+#lbsddyrtns .gt_indent_4 {
   text-indent: 20px;
 }
 
-#bvqgdhmfzb .gt_indent_5 {
+#lbsddyrtns .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -7521,12 +7524,12 @@ SINTA
 <h2 id="categoría-hotelera">CATEGORÍA HOTELERA</h2>
 <h3 id="plazas-y-pernoctaciones">Plazas y pernoctaciones</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div id="yqbjggaecu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="junlgnfujr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#yqbjggaecu .gt_table {
+#junlgnfujr .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: 0;
@@ -7551,7 +7554,7 @@ SINTA
   border-left-color: #D3D3D3;
 }
 
-#yqbjggaecu .gt_heading {
+#junlgnfujr .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -7563,12 +7566,12 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#yqbjggaecu .gt_caption {
+#junlgnfujr .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#yqbjggaecu .gt_title {
+#junlgnfujr .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -7580,7 +7583,7 @@ SINTA
   border-bottom-width: 0;
 }
 
-#yqbjggaecu .gt_subtitle {
+#junlgnfujr .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -7592,13 +7595,13 @@ SINTA
   border-top-width: 0;
 }
 
-#yqbjggaecu .gt_bottom_border {
+#junlgnfujr .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#yqbjggaecu .gt_col_headings {
+#junlgnfujr .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7613,7 +7616,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#yqbjggaecu .gt_col_heading {
+#junlgnfujr .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7633,7 +7636,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#yqbjggaecu .gt_column_spanner_outer {
+#junlgnfujr .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7645,15 +7648,15 @@ SINTA
   padding-right: 4px;
 }
 
-#yqbjggaecu .gt_column_spanner_outer:first-child {
+#junlgnfujr .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#yqbjggaecu .gt_column_spanner_outer:last-child {
+#junlgnfujr .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#yqbjggaecu .gt_column_spanner {
+#junlgnfujr .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -7665,7 +7668,7 @@ SINTA
   width: 100%;
 }
 
-#yqbjggaecu .gt_group_heading {
+#junlgnfujr .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7691,7 +7694,7 @@ SINTA
   text-align: left;
 }
 
-#yqbjggaecu .gt_empty_group_heading {
+#junlgnfujr .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -7706,15 +7709,15 @@ SINTA
   vertical-align: middle;
 }
 
-#yqbjggaecu .gt_from_md > :first-child {
+#junlgnfujr .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#yqbjggaecu .gt_from_md > :last-child {
+#junlgnfujr .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#yqbjggaecu .gt_row {
+#junlgnfujr .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7733,7 +7736,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#yqbjggaecu .gt_stub {
+#junlgnfujr .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7746,7 +7749,7 @@ SINTA
   padding-right: 5px;
 }
 
-#yqbjggaecu .gt_stub_row_group {
+#junlgnfujr .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -7760,11 +7763,11 @@ SINTA
   vertical-align: top;
 }
 
-#yqbjggaecu .gt_row_group_first td {
+#junlgnfujr .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#yqbjggaecu .gt_summary_row {
+#junlgnfujr .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7774,16 +7777,16 @@ SINTA
   padding-right: 5px;
 }
 
-#yqbjggaecu .gt_first_summary_row {
+#junlgnfujr .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#yqbjggaecu .gt_first_summary_row.thick {
+#junlgnfujr .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#yqbjggaecu .gt_last_summary_row {
+#junlgnfujr .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7793,7 +7796,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#yqbjggaecu .gt_grand_summary_row {
+#junlgnfujr .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -7803,7 +7806,7 @@ SINTA
   padding-right: 5px;
 }
 
-#yqbjggaecu .gt_first_grand_summary_row {
+#junlgnfujr .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -7813,11 +7816,11 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#yqbjggaecu .gt_striped {
+#junlgnfujr .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#yqbjggaecu .gt_table_body {
+#junlgnfujr .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -7826,7 +7829,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#yqbjggaecu .gt_footnotes {
+#junlgnfujr .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7840,7 +7843,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#yqbjggaecu .gt_footnote {
+#junlgnfujr .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -7849,7 +7852,7 @@ SINTA
   padding-right: 5px;
 }
 
-#yqbjggaecu .gt_sourcenotes {
+#junlgnfujr .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -7863,7 +7866,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#yqbjggaecu .gt_sourcenote {
+#junlgnfujr .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -7871,64 +7874,64 @@ SINTA
   padding-right: 5px;
 }
 
-#yqbjggaecu .gt_left {
+#junlgnfujr .gt_left {
   text-align: left;
 }
 
-#yqbjggaecu .gt_center {
+#junlgnfujr .gt_center {
   text-align: center;
 }
 
-#yqbjggaecu .gt_right {
+#junlgnfujr .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#yqbjggaecu .gt_font_normal {
+#junlgnfujr .gt_font_normal {
   font-weight: normal;
 }
 
-#yqbjggaecu .gt_font_bold {
+#junlgnfujr .gt_font_bold {
   font-weight: bold;
 }
 
-#yqbjggaecu .gt_font_italic {
+#junlgnfujr .gt_font_italic {
   font-style: italic;
 }
 
-#yqbjggaecu .gt_super {
+#junlgnfujr .gt_super {
   font-size: 65%;
 }
 
-#yqbjggaecu .gt_footnote_marks {
+#junlgnfujr .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#yqbjggaecu .gt_asterisk {
+#junlgnfujr .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#yqbjggaecu .gt_indent_1 {
+#junlgnfujr .gt_indent_1 {
   text-indent: 5px;
 }
 
-#yqbjggaecu .gt_indent_2 {
+#junlgnfujr .gt_indent_2 {
   text-indent: 10px;
 }
 
-#yqbjggaecu .gt_indent_3 {
+#junlgnfujr .gt_indent_3 {
   text-indent: 15px;
 }
 
-#yqbjggaecu .gt_indent_4 {
+#junlgnfujr .gt_indent_4 {
   text-indent: 20px;
 }
 
-#yqbjggaecu .gt_indent_5 {
+#junlgnfujr .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -8028,12 +8031,12 @@ SINTA
 <h2 id="regiones">REGIONES</h2>
 <h3 id="pernoctaciones-viajeros-y-estadía-1">Pernoctaciones, viajeros y estadía</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div id="vmasememts" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="rizgfhvxoa" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#vmasememts .gt_table {
+#rizgfhvxoa .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: 0;
@@ -8058,7 +8061,7 @@ SINTA
   border-left-color: #D3D3D3;
 }
 
-#vmasememts .gt_heading {
+#rizgfhvxoa .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -8070,12 +8073,12 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#vmasememts .gt_caption {
+#rizgfhvxoa .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#vmasememts .gt_title {
+#rizgfhvxoa .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -8087,7 +8090,7 @@ SINTA
   border-bottom-width: 0;
 }
 
-#vmasememts .gt_subtitle {
+#rizgfhvxoa .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -8099,13 +8102,13 @@ SINTA
   border-top-width: 0;
 }
 
-#vmasememts .gt_bottom_border {
+#rizgfhvxoa .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#vmasememts .gt_col_headings {
+#rizgfhvxoa .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -8120,7 +8123,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#vmasememts .gt_col_heading {
+#rizgfhvxoa .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8140,7 +8143,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#vmasememts .gt_column_spanner_outer {
+#rizgfhvxoa .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8152,15 +8155,15 @@ SINTA
   padding-right: 4px;
 }
 
-#vmasememts .gt_column_spanner_outer:first-child {
+#rizgfhvxoa .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#vmasememts .gt_column_spanner_outer:last-child {
+#rizgfhvxoa .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#vmasememts .gt_column_spanner {
+#rizgfhvxoa .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -8172,7 +8175,7 @@ SINTA
   width: 100%;
 }
 
-#vmasememts .gt_group_heading {
+#rizgfhvxoa .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8198,7 +8201,7 @@ SINTA
   text-align: left;
 }
 
-#vmasememts .gt_empty_group_heading {
+#rizgfhvxoa .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -8213,15 +8216,15 @@ SINTA
   vertical-align: middle;
 }
 
-#vmasememts .gt_from_md > :first-child {
+#rizgfhvxoa .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#vmasememts .gt_from_md > :last-child {
+#rizgfhvxoa .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#vmasememts .gt_row {
+#rizgfhvxoa .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8240,7 +8243,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#vmasememts .gt_stub {
+#rizgfhvxoa .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8253,7 +8256,7 @@ SINTA
   padding-right: 5px;
 }
 
-#vmasememts .gt_stub_row_group {
+#rizgfhvxoa .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8267,11 +8270,11 @@ SINTA
   vertical-align: top;
 }
 
-#vmasememts .gt_row_group_first td {
+#rizgfhvxoa .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#vmasememts .gt_summary_row {
+#rizgfhvxoa .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -8281,16 +8284,16 @@ SINTA
   padding-right: 5px;
 }
 
-#vmasememts .gt_first_summary_row {
+#rizgfhvxoa .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#vmasememts .gt_first_summary_row.thick {
+#rizgfhvxoa .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#vmasememts .gt_last_summary_row {
+#rizgfhvxoa .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8300,7 +8303,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#vmasememts .gt_grand_summary_row {
+#rizgfhvxoa .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -8310,7 +8313,7 @@ SINTA
   padding-right: 5px;
 }
 
-#vmasememts .gt_first_grand_summary_row {
+#rizgfhvxoa .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8320,11 +8323,11 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#vmasememts .gt_striped {
+#rizgfhvxoa .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#vmasememts .gt_table_body {
+#rizgfhvxoa .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -8333,7 +8336,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#vmasememts .gt_footnotes {
+#rizgfhvxoa .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -8347,7 +8350,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#vmasememts .gt_footnote {
+#rizgfhvxoa .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -8356,7 +8359,7 @@ SINTA
   padding-right: 5px;
 }
 
-#vmasememts .gt_sourcenotes {
+#rizgfhvxoa .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -8370,7 +8373,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#vmasememts .gt_sourcenote {
+#rizgfhvxoa .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -8378,64 +8381,64 @@ SINTA
   padding-right: 5px;
 }
 
-#vmasememts .gt_left {
+#rizgfhvxoa .gt_left {
   text-align: left;
 }
 
-#vmasememts .gt_center {
+#rizgfhvxoa .gt_center {
   text-align: center;
 }
 
-#vmasememts .gt_right {
+#rizgfhvxoa .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#vmasememts .gt_font_normal {
+#rizgfhvxoa .gt_font_normal {
   font-weight: normal;
 }
 
-#vmasememts .gt_font_bold {
+#rizgfhvxoa .gt_font_bold {
   font-weight: bold;
 }
 
-#vmasememts .gt_font_italic {
+#rizgfhvxoa .gt_font_italic {
   font-style: italic;
 }
 
-#vmasememts .gt_super {
+#rizgfhvxoa .gt_super {
   font-size: 65%;
 }
 
-#vmasememts .gt_footnote_marks {
+#rizgfhvxoa .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#vmasememts .gt_asterisk {
+#rizgfhvxoa .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#vmasememts .gt_indent_1 {
+#rizgfhvxoa .gt_indent_1 {
   text-indent: 5px;
 }
 
-#vmasememts .gt_indent_2 {
+#rizgfhvxoa .gt_indent_2 {
   text-indent: 10px;
 }
 
-#vmasememts .gt_indent_3 {
+#rizgfhvxoa .gt_indent_3 {
   text-indent: 15px;
 }
 
-#vmasememts .gt_indent_4 {
+#rizgfhvxoa .gt_indent_4 {
   text-indent: 20px;
 }
 
-#vmasememts .gt_indent_5 {
+#rizgfhvxoa .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -8573,12 +8576,12 @@ SINTA
 
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div id="slllvcdblu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="pjqmfzuayr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#slllvcdblu .gt_table {
+#pjqmfzuayr .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: 0;
@@ -8603,7 +8606,7 @@ SINTA
   border-left-color: #D3D3D3;
 }
 
-#slllvcdblu .gt_heading {
+#pjqmfzuayr .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -8615,12 +8618,12 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#slllvcdblu .gt_caption {
+#pjqmfzuayr .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#slllvcdblu .gt_title {
+#pjqmfzuayr .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -8632,7 +8635,7 @@ SINTA
   border-bottom-width: 0;
 }
 
-#slllvcdblu .gt_subtitle {
+#pjqmfzuayr .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -8644,13 +8647,13 @@ SINTA
   border-top-width: 0;
 }
 
-#slllvcdblu .gt_bottom_border {
+#pjqmfzuayr .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#slllvcdblu .gt_col_headings {
+#pjqmfzuayr .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -8665,7 +8668,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#slllvcdblu .gt_col_heading {
+#pjqmfzuayr .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8685,7 +8688,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#slllvcdblu .gt_column_spanner_outer {
+#pjqmfzuayr .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8697,15 +8700,15 @@ SINTA
   padding-right: 4px;
 }
 
-#slllvcdblu .gt_column_spanner_outer:first-child {
+#pjqmfzuayr .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#slllvcdblu .gt_column_spanner_outer:last-child {
+#pjqmfzuayr .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#slllvcdblu .gt_column_spanner {
+#pjqmfzuayr .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -8717,7 +8720,7 @@ SINTA
   width: 100%;
 }
 
-#slllvcdblu .gt_group_heading {
+#pjqmfzuayr .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8743,7 +8746,7 @@ SINTA
   text-align: left;
 }
 
-#slllvcdblu .gt_empty_group_heading {
+#pjqmfzuayr .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -8758,15 +8761,15 @@ SINTA
   vertical-align: middle;
 }
 
-#slllvcdblu .gt_from_md > :first-child {
+#pjqmfzuayr .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#slllvcdblu .gt_from_md > :last-child {
+#pjqmfzuayr .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#slllvcdblu .gt_row {
+#pjqmfzuayr .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8785,7 +8788,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#slllvcdblu .gt_stub {
+#pjqmfzuayr .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8798,7 +8801,7 @@ SINTA
   padding-right: 5px;
 }
 
-#slllvcdblu .gt_stub_row_group {
+#pjqmfzuayr .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -8812,11 +8815,11 @@ SINTA
   vertical-align: top;
 }
 
-#slllvcdblu .gt_row_group_first td {
+#pjqmfzuayr .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#slllvcdblu .gt_summary_row {
+#pjqmfzuayr .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -8826,16 +8829,16 @@ SINTA
   padding-right: 5px;
 }
 
-#slllvcdblu .gt_first_summary_row {
+#pjqmfzuayr .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#slllvcdblu .gt_first_summary_row.thick {
+#pjqmfzuayr .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#slllvcdblu .gt_last_summary_row {
+#pjqmfzuayr .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8845,7 +8848,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#slllvcdblu .gt_grand_summary_row {
+#pjqmfzuayr .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -8855,7 +8858,7 @@ SINTA
   padding-right: 5px;
 }
 
-#slllvcdblu .gt_first_grand_summary_row {
+#pjqmfzuayr .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -8865,11 +8868,11 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#slllvcdblu .gt_striped {
+#pjqmfzuayr .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#slllvcdblu .gt_table_body {
+#pjqmfzuayr .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -8878,7 +8881,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#slllvcdblu .gt_footnotes {
+#pjqmfzuayr .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -8892,7 +8895,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#slllvcdblu .gt_footnote {
+#pjqmfzuayr .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -8901,7 +8904,7 @@ SINTA
   padding-right: 5px;
 }
 
-#slllvcdblu .gt_sourcenotes {
+#pjqmfzuayr .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -8915,7 +8918,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#slllvcdblu .gt_sourcenote {
+#pjqmfzuayr .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -8923,64 +8926,64 @@ SINTA
   padding-right: 5px;
 }
 
-#slllvcdblu .gt_left {
+#pjqmfzuayr .gt_left {
   text-align: left;
 }
 
-#slllvcdblu .gt_center {
+#pjqmfzuayr .gt_center {
   text-align: center;
 }
 
-#slllvcdblu .gt_right {
+#pjqmfzuayr .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#slllvcdblu .gt_font_normal {
+#pjqmfzuayr .gt_font_normal {
   font-weight: normal;
 }
 
-#slllvcdblu .gt_font_bold {
+#pjqmfzuayr .gt_font_bold {
   font-weight: bold;
 }
 
-#slllvcdblu .gt_font_italic {
+#pjqmfzuayr .gt_font_italic {
   font-style: italic;
 }
 
-#slllvcdblu .gt_super {
+#pjqmfzuayr .gt_super {
   font-size: 65%;
 }
 
-#slllvcdblu .gt_footnote_marks {
+#pjqmfzuayr .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#slllvcdblu .gt_asterisk {
+#pjqmfzuayr .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#slllvcdblu .gt_indent_1 {
+#pjqmfzuayr .gt_indent_1 {
   text-indent: 5px;
 }
 
-#slllvcdblu .gt_indent_2 {
+#pjqmfzuayr .gt_indent_2 {
   text-indent: 10px;
 }
 
-#slllvcdblu .gt_indent_3 {
+#pjqmfzuayr .gt_indent_3 {
   text-indent: 15px;
 }
 
-#slllvcdblu .gt_indent_4 {
+#pjqmfzuayr .gt_indent_4 {
   text-indent: 20px;
 }
 
-#slllvcdblu .gt_indent_5 {
+#pjqmfzuayr .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -9178,12 +9181,12 @@ SINTA
   
 </table>
 </div>
-<div id="zalooqpipc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="rtbhjgtnax" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#zalooqpipc .gt_table {
+#rtbhjgtnax .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: 0;
@@ -9208,7 +9211,7 @@ SINTA
   border-left-color: #D3D3D3;
 }
 
-#zalooqpipc .gt_heading {
+#rtbhjgtnax .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -9220,12 +9223,12 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#zalooqpipc .gt_caption {
+#rtbhjgtnax .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#zalooqpipc .gt_title {
+#rtbhjgtnax .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -9237,7 +9240,7 @@ SINTA
   border-bottom-width: 0;
 }
 
-#zalooqpipc .gt_subtitle {
+#rtbhjgtnax .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -9249,13 +9252,13 @@ SINTA
   border-top-width: 0;
 }
 
-#zalooqpipc .gt_bottom_border {
+#rtbhjgtnax .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#zalooqpipc .gt_col_headings {
+#rtbhjgtnax .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -9270,7 +9273,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#zalooqpipc .gt_col_heading {
+#rtbhjgtnax .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -9290,7 +9293,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#zalooqpipc .gt_column_spanner_outer {
+#rtbhjgtnax .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -9302,15 +9305,15 @@ SINTA
   padding-right: 4px;
 }
 
-#zalooqpipc .gt_column_spanner_outer:first-child {
+#rtbhjgtnax .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#zalooqpipc .gt_column_spanner_outer:last-child {
+#rtbhjgtnax .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#zalooqpipc .gt_column_spanner {
+#rtbhjgtnax .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -9322,7 +9325,7 @@ SINTA
   width: 100%;
 }
 
-#zalooqpipc .gt_group_heading {
+#rtbhjgtnax .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -9348,7 +9351,7 @@ SINTA
   text-align: left;
 }
 
-#zalooqpipc .gt_empty_group_heading {
+#rtbhjgtnax .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -9363,15 +9366,15 @@ SINTA
   vertical-align: middle;
 }
 
-#zalooqpipc .gt_from_md > :first-child {
+#rtbhjgtnax .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#zalooqpipc .gt_from_md > :last-child {
+#rtbhjgtnax .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#zalooqpipc .gt_row {
+#rtbhjgtnax .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -9390,7 +9393,7 @@ SINTA
   overflow-x: hidden;
 }
 
-#zalooqpipc .gt_stub {
+#rtbhjgtnax .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -9403,7 +9406,7 @@ SINTA
   padding-right: 5px;
 }
 
-#zalooqpipc .gt_stub_row_group {
+#rtbhjgtnax .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -9417,11 +9420,11 @@ SINTA
   vertical-align: top;
 }
 
-#zalooqpipc .gt_row_group_first td {
+#rtbhjgtnax .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#zalooqpipc .gt_summary_row {
+#rtbhjgtnax .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -9431,16 +9434,16 @@ SINTA
   padding-right: 5px;
 }
 
-#zalooqpipc .gt_first_summary_row {
+#rtbhjgtnax .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#zalooqpipc .gt_first_summary_row.thick {
+#rtbhjgtnax .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#zalooqpipc .gt_last_summary_row {
+#rtbhjgtnax .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -9450,7 +9453,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#zalooqpipc .gt_grand_summary_row {
+#rtbhjgtnax .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -9460,7 +9463,7 @@ SINTA
   padding-right: 5px;
 }
 
-#zalooqpipc .gt_first_grand_summary_row {
+#rtbhjgtnax .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -9470,11 +9473,11 @@ SINTA
   border-top-color: #D3D3D3;
 }
 
-#zalooqpipc .gt_striped {
+#rtbhjgtnax .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#zalooqpipc .gt_table_body {
+#rtbhjgtnax .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -9483,7 +9486,7 @@ SINTA
   border-bottom-color: #D3D3D3;
 }
 
-#zalooqpipc .gt_footnotes {
+#rtbhjgtnax .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -9497,7 +9500,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#zalooqpipc .gt_footnote {
+#rtbhjgtnax .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -9506,7 +9509,7 @@ SINTA
   padding-right: 5px;
 }
 
-#zalooqpipc .gt_sourcenotes {
+#rtbhjgtnax .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -9520,7 +9523,7 @@ SINTA
   border-right-color: #D3D3D3;
 }
 
-#zalooqpipc .gt_sourcenote {
+#rtbhjgtnax .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -9528,64 +9531,64 @@ SINTA
   padding-right: 5px;
 }
 
-#zalooqpipc .gt_left {
+#rtbhjgtnax .gt_left {
   text-align: left;
 }
 
-#zalooqpipc .gt_center {
+#rtbhjgtnax .gt_center {
   text-align: center;
 }
 
-#zalooqpipc .gt_right {
+#rtbhjgtnax .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#zalooqpipc .gt_font_normal {
+#rtbhjgtnax .gt_font_normal {
   font-weight: normal;
 }
 
-#zalooqpipc .gt_font_bold {
+#rtbhjgtnax .gt_font_bold {
   font-weight: bold;
 }
 
-#zalooqpipc .gt_font_italic {
+#rtbhjgtnax .gt_font_italic {
   font-style: italic;
 }
 
-#zalooqpipc .gt_super {
+#rtbhjgtnax .gt_super {
   font-size: 65%;
 }
 
-#zalooqpipc .gt_footnote_marks {
+#rtbhjgtnax .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#zalooqpipc .gt_asterisk {
+#rtbhjgtnax .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#zalooqpipc .gt_indent_1 {
+#rtbhjgtnax .gt_indent_1 {
   text-indent: 5px;
 }
 
-#zalooqpipc .gt_indent_2 {
+#rtbhjgtnax .gt_indent_2 {
   text-indent: 10px;
 }
 
-#zalooqpipc .gt_indent_3 {
+#rtbhjgtnax .gt_indent_3 {
   text-indent: 15px;
 }
 
-#zalooqpipc .gt_indent_4 {
+#rtbhjgtnax .gt_indent_4 {
   text-indent: 20px;
 }
 
-#zalooqpipc .gt_indent_5 {
+#rtbhjgtnax .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -9858,7 +9861,7 @@ SINTA
 <!--/radix_placeholder_appendices-->
 <!--radix_placeholder_navigation_after_body-->
 <div class="distill-site-nav distill-site-footer">
-<p>Dirección Nacional de Mercados y Estadísticas | Subsecretaría de Turismo | Ministerio del Interior (<script>document.write(new Date().getFullYear())</script>)</p>
+<p>Dirección Nacional de Mercados y Estadísticas | Subsecretaría de Turismo (<script>document.write(new Date().getFullYear())</script>)</p>
 </div>
 <!--/radix_placeholder_navigation_after_body-->
 
