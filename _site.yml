@@ -5,7 +5,7 @@ google_analytics: "G-355VFL1KNX"
 output_dir: "docs"
 navbar:
   logo:
-    image: sinta.png
+    image: https://tableros.yvera.tur.ar/recursos/logos_institucionales/sinta.png
     href: https://www.yvera.tur.ar/sinta/
   right:
     - text: "SINTA"
@@ -33,5 +33,5 @@ navbar:
 output:
   distill::distill_article:
     css: 
-     - styles.css 
+     - /srv/shiny-server/recursos/dnmye/styles.css 
      - strapless.css
