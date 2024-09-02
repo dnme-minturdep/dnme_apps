@@ -433,6 +433,7 @@ tabla5$rubro <- tabla5$rubro %>%  as.factor() %>% recode_factor(
   cargos_por_el_uso_de_la_propiedad_intelectual="Propiedad Intelectual", 
   servicios_de_seguros_y_siniestros="Seguros y siniestros",
   servicios_arrendamiento_operativo="Arrendamiento operativo",
+  servicios_de_construccion = 'Construcción',
   otros_agrup="Otros")
 
 tabla5 <- mutate(tabla5, orden=1:length(tabla5$rubro),
@@ -468,6 +469,7 @@ tabla6$rubro <- tabla6$rubro %>%  as.factor() %>% recode_factor(
   servicios_de_informacion_e_informatica="Información e informática", 
   servicios_personales_culturales_y_recreativos="Personales, culturales y recreativos", 
   otros_servicios_de_transporte="Otros ss de transporte",
+  servicios_de_construccion = 'Construcción',
   fletes="Fletes",
   servicios_de_comunicaciones="Comunicaciones",
   servicios_de_gobierno="Gobierno", 
@@ -520,6 +522,7 @@ tabla5_acum$rubro <- tabla5_acum$rubro %>%  as.factor() %>% recode_factor(
   otros_servicios_de_transporte="Otros ss de transporte", fletes="Fletes",
   servicios_de_comunicaciones="Comunicaciones",
   servicios_de_gobierno="Gobierno", 
+  servicios_de_construccion = 'Construcción',
   servicios_financieros = 'Servicios financieros',
   servicios_relacionados_con_el_comercio="Relacionados con comercio",
   turismo="Turismo",
