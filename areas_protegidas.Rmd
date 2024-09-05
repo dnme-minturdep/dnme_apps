@@ -23,11 +23,11 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2024-06-01"
-mes <- "junio"
+fecha <- "2024-07-01"
+mes <- "julio"
 anio <- "2024"
 # parques_sin_dato <- c("los glaciares","los cardones","predelta")
-parques_sin_dato <- c("pizarro","predelta", "laguna blanca", "formosa", "rio pilcomayo", "colonia benitez")
+parques_sin_dato <- c("pizarro","los cardones", "formosa", "rio pilcomayo")
 #parques <- c("el leoncito", "sierra de las quijadas")
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
@@ -595,8 +595,8 @@ data_tabla_2 <- data_tabla_2 %>%
               missing_text = "///") %>% 
   sub_zero(columns = 1:10, zero_text = "-") %>% 
   tab_source_note(glue("///: Dato que no corresponde mostrar debido a la naturaleza de las cosas.")) %>% 
-    tab_source_note("El PN Perito Moreno se cierra a la visita desde fines de abril a principios de octubre.") %>% 
-  tab_source_note("Nota: No se recibió información de visitas de los PN Pre Delta, Laguna Blanca, Formosa, Colonia Benítez, la RN Pizarro.")
+    tab_source_note("Los PN Perito Moreno e Isla Pingüino se cierran a la visita desde fines de abril a principios de octubre.") %>% 
+  tab_source_note("Nota: No se recibió información de visitas de los PN Los Cardones, Formosa,Río Pilcomayo y la RN Pizarro.")
     #tab_source_note("Nota: entre el 22 y 30 de mayo los parques nacionales se cerraron a las visitas (según DI-2021-95-APN-DNO#APNAC) en adhesión a las medidas nacionales (Decreto 334/2021).")
 ```
 
