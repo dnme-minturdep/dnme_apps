@@ -33,5 +33,5 @@ navbar:
 output:
   distill::distill_article:
     css: 
-     - /srv/shiny-server/recursos/dnmye/styles.css 
+     - styles.css
      - strapless.css

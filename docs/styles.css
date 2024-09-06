@@ -9,9 +9,9 @@
 
 /* Optional: embed custom fonts here with `@import`          */
 /* This must remain at the top of this file.                 */
-@import url('https://fonts.googleapis.com/css2?family=Encode+Sans');
-@import url('https://fonts.googleapis.com/css2?family=Roboto');
-@import url('https://fonts.googleapis.com/css2?family=Fira Mono');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat');
+@import url('https://fonts.googleapis.com/css2?family=Lora');
+@import url('https://fonts.googleapis.com/css2?family=Fira%20Mono');
 
 
 html {
@@ -22,16 +22,16 @@ html {
   --aside-size:      12px;
   --fig-cap-size:    13px;
   /*-- Main font colors --*/
-  --title-color:     #37BBED;
-  --heading-color:   #37BBED;
+  --title-color:     #252C4F;
+  --heading-color:   #252C4F;
   --body-color:      #383838;                    /* edited */
-  --aside-color:     #37BBED;
-  --fig-cap-color:   #37BBED;
+  --aside-color:     #252C4F;
+  --fig-cap-color:   #252C4F;
   /*-- Specify custom fonts ~~~ must be imported above   --*/
-  --heading-font:    'Encode', sans-serif;         /* edited */
+  --heading-font:    'Lora', sans-serif;         /* edited */
   --mono-font:       'Fira Mono', monospace;     /* edited */
-  --body-font:       'Roboto', sans-serif;         /* edited */
-  --navbar-font:     'Encode', sans-serif;   /* edited */
+  --body-font:       'Montserrat', sans-serif;         /* edited */
+  --navbar-font:     'Lora', sans-serif;   /* edited */
 }
 
 
@@ -54,19 +54,21 @@ html {
   --bkgd-color:       #0F2E3D;
 }
 
-/* PRUEBAS 
+/* PRUEBAS
 /*-- Additional custom styles --*/
 
 
 
 .distill-site-header .logo img{
-  max-height: 50px; /* Makes logo bigger, default was 20px */
+  max-height: 30px; /* Makes logo bigger, default was 20px */
+  vertical-align: sub;
+  
 }
 
 
 
 .distill-site-header .title {
-    font-weight: 900; 
+    font-weight: 600;
 }
 
 ul > li::marker {
@@ -79,15 +81,15 @@ d-title {
 
 h1, h2, h3, h4, h5, h6 {
   margin-top: 20px;
-  font-family: "Encode Sans";
-  letter-spacing: 2px;  
-  line-height: 2rem; /* increases, so wrapping headers don't overlap */ 
+  font-family: "Lora Sans";
+  letter-spacing: 2px;
+  line-height: 2rem; /* increases, so wrapping headers don't overlap */
 
 }
 
 
 body {
-  font-family: "Roboto";
+  font-family: "Montserrat";
   color: #1f1f1f;
 }
 
@@ -102,21 +104,21 @@ body {
 }
 
 
-.distill-site-header{ 
+.distill-site-header{
   padding: 10px 0px;
   font-size: 15px;
-  font-family: 'Encode Sans', sans-serif;
+  font-family: 'Lora Sans', sans-serif;
   letter-spacing: 2px;
-  
-    
+
+
   /* background-image for fade-to-white color of navbar */
-  background-color: #37BBED;
+  background-color: #252C4F;
 
 }
 
 .distill-site-nav a {
   color: #FFFFFF;
-  background-color: #37BBED;
+  background-color: #252C4F;
   text-decoration: none;
 }
 
@@ -129,7 +131,7 @@ body {
 
 .distill-site-footer {
   color: #f7f7f7b0;
-  background-color: #37BBED;
+  background-color: #252C4F;
   margin-top: 0px;
   padding: 50px 20px;
   font-size: 12px;
