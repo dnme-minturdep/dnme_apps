@@ -1317,7 +1317,11 @@ ggplotly(graf_7, tooltip = "text") %>%
 ```{r}
 rank_provs <- cabotaje %>% 
   filter(fecha_month == max(fecha_month)) %>%
-  group_by(destino_provincia_etiqueta) %>% 
+  filter(empresa_agrup_def %in% c("JetSMART Airlines",
+                                  "Aerolíneas Argentinas",
+                                  "Flybondi",
+                                  "LADE - Líneas Aéreas Del Estado")) %>% 
+  group_by(destino_provincia_etiqueta, empresa_agrup_def) %>% 
   summarise(vuelos = sum(vuelos, na.rm = T)) %>%
   arrange(-vuelos) %>% 
   top_n(3) 
@@ -1663,6 +1667,10 @@ herfintal_prov_empre %>%
 ```{r}
 rank_locs <- cabotaje %>% 
   filter(fecha_month == max(fecha_month)) %>%
+  filter(empresa_agrup_def %in% c("JetSMART Airlines",
+                                  "Aerolíneas Argentinas",
+                                  "Flybondi",
+                                  "LADE - Líneas Aéreas Del Estado")) %>% 
   group_by(destino_localidad_etiqueta) %>% 
   summarise(vuelos = sum(vuelos, na.rm = T)) %>%
   arrange(-vuelos) %>% 
@@ -1678,6 +1686,10 @@ Por su parte, a nivel de localidad, **`r primer_rank_loc`, `r segun_rank_loc` y 
 ```{r}
 freq_ciudad_dest_24 <- cabotaje %>% 
   filter(anio_local == year(max(cabotaje$Fecha)) & mes_local == month(max(cabotaje$Fecha))) %>% 
+  filter(empresa_agrup_def %in% c("JetSMART Airlines",
+                                  "Aerolíneas Argentinas",
+                                  "Flybondi",
+                                  "LADE - Líneas Aéreas Del Estado")) %>%
   group_by(destino_localidad_etiqueta) %>% 
   summarise(frecuencias_24 = sum(vuelos, na.rm = T)) %>% 
   ungroup() %>% 
@@ -1687,6 +1699,10 @@ freq_ciudad_dest_24 <- cabotaje %>%
 
 freq_ciudad_dest_23 <- cabotaje %>% 
   filter(anio_local == year(max(cabotaje$Fecha)) - 1 & mes_local == month(max(cabotaje$Fecha))) %>% 
+    filter(empresa_agrup_def %in% c("JetSMART Airlines",
+                                  "Aerolíneas Argentinas",
+                                  "Flybondi",
+                                  "LADE - Líneas Aéreas Del Estado")) %>%
   group_by(destino_localidad_etiqueta) %>% 
   summarise(frecuencias_23 = sum(vuelos, na.rm = T)) %>% 
   ungroup() %>% 
@@ -4646,8 +4662,8 @@ tabla %>%
     anio_2024 = md("2024"),
     anio_2023 = md("2023"),
     anio_2019 = md("2019"),
-    pasajeros_mes_2019 = md("2019"),
     pasajeros_mes_actual = md("2024"),
+    pasajeros_mes_2019 = md("2019"),
     variacion_mes = md("Mensual"),
     variacion_anual = md("Anual")) %>% 
   cols_align(
