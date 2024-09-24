@@ -23,11 +23,11 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2024-07-01"
-mes <- "julio"
+fecha <- "2024-08-01"
+mes <- "agosto"
 anio <- "2024"
 # parques_sin_dato <- c("los glaciares","los cardones","predelta")
-parques_sin_dato <- c("pizarro","los cardones", "formosa", "rio pilcomayo")
+parques_sin_dato <- c("pizarro", "formosa", "rio pilcomayo")
 #parques <- c("el leoncito", "sierra de las quijadas")
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
@@ -611,7 +611,8 @@ months <- data.frame(Mes = c("enero","febrero","marzo","abril","mayo","junio",
 ### AJUSTÉ TOMBO Y MARQUES EN FEBRERO 2023 PARA VARACIONES
 chubut <-  read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/insumos/base_trabajo/bases_chubut.csv") %>% 
   filter(Mes != "total") %>% 
-  mutate(Mes = ifelse(Mes=="setiembre", "septiembre", Mes)) %>% 
+  mutate(Mes = ifelse(Mes=="setiembre", "septiembre", Mes)) %>%
+  filter(area_protegida != "Cabo 2B") %>% 
   left_join(months) %>% 
   mutate(indice_tiempo = as.Date(paste(anio,month,"01",sep = "-")),
          residencia = ifelse(residencia == "no_residentes", "No residentes", "Residentes"),
