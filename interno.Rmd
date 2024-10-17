@@ -117,7 +117,7 @@ turismo_interno2 <- evyth %>%
          estadia, var.estadia, gasto_total, var.gasto.total.real, gasto.promedio.nom, var.gasto.prom.real)
 ```
 
-```{r include=FALSE}
+```{r include=TRUE}
 #Acumulado del año
 
 #sum(turismo_interno_sheet$trimestre)
@@ -149,9 +149,9 @@ En este periodo los viajes tuvieron una estadía promedio de `r format(pull(roun
 <br>
 ```{r}
 turismo_interno_tabla <- turismo_interno2 %>%
-  filter(trimestre == trim_actual, anio == Anio) %>% 
+  filter(trimestre <= trim_actual, anio == Anio) %>% 
   mutate(periodo = paste0(trimestre,"° trimestre. ",anio)) %>% 
- #bind_rows(turismo_interno_acum) %>% 
+ bind_rows(turismo_interno_acum) %>% 
   mutate(across(-periodo, .fns = as.numeric),
          turistas_millones = turistas/1000000,
          gasto_total_millones = gasto_total/1000000,
