@@ -26,7 +26,7 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 fecha <- "2024-09-01"
 mes <- "septiembre"
 anio <- "2024"
-parques_sin_dato <- c("pizarro", "los cardones", "ansenuza", "traslasierra", "isla pingüino")
+parques_sin_dato <- c("pizarro", "ansenuza", "traslasierra", "isla pingüino")
 #parques <- c("el leoncito", "sierra de las quijadas")
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
@@ -607,11 +607,11 @@ months <- data.frame(Mes = c("enero","febrero","marzo","abril","mayo","junio",
                      "julio","agosto","septiembre","octubre","noviembre","diciembre"),
                      month = seq(1,12))
 
-### AJUSTÉ TOMBO Y MARQUES EN FEBRERO 2023 PARA VARACIONES
+### SE LEVANTAN LA BASE DE LAS AP DEL CHUBUT. AJUSTÉ TOMBO Y MARQUES EN FEBRERO 2023 PARA VARACIONES
 chubut <-  read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/insumos/base_trabajo/bases_chubut.csv") %>% 
   filter(Mes != "total") %>% 
   mutate(Mes = ifelse(Mes=="setiembre", "septiembre", Mes)) %>%
-  filter(area_protegida != "Cabo 2B") %>% 
+  # filter(area_protegida != "Cabo 2B") %>% 
   left_join(months) %>% 
   mutate(indice_tiempo = as.Date(paste(anio,month,"01",sep = "-")),
          residencia = ifelse(residencia == "no_residentes", "No residentes", "Residentes"),
@@ -619,6 +619,7 @@ chubut <-  read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provi
          # visitantes = ifelse(area_protegida %in% c("Punta Tombo","Punta Marqués") &
          #                       Mes == mes & anio == 2023, 0, visitantes)
          )
+#SE LEVANTA LA PIVOT DE ISCHIGUALASTO
 
 sanjuan <-read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/Base_parq_prov_ischigualasto.xlsx") %>% 
   rename(indice_tiempo = 1, visitantes = 2) %>% 
@@ -629,6 +630,7 @@ sanjuan <-read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provin
          provincia = "San Juan (Ischigualasto)") %>% 
   left_join(months)
 
+# A PARTIR DEL 2024 SE ABRIO LA INFORMACIÓN POR CONDICION DE RESIDENCIA, SE LEVANTA LA INFORMACIÓN DE LA MISMA PIVOT EN OTRA SOLAPA
 
 sanjuan_res<-read_file_srv("/srv/DataDNMYE/areas_protegidas/areas_protegidas_provinciales/Base_parq_prov_ischigualasto.xlsx", sheet = 3)
 
@@ -640,16 +642,17 @@ sanjuan_res <- sanjuan_res %>%
          Mes = str_to_lower(Mes)) %>% 
   rename(month = mes)
 
-
+# SE LEVANTA LA PIVOT DEL GPI
  
  data_ibera <- read_file_srv("areas_protegidas/areas_protegidas_provinciales/pivot_ibera.xlsx", sheet=2) %>% 
   mutate(mes_1 = as.numeric(mes_1),
          visitantes = as.numeric(visitantes)) %>% 
-   mutate(provincia = "Corrientes",
-          area_protegida = "Gran Parque Iberá") %>% 
-  mutate(indice_tiempo = as.Date(paste(anio,mes_1,"01",sep = "-"))) %>%  
+   mutate(provincia = "Corrientes (Gran Parque Iberá)") %>% 
+  mutate(indice_tiempo = as.Date(paste(anio,mes_1,"01",sep = "-")),
+         provincia = "Corrientes (Gran Parque Iberá)",) %>%  
          # mes = str_to_sentence(mes)) 
-  rename(Mes = mes, month = mes_1)
+  rename(Mes = mes, month = mes_1) 
+   
 
 tabla_parques <- bind_rows(chubut, sanjuan, sanjuan_res, data_ibera) %>% 
   filter(indice_tiempo <= fecha, anio >= as.integer(.GlobalEnv$anio)-1) %>% 
@@ -691,7 +694,7 @@ var_acum <- tabla_parques %>%
   filter(anio == as.integer(.GlobalEnv$anio))
 ```
 
-En el caso de los parques provinciales, durante el mes de `r mes` se registraron `r lbl_int(var_ia[var_ia$provincia == "Chubut", "Total"] %>% pull())` visitas a áreas naturales protegidas del Chubut, con `r lbl_int(var_ia[var_ia$provincia == "Chubut", "residentes"] %>% pull())` visitas de residentes y `r lbl_int(var_ia[var_ia$provincia == "Chubut", "no_residentes"] %>% pull())` de no residentes. Mientras que el Parque Provincial Ischigualasto, en San Juan, recibió un total de `r lbl_int(var_ia[var_ia$provincia == "San Juan (Ischigualasto)", "Total"] %>% pull())` visitas.
+En el caso de los parques provinciales, durante el mes de `r mes` se registraron `r lbl_int(var_ia[var_ia$provincia == "Chubut", "Total"] %>% pull())` visitas a áreas naturales protegidas del Chubut, con `r lbl_int(var_ia[var_ia$provincia == "Chubut", "residentes"] %>% pull())` visitas de residentes y `r lbl_int(var_ia[var_ia$provincia == "Chubut", "no_residentes"] %>% pull())` de no residentes. En San Juan, el Parque Provincial Ischigualasto recibió un total de `r lbl_int(var_ia[var_ia$provincia == "San Juan (Ischigualasto)", "Total"] %>% pull())` visitas y el Gran Parque Iberá `r lbl_int(var_ia[var_ia$provincia == "Corrientes (Gran Parque Iberá)", "Total"] %>% pull())`.
 
 ```{r}
  var_ia %>% 
