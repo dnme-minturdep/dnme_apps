@@ -43,13 +43,14 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 #mes <- "Marzo"
 
 ##### SIN ACUMULADO PARA PRIMER TRIMESTRE
-trimestre <- "2do"
+trimestre <- "3er"
 anio <- "2023"
 Anio <- 2023
-trim_actual <- 2
-trim_anterior <- 1
+trim_actual <- 4
+trim_anterior <- 3
 anio_anterior <- 2022
 
+# ACTUALIZAR VARIABLE DE GASTO chunks 4 y 5 SEGÚN CORRESPONDA, ÚLTIMO: gasto_viajetot_pc_pesos_2023_11
 
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
@@ -102,7 +103,7 @@ turismo_interno2 <- evyth %>%
             pernoctaciones = sum(pondera * px07, na.rm = T),
             estadia = pernoctaciones/turistas,
             gasto.promedio.nom = gasto_total/turistas,
-            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2023_7, na.rm = T),
+            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2023_11, na.rm = T),
             gasto.promedio.real = gasto_total_real/turistas) %>%
   ungroup() %>% 
   group_by(trimestre) %>% 
@@ -116,7 +117,7 @@ turismo_interno2 <- evyth %>%
          estadia, var.estadia, gasto_total, var.gasto.total.real, gasto.promedio.nom, var.gasto.prom.real)
 ```
 
-```{r include=FALSE}
+```{r include=TRUE}
 #Acumulado del año
 
 #sum(turismo_interno_sheet$trimestre)
@@ -129,7 +130,7 @@ turismo_interno_acum <- evyth %>%
             pernoctaciones = sum(pondera * px07, na.rm = T),
             estadia = pernoctaciones/turistas,
             gasto.promedio.nom = gasto_total/turistas,
-            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2023_7, na.rm = T),
+            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2023_11, na.rm = T),
             gasto.promedio.real = gasto_total_real/turistas) %>%
   ungroup() %>% 
   mutate(var.turistas = turistas/lag(turistas,1)-1,
@@ -148,9 +149,9 @@ En este periodo los viajes tuvieron una estadía promedio de `r format(pull(roun
 <br>
 ```{r}
 turismo_interno_tabla <- turismo_interno2 %>%
-  filter(trimestre == trim_actual, anio == Anio) %>% 
+  filter(trimestre <= trim_actual, anio == Anio) %>% 
   mutate(periodo = paste0(trimestre,"° trimestre. ",anio)) %>% 
- #bind_rows(turismo_interno_acum) %>% 
+ bind_rows(turismo_interno_acum) %>% 
   mutate(across(-periodo, .fns = as.numeric),
          turistas_millones = turistas/1000000,
          gasto_total_millones = gasto_total/1000000,
