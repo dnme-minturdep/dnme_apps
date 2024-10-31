@@ -26,7 +26,9 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 fecha <- "2024-09-01"
 mes <- "septiembre"
 anio <- "2024"
+
 parques_sin_dato <- c("pizarro", "ansenuza", "traslasierra", "isla pingüino")
+
 #parques <- c("el leoncito", "sierra de las quijadas")
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
@@ -641,18 +643,20 @@ sanjuan_res <- sanjuan_res %>%
          provincia = "San Juan (Ischigualasto)",
          Mes = str_to_lower(Mes)) %>% 
   rename(month = mes)
+```
 
+
+```{r}
 # SE LEVANTA LA PIVOT DEL GPI
- 
- data_ibera <- read_file_srv("areas_protegidas/areas_protegidas_provinciales/pivot_ibera.xlsx", sheet=2) %>% 
+
+data_ibera <- read_file_srv("areas_protegidas/areas_protegidas_provinciales/pivot_ibera.xlsx", sheet=2) %>% 
   mutate(mes_1 = as.numeric(mes_1),
          visitantes = as.numeric(visitantes)) %>% 
-   mutate(provincia = "Corrientes (Gran Parque Iberá)") %>% 
-  mutate(indice_tiempo = as.Date(paste(anio,mes_1,"01",sep = "-")),
-         provincia = "Corrientes (Gran Parque Iberá)",) %>%  
+   mutate(provincia = "Corrientes",
+          area_protegida = "Gran Parque Iberá") %>% 
+  mutate(indice_tiempo = as.Date(paste(anio,mes_1,"01",sep = "-"))) %>%  
          # mes = str_to_sentence(mes)) 
-  rename(Mes = mes, month = mes_1) 
-   
+  rename(Mes = mes, month = mes_1)
 
 tabla_parques <- bind_rows(chubut, sanjuan, sanjuan_res, data_ibera) %>% 
   filter(indice_tiempo <= fecha, anio >= as.integer(.GlobalEnv$anio)-1) %>% 
