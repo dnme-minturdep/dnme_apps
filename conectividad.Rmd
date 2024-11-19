@@ -1321,7 +1321,7 @@ rank_provs <- cabotaje %>%
                                   "Aerolíneas Argentinas",
                                   "Flybondi",
                                   "LADE - Líneas Aéreas Del Estado")) %>% 
-  group_by(destino_provincia_etiqueta, empresa_agrup_def) %>% 
+  group_by(destino_provincia_etiqueta) %>% 
   summarise(vuelos = sum(vuelos, na.rm = T)) %>%
   arrange(-vuelos) %>% 
   top_n(3) 
@@ -1370,6 +1370,10 @@ herfintal_prov_empre <- cabotaje %>%
 
 herfintal_prov_empre_2023 <- cabotaje %>% 
   filter(anio_local == year(max(cabotaje$Fecha)) - 1 & mes_local == month(max(cabotaje$Fecha))) %>%
+    filter(empresa_agrup_def %in% c("JetSMART Airlines",
+                                  "Aerolíneas Argentinas",
+                                  "Flybondi",
+                                  "LADE - Líneas Aéreas Del Estado")) %>% 
   group_by(destino_provincia_etiqueta, .drop = F) %>%
   summarise(freq_totaltes_prov = sum(vuelos, na.rm = T)) %>%
   arrange(-freq_totaltes_prov) %>% 
@@ -1378,6 +1382,10 @@ herfintal_prov_empre_2023 <- cabotaje %>%
 
 herfintal_prov_empre %>%
   filter(anio_local %in% c(year(max(cabotaje$Fecha)) - 1, year(max(cabotaje$Fecha)))) %>%
+    filter(empresa_agrup_def %in% c("JetSMART Airlines",
+                                  "Aerolíneas Argentinas",
+                                  "Flybondi",
+                                  "LADE - Líneas Aéreas Del Estado")) %>% 
   ungroup() %>%
   complete(anio_local,
            destino_provincia_etiqueta,
