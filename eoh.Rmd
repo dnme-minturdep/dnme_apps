@@ -37,8 +37,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2024-08-01")
-mes <- "Agosto"
+fecha <- as.Date("2024-09-01")
+mes <- "Septiembre"
 #trimestre <- "2do"
 anio <- "2024"
 
