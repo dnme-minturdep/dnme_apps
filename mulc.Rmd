@@ -1069,3 +1069,32 @@ Para recibir las novedades del SINTA escribíle al bot de Telegram de la DNMyE [
 
 :::
 
+```{r}
+url <- 'https://docs.google.com/spreadsheets/d/1uA3kJ-B-FIHruDgHJmawUxKmHFcDpJ5bFHduPtLMuTk/edit?usp=sharing'
+
+ver <- read_sheet(url)
+
+mulc_resumen <- tabla1 %>% 
+  mutate(balanza =cobros-pagos)
+
+
+  
+trimestral <- tabla9 %>% select(anio,trim,fecha,categoria=turismo_pagos,pagos=value) %>% 
+   left_join(tabla7%>% select(anio,trim,fecha,categoria=turismo_cobros,cobros=value)) %>% 
+  mutate(balanza = cobros - pagos) 
+
+anual <- trimestral %>% 
+  group_by(anio,categoria) %>% 
+  summarise(cobros = sum(cobros),
+            pagos=sum(pagos,na.rm=T)) %>% 
+  ungroup() %>% 
+  mutate(balanza = cobros-pagos)
+
+write_sheet(mulc_resumen,ss=url,sheet='mulc_mensual')
+write_sheet(trimestral,ss=url,sheet='trimestral')
+write_sheet(anual,ss=url,sheet='anual')
+
+
+
+```
+
