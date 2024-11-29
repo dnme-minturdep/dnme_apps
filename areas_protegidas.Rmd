@@ -23,11 +23,11 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2024-09-01"
-mes <- "septiembre"
+fecha <- "2024-10-01"
+mes <- "Octubre"
 anio <- "2024"
 
-parques_sin_dato <- c("pizarro", "ansenuza", "traslasierra", "isla pingüino")
+parques_sin_dato <- c("pizarro", "ansenuza", "formosa", "isla pingüino", "laguna blanca", "laguna de los pozuelos", "sierra de las quijadas")
 
 #parques <- c("el leoncito", "sierra de las quijadas")
 # PALETAS Y FUENTES ---------------------------------------------------------
