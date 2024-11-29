@@ -666,7 +666,7 @@ tabla_parques <- bind_rows(chubut, sanjuan, sanjuan_res, data_ibera) %>%
   arrange(indice_tiempo)
   
 var_ia <- tabla_parques %>% 
-  filter(Mes == mes) %>% 
+  filter(Mes == Mes) %>% 
   mutate(residencia = ifelse(is.na(residencia), "Total", tolower(str_replace(residencia, " ", "_")))) %>% 
   pivot_wider(names_from = "residencia", values_from = "visitantes") %>% 
   mutate(Total = ifelse(provincia == "Chubut", no_residentes + residentes, Total)) %>% 
