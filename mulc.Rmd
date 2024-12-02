@@ -29,7 +29,7 @@ knitr::knit_hooks$set(inline = function(x) {
 
 Sys.setlocale(locale = "es_AR.UTF-8")
 
-mes <- as.character(lubridate::month(floor_date(Sys.Date(),"month")- months(1), label = TRUE, abbr = FALSE))
+mes <- as.character(lubridate::month(floor_date(Sys.Date(),"month")- months(2), label = TRUE, abbr = FALSE))
 anio_actual <- year(floor_date(Sys.Date(),"year"))
 anio_datos <- year(floor_date(Sys.Date(),"year")) # CAMBIAR!!!
 
