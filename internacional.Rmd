@@ -34,7 +34,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 ```{r}
 # Definir mes para títulos ####
-mes <- "Octubre"
+mes <- "Noviembre"
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -64,7 +64,12 @@ mes_nro  <- as.numeric(as_tibble(turismo_internacional_turistas[nrow(turismo_int
 fecha <- str_c(anio, mes_nro, "01" , sep = "-")
 
 # Cuadro visitantes
-indec_vis <- herramientas::read_file_srv(glue("turismo_internacional/informe_mensual/tabla_indec_{anio}_{mes}.xlsx"), sheet = "visitantes")
+
+# indec_vis <- herramientas::read_file_srv(glue("turismo_internacional/informe_mensual/tabla_indec_{anio}_{mes}.xlsx"), sheet = "visitantes")
+
+indec_vis <- herramientas::read_file_srv(glue("turismo_internacional/informe_mensual/tabla_indec_{anio}_{mes}.xlsx"))
+
+
 
 ```
 
