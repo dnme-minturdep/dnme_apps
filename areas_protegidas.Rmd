@@ -23,11 +23,11 @@ Sys.setlocale("LC_TIME", "es_AR.UTF-8")
 
 ```{r }
 # Definir mes / trimestre / año de referencia para títulos ####
-fecha <- "2024-10-01"
-mes <- "Octubre"
+fecha <- "2024-11-01"
+mes <- "Noviembre"
 anio <- "2024"
 
-parques_sin_dato <- c("pizarro", "ansenuza", "formosa", "isla pingüino", "laguna blanca", "laguna de los pozuelos", "sierra de las quijadas")
+parques_sin_dato <- c("pizarro", "ansenuza", "formosa", "isla pingüino", "los cardones", "sierra de las quijadas")
 
 #parques <- c("el leoncito", "sierra de las quijadas")
 # PALETAS Y FUENTES ---------------------------------------------------------
@@ -60,9 +60,9 @@ theme_imet <- function() {
 #   meta_social(
 #     title = glue("Parques Nacionales {mes} {anio}"),
 #     image = "https://upload.wikimedia.org/wikipedia/commons/8/8e/Ministerio_de_Turismo_y_Deportes_arg.png",
-#     og_author = c("Dirección Nacional de Mercados y Estadística", 
-#                   "Subsecretaría de Desarrollo Estratégico", 
-#                   "Ministerio de Turismo y Deportes")
+#     og_author = c("Dirección de Mercados y Estadísticas", 
+#                   "Dirección Nacional de Calidad Turística", 
+#                   "Secretaría de Turismo, Ambiente y Deportes")
 #   )
 ```
 
@@ -492,7 +492,7 @@ data_tabla_2 <- data_tabla_2 %>%
   ) %>%
   tab_source_note(
     source_note = md(
-      "**Fuente**: Dirección Nacional de Mercados y Estadística, Subsecretaría de Turismo en base a la informacion suministrada por la Dirección Nacional de Uso Público, APN")
+      "**Fuente**: Dirección de Mercados y Estadísticas, Dirección Nacional de Calidad Turística, Secretaría de Turismo, Ambiente y Deportes, en base a la informacion suministrada por la Dirección Nacional de Uso Público, APN")
   ) %>%
   #   tab_source_note(
   #   source_note = md(
