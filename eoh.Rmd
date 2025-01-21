@@ -37,8 +37,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2024-10-01")
-mes <- "Octubre"
+fecha <- as.Date("2024-11-01")
+mes <- "Noviembre"
 #trimestre <- "2do"
 anio <- "2024"
 
@@ -139,7 +139,7 @@ grafico1 <- datos_grafico1 %>%
   labs(
        title = tolower(glue("en millones de noches. enero 2018-{mes} {anio}. <span style='color:{cols_arg2[6]}'>residentes</span> y <span style='color:{cols_arg2[1]}'>no residentes</span>")),subtitle="",
                        x="",y="", fill = "",
-       caption = "Fuente: Encuesta de Ocupación Hotelera (EOH), INDEC y Dirección Nacional de Mercados, Subsecretaría de Turismo")
+       caption = "Fuente: Encuesta de Ocupación Hotelera (EOH), INDEC y Dirección de Mercados y Estadísticas, Subsecretaría de Turismo")
 ```
 
 
@@ -304,7 +304,7 @@ tabla1_ficha <- tablafinal_ficha %>%
   tab_header(title = md(glue("**Según origen de los viajeros. {mes} {anio}**"))) %>% 
   tab_source_note(
     source_note = md(
-      "**Fuente**: Encuesta de Ocupación Hotelera (EOH) INDEC y Dirección Nacional de Mercados, Subsecretaría de Turismo")
+      "**Fuente**: Encuesta de Ocupación Hotelera (EOH) INDEC y Dirección de Mercados y Estadísticas, Subsecretaría de Turismo")
   ) %>%
   tab_style(
     style = list(
@@ -445,7 +445,7 @@ tabla2_ficha <- tabla2 %>%
   ) %>%
   tab_source_note(
     source_note = md(
-      "**Fuente**: Encuesta de Ocupación Hotelera (EOH) INDEC y Dirección Nacional de Mercados, Subsecretaría de Turismo")
+      "**Fuente**: Encuesta de Ocupación Hotelera (EOH) INDEC y Dirección de Mercados y Estadísticas, Subsecretaría de Turismo")
   ) %>%
   tab_style(
     style = list(
@@ -601,7 +601,7 @@ grafico2 <- datos_grafico2 %>%
   labs(title = "**Plazas disponibles, pernoctaciones y tasa de ocupación, según categoría**",
        subtitle = tolower(glue("**en miles y porcentaje, {mes} {anio}.** <span style='color:{cols_arg2[2]}'>**plazas disponibles**</span>**,** <span style='color:{cols_arg2[6]}'>**ocupadas**</span> **y** <span style='color: #3D4D7C'>**tasa de ocupación**</span>")),
                        x="",y="", fill = "",
-       caption = "Fuente: Encuesta de Ocupación Hotelera (EOH), INDEC y Dirección Nacional de Mercados, Subsecretaría de Turismo")
+       caption = "Fuente: Encuesta de Ocupación Hotelera (EOH), INDEC y Dirección de Mercados y Estadísticas, Subsecretaría de Turismo")
 
 grafico2
 
@@ -682,7 +682,7 @@ tabla3_ficha <- tabla3 %>% filter(year(indice_tiempo) == anio) %>%
   ) %>%
   tab_source_note(
     source_note = md(
-      "**Fuente**: Encuesta de Ocupación Hotelera (EOH) INDEC y Dirección Nacional de Mercados, Subsecretaría de Turismo")
+      "**Fuente**: Encuesta de Ocupación Hotelera (EOH) INDEC y Dirección de Mercados y Estadísticas, Subsecretaría de Turismo")
   ) %>%
   tab_style(
     style = list(
@@ -774,7 +774,7 @@ grafico3 <- datos_grafico3 %>% ggplot() +
   labs(#title = "**Pernoctaciones por región**",
        subtitle = tolower(glue("**en miles, {mes} {anio}.** <span style='color:{cols_arg2[6]}'>**residentes**</span> **y** <span style='color:{cols_arg2[2]}'>**no residentes**</span>")),
                        x="",y="", fill = "",
-       caption = "Fuente: Encuesta de Ocupación Hotelera (EOH), INDEC y Dirección Nacional de Mercados, Subsecretaría de Turismo")
+       caption = "Fuente: Encuesta de Ocupación Hotelera (EOH), INDEC y Dirección de Mercados y Estadísticas, Subsecretaría de Turismo")
 
 grafico3
 
@@ -804,7 +804,7 @@ pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/
 
 #Localidades que no corresponde mostrar datos (AD HOC,INDEC)
 
-localidades_sin_datos <- c("x")#Localidades años anterior
+localidades_sin_datos <- c("Calafate", "Corrientes")#Localidades años anterior
 
 localidades_insuficiencia <- c("x")#Para localidades de este año
 
@@ -1089,7 +1089,7 @@ tabla4_B_ficha <- tabla4_B %>% arrange(region_de_destino) %>%
   ) %>% 
   tab_source_note(
     source_note = md(
-      "**Fuente**: Encuesta de Ocupación Hotelera (EOH) INDEC y Dirección Nacional de Mercados, Subsecretaría de Turismo")
+      "**Fuente**: Encuesta de Ocupación Hotelera (EOH) INDEC y Dirección de Mercados y Estadísticas, Subsecretaría de Turismo")
   ) %>%
   tab_style(
     style = list(
