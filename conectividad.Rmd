@@ -1370,7 +1370,7 @@ herfintal_prov_empre <- cabotaje %>%
 
 herfintal_prov_empre_2023 <- cabotaje %>% 
   filter(anio_local == year(max(cabotaje$Fecha)) - 1 & mes_local == month(max(cabotaje$Fecha))) %>%
-    filter(empresa_agrup_def %in% c("JetSMART Airlines",
+  filter(empresa_agrup_def %in% c("JetSMART Airlines",
                                   "Aerolíneas Argentinas",
                                   "Flybondi",
                                   "LADE - Líneas Aéreas Del Estado")) %>% 
@@ -1382,7 +1382,7 @@ herfintal_prov_empre_2023 <- cabotaje %>%
 
 herfintal_prov_empre %>%
   filter(anio_local %in% c(year(max(cabotaje$Fecha)) - 1, year(max(cabotaje$Fecha)))) %>%
-    filter(empresa_agrup_def %in% c("JetSMART Airlines",
+  filter(empresa_agrup_def %in% c("JetSMART Airlines",
                                   "Aerolíneas Argentinas",
                                   "Flybondi",
                                   "LADE - Líneas Aéreas Del Estado")) %>% 
@@ -1707,7 +1707,7 @@ freq_ciudad_dest_24 <- cabotaje %>%
 
 freq_ciudad_dest_23 <- cabotaje %>% 
   filter(anio_local == year(max(cabotaje$Fecha)) - 1 & mes_local == month(max(cabotaje$Fecha))) %>% 
-    filter(empresa_agrup_def %in% c("JetSMART Airlines",
+  filter(empresa_agrup_def %in% c("JetSMART Airlines",
                                   "Aerolíneas Argentinas",
                                   "Flybondi",
                                   "LADE - Líneas Aéreas Del Estado")) %>%
@@ -2329,7 +2329,7 @@ En total, **`r comp_numero_cabotaje` aerolíneas comerciales** realizaron vuelos
 graf_12 <- internacional %>% 
   filter(clase_vuelo == "Regular") %>% 
   group_by(anio_local, mes_local, empresa_agrup_def) %>% 
-  summarise(total = n()) %>% 
+  summarise(total = sum(vuelos, na.rm = T)) %>%
   filter(total >= 4) %>% 
   group_by(anio_local, mes_local) %>% 
   summarise(total_aerolineas = n_distinct(empresa_agrup_def)) %>% 
@@ -2354,7 +2354,7 @@ graf_12 <- internacional %>%
   geom_point(data = internacional %>% 
                filter(clase_vuelo == "Regular") %>% 
                group_by(anio_local, mes_local, empresa_agrup_def) %>% 
-               summarise(total = n()) %>% 
+               summarise(total = sum(vuelos, na.rm = T)) %>%
                filter(total >= 4) %>% 
                group_by(anio_local, mes_local) %>% 
                summarise(total_aerolineas = n_distinct(empresa_agrup_def)) %>% 
