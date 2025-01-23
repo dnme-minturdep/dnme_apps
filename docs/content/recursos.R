@@ -84,4 +84,5 @@ data.frame(
                            "Agencias"))) %>% 
   mutate(orden = row_number()) %>%   # ORDENO POR TEMA Y NO POR TIPO DE RECURSO
 #arrange(orden)  %>%
+  filter(recurso != "Agencias") %>%
 write_csv(here::here("content", "recursos.csv"))
