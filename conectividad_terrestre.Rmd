@@ -10,6 +10,7 @@ params:
 
 ---
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = F, message = F, warning = F, 
                       fig.align = 'left', fig.width = 10, fig.height = 6)
@@ -26,6 +27,8 @@ library(treemapify)
 library(leaflet)
 library(htmltools)
 library(sf)
+library(arrow)
+
 options(scipen = 999)
 
 Sys.setlocale(locale = "es_AR.UTF-8")
@@ -35,24 +38,25 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ```{r carga base}
 
 # Base Actual
-base_total <- read_file_srv("cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-11-30.parquet") # Actualizar
+base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-12-31.parquet") # Actualizar
 
 # Base Año Previo
-base_vieja <- read_file_srv("cnrt/base_de_trabajo/base_final/cnrt_total_historica_2023-01-01_a_2023-12-31.parquet")
+base_vieja <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2023-01-01_a_2023-12-31.parquet")
 
 # Filtramos mismo periodo
 base_vieja <- base_vieja %>% 
-  filter(mes <= max(base_total$mes))
+  filter(mes <= base_total %>% pull(mes) %>% max())
 
 
 # Variables Fecha
 publicacion_mes_anio <- strftime(Sys.Date(), '%B %Y')
 
-datos_mes_anio <- strftime(max(base_total$fecha), '%B')
+datos_mes_anio <- strftime(base_total %>% pull(fecha) %>% max(), '%B')
 
-datos_mes_anio_bis <- strftime(max(base_total$fecha), '%d-%m-%Y')
+datos_mes_anio_bis <- strftime(base_total %>% pull(fecha) %>% max(), '%d-%m-%Y')
 
 ```
+
 
 ```{r Regiones}
 # Regiones Tramos
@@ -111,12 +115,14 @@ base_total <- base_total %>%
 ```
 
 
+
 ```{r VIAJES}
 # Viajes mensuales
 viajes_mes <- base_total %>%
   group_by(anio, mes) %>%
   summarise(viajes = n_distinct(id_servicio)) %>%
   ungroup() %>% 
+  collect() %>% 
   group_by(anio) %>% 
   mutate(viajes_anio = sum(viajes)) %>% 
   ungroup() %>%
@@ -127,6 +133,7 @@ viajes_mes_anio_pasado <- base_vieja %>%
   group_by(anio, mes) %>%
   summarise(viajes = n_distinct(id_servicio)) %>%
   ungroup() %>% 
+  collect() %>% 
   group_by(anio) %>% 
   mutate(viajes_anio = sum(viajes)) %>% 
   ungroup() %>%
@@ -175,6 +182,7 @@ pasajeros_mes <- base_total %>%
   group_by(anio, mes) %>%
   summarise(pasajeros_mes = sum(pasajeros, na.rm = T)) %>% # POr que da distinto al tablero?
   ungroup() %>% 
+    collect() %>% 
   group_by(anio) %>% 
   mutate(pasajeros_anio = sum(pasajeros_mes)) %>% 
   ungroup() %>%
@@ -185,6 +193,7 @@ pasajeros_mes_anio_pasado <- base_vieja %>%
   group_by(anio, mes) %>%
   summarise(pasajeros_mes = sum(pasajeros, na.rm = T)) %>% # POr que da distinto al tablero?
   ungroup() %>% 
+    collect() %>% 
   group_by(anio) %>% 
   mutate(pasajeros_anio = sum(pasajeros_mes)) %>% 
   ungroup() %>%
@@ -228,12 +237,14 @@ variacion_interanual_acum_pasajeros <- if_else((pasajeros_mes %>% select(pasajer
 ```
 
 ```{r ASIENTOS}
+
 # Asientos mensuales
 asientos_mes <- base_total %>%
-  distinct(id_servicio, .keep_all = T) %>% 
+  distinct(anio, mes, id_servicio, cantidad_asientos_ruta) %>% 
   group_by(anio, mes) %>%
   summarise(asientos_mes = sum(cantidad_asientos_ruta, na.rm = T)) %>% # POr que da distinto al tablero?
   ungroup() %>% 
+  collect() %>% 
   group_by(anio) %>% 
   mutate(asientos_anio = sum(asientos_mes)) %>% 
   ungroup() %>%
@@ -241,10 +252,11 @@ asientos_mes <- base_total %>%
 
 # asientos mes - año previo
 asientos_mes_anio_pasado <- base_vieja %>%
-  distinct(id_servicio, .keep_all = T) %>%
+  distinct(anio, mes, id_servicio, cantidad_asientos_ruta) %>% 
   group_by(anio, mes) %>%
   summarise(asientos_mes = sum(cantidad_asientos_ruta, na.rm = T)) %>% # POr que da distinto al tablero?
   ungroup() %>% 
+  collect() %>% 
   group_by(anio) %>% 
   mutate(asientos_anio = sum(asientos_mes)) %>% 
   ungroup() %>%
@@ -300,12 +312,15 @@ En el mismo mes, fueron transportados **`r pasajeros_mes_total` pasajeros**, un 
 Con respecto al número de **asientos** disponibles en servicios regulares, en `r datos_mes_anio`, fueron ofrecidos **`r asientos_mes_total` asientos**, lo que supone un **`r var_ia_asientos`** contra un año atrás, y, en lo que va del año, `r asientos_acumulados_total` asientos, `r variacion_interanual_acum_asientos` frente al mismo período previo.
 
 ```{r}
+mes_ref <- month(datos_mes_anio_bis)
+
 # Gráfico - Pasajeros.
 base_total_agrupada_region_pasajeros <- base_total %>% 
-    filter(mes == month(max(fecha))) %>%
+    filter(mes == mes_ref) %>%
   group_by(region_origen, region_destino) %>% 
   summarise(total = sum(pasajeros)) %>% 
-  ungroup()
+  ungroup() %>% 
+  collect()
 
 base_total_agrupada_region_texto <- base_total_agrupada_region_pasajeros %>%
   group_by(region_destino) %>%
@@ -431,7 +446,7 @@ sankey
 ```
 
 ```{r}
-cnrt <- arrow::open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/")
+cnrt <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/")
 
 graf_7 <- cnrt %>% 
   mutate(region_destino = case_when(provincia_destino == "Buenos Aires" ~ "Buenos Aires",
@@ -504,7 +519,7 @@ graf_7 <- cnrt %>%
                               "<br> Total:",
                               format(pasajeros,
                                      big.mark=".", decimal.mark = ",", digits=0)))) +
-  scale_y_continuous(limits = c(0, 1000000),
+  scale_y_continuous(#limits = c(0, 1000000),
                      breaks = seq(0, 1000000, 100000),
                      labels = function(x) format(x, big.mark = ".")) +
   scale_x_date(date_breaks = "3 month", 
@@ -591,9 +606,10 @@ ggplotly(graf_7, tooltip = "text") %>%
 
 # Por pasajeros
 rank_provs <- base_total %>% 
-  filter(mes == max(mes)) %>%
+  filter(mes == mes_ref) %>%
   group_by(provincia_destino) %>% 
   summarise(pasajeros = sum(pasajeros, na.rm = T)) %>%
+  collect() %>% 
   slice_max(n = 3, pasajeros)
 
 # 1° Prov
@@ -613,9 +629,10 @@ Los distritos de **`r primer_rank_prov`, `r segun_rank_prov` y `r tercer_rank_pr
 ```{r Treemap}
 # Generamos base - pasajeros
 base_total_treemap <- base_total %>% 
-  filter(mes == month(max(fecha))) %>%
+  filter(mes == mes_ref) %>%
   group_by(provincia_destino, localidad_destino) %>% 
   summarise(total = sum(pasajeros, na.rm = T)) %>% 
+  collect() %>% 
   mutate(total_acum = sum(total, na.rm = T),
          pct = total/total_acum,
          localidad_destino = case_when(pct < 0.05 ~ "Otras Localidades",
@@ -676,9 +693,10 @@ ggplot(base_total_treemap,
 
 # Localidades por pasajeros-
 rank_locs <- base_total %>% 
-  filter(mes == max(mes)) %>%
+  filter(mes == mes_ref) %>%
   group_by(localidad_destino) %>% 
   summarise(pasajeros = sum(pasajeros, na.rm = T)) %>%
+  collect() %>% 
   slice_max(n = 3, pasajeros)
 
 # 1° Localidad
@@ -837,19 +855,21 @@ Por su parte, a nivel urbano, **`r primer_rank_loc`, `r segun_rank_loc` y `r ter
 
 ```{r Localidades por pasajeros}
 freq_ciudad_dest_24 <- base_total %>% 
-  filter(mes == max(mes)) %>% 
+  filter(mes == mes_ref) %>% 
   group_by(localidad_destino) %>% 
   summarise(pasajeros_24 = sum(pasajeros, na.rm = T)) %>% 
   ungroup() %>% 
+  collect() %>% 
   arrange(desc(pasajeros_24)) %>% 
   mutate(posicion_24 = 1:n(),
          participacion_24 = pasajeros_24/sum(pasajeros_24, na.rm = T))
 
 freq_ciudad_dest_23 <- base_vieja %>% 
-  filter(mes == max(mes)) %>% 
+  filter(mes == mes_ref) %>% 
   group_by(localidad_destino) %>% 
   summarise(pasajeros_23 = sum(pasajeros, na.rm = T)) %>% 
   ungroup() %>% 
+    collect() %>% 
   arrange(desc(pasajeros_23)) %>% 
   mutate(posicion_23 = 1:n(),
          participacion_23 = pasajeros_23/sum(pasajeros_23, na.rm = T))
@@ -905,7 +925,7 @@ freq_ciudad_dest_24 %>%
   gt() %>% 
   tab_header(
     title = md("__DESTINOS POR CANTIDAD DE PASAJEROS__"),
-    subtitle = md(glue::glue("{str_to_title(strftime(max(base_total$fecha), '%B'))}"))) %>%  
+    subtitle = md(glue::glue("{str_to_title(strftime(base_total %>% pull(fecha) %>% max(), '%B'))}"))) %>%  
   tab_source_note(
     source_note = md("**Fuente:** DNMyE en base a información de CNRT.")) %>% 
   cols_label(
@@ -979,13 +999,14 @@ freq_ciudad_dest_24 %>%
 
 ```{r}
 rutas_base <- base_total %>%
-  filter(mes == max(mes)) %>%
+  filter(mes == mes_ref) %>%
   mutate(par_origen_destino = paste0(pmin(localidad_origen, localidad_destino),
                               " - ",
                               pmax(localidad_origen, localidad_destino))) %>%
   group_by(par_origen_destino, tramo_clasificacion) %>%
   summarise(total = n()) %>% # que cuente las veces que se repite o que haga n_distinct(id) para que sume solo los servicios únicos?
   ungroup() %>% 
+  collect() %>% 
   slice_max(n = 20, total)
 
 # 1° Ruta
@@ -1036,13 +1057,14 @@ rutas_base %>%
 
 ```{r}
 base_total_pasajeros <- base_total %>%
-  filter(mes == max(mes)) %>%
+  filter(mes == mes_ref) %>%
   mutate(par_origen_destino = paste0(pmin(localidad_origen, localidad_destino),
                               " - ",
                               pmax(localidad_origen, localidad_destino))) %>%
   group_by(par_origen_destino, tramo_clasificacion) %>%
   summarise(total = sum(pasajeros, na.rm = T)) %>%
   ungroup() %>% 
+  collect() %>% 
   slice_max(n = 20, total)
 
 # 1° Ruta

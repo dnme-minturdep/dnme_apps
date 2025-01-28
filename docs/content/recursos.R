@@ -10,7 +10,7 @@ data.frame(
           "img/parques_tablero.png","img/evyth.png","img/ti_dash.png" ,
           "img/puna.png", "img/mulc.png", "img/empleo.png", "img/mapeAr.png", "img/agencias.png", "img/visor.png",
           "img/crucerismo.png", "img/conectividad_aerea.png","img/indicadores_ods.png","img/indice.png","img/ultimos_datos.png", "img/eoh_tablero.png"),
-  url = c("https://tableros.yvera.tur.ar/conectividad_terrestre.html/", 
+  url = c("https://tableros.yvera.tur.ar/conectividad_terrestre.html", 
           "https://tableros.yvera.tur.ar/conectividad_terrestre/", 
           "https://tableros.yvera.tur.ar/conectividad/",
           "https://tableros.yvera.tur.ar/internacional.html",
