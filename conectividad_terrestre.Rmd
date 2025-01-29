@@ -1097,8 +1097,8 @@ ggplot(aes(x = fct_reorder(par_origen_destino, total), y = total, fill = tramo_c
              size = 3.5,
         show.legend = F) +
   scale_fill_dnmye() +
-  scale_y_continuous(limits = c(0, 50000),
-                     breaks = seq(0, 50000, 5000),
+  scale_y_continuous(limits = c(0, 80000),
+                     breaks = seq(0, 80000, 10000),
                      labels = function(x) format(x, 
                                                  big.mark = "."))+
   labs(title = "Top 20: Rutas más transitadas",
@@ -1148,61 +1148,64 @@ rutas_numero_cabotaje_diferencia <- if_else((rutas_aereas_numero_tot[2,3] %>% pu
 
 ```
 
-Hasta **`r datos_mes_anio`**, existían en el país **`r rutas_numero_total` rutas con 4 o más frecuencias mensuales**, `r rutas_numero_cabotaje_diferencia` con respecto al mismo mes del año pasado (`r rutas_numero_total_previo`). De dicho total, `r rutas_numero_federales` eran federales y `r rutas_numero_portenias` eran porteñas.
+Hasta **`r datos_mes_anio`**, existían en el país **`r rutas_numero_total` rutas con 4 o más frecuencias mensuales**. De dicho total, `r rutas_numero_federales` eran federales y `r rutas_numero_portenias` eran porteñas.
 
 ```{r}
-graf_4 <- 
-  rutas_aereas_numero %>% 
-  ggplot(aes(x = fecha,
-             y = total_rutas,
-             text = paste("Fecha:",
-                          format(fecha,"%b-%y"),
-                          "<br> Total:",
-                          format(total_rutas,
-                                 big.mark=".",
-                                 decimal.mark = ",",
-                                 digits=0)))) +
-  geom_segment(aes(xend = fecha,
-                   y = 0,
-                   yend = total_rutas),
-               color = dnmye_colores("cian"))+
-  geom_point(color = dnmye_colores("cian"),
-             size = 1.25,
-             fill = alpha(dnmye_colores("cian"), 0.3),
-             alpha = 0.7,
-             shape = 21,
-             stroke = 2) + 
-  geom_point(data = rutas_aereas_numero %>% 
-                filter(month(fecha) == month(max(fecha))),
-             color = dnmye_colores("rosa"),
-             size = 1,
-             fill = alpha(dnmye_colores("rosa"), 0.3),
-             alpha = 0.7,
-             shape = 21,
-             stroke = 1.75) + 
-  scale_y_continuous(limits = c(0, 1000),
-                     breaks = seq(0, 1000, 250))+
-  scale_x_date(date_breaks = "4 month", 
-               date_labels = "%b-%y")+
-  scale_fill_dnmye(palette = "cualitativa", reverse = -1)+
-  labs(title = "Cantidad de rutas",
-       subtitle = "Con al menos 4 frecuencias mensuales",
-       y = "",
-       x = "",
-       color = "",
-       caption = glue::glue("Fuente: DNMyE en base a información de CNRT\n Nota: En rojo, los meses de {datos_mes_anio}.")) +
-  theme_minimal() +
-  theme(legend.position = "bottom",
-        axis.text.x = element_text(angle = 45,
-                                   hjust = 1,
-                                   vjust = 1)) +
-  facet_grid(ruta_clasificacion ~ .)
 
-ggplotly(graf_4, tooltip = "text") %>% 
-  layout(title = list(text = paste0("Cantidad de rutas",
-                                    '<br>',
-                                    '<sup>',
-                                    "Con 4 o más frecuencias mensuales",'</sup>')))
+# Hasta **`r datos_mes_anio`**, existían en el país **`r rutas_numero_total` rutas con 4 o más frecuencias mensuales**, `r rutas_numero_cabotaje_diferencia` con respecto al mismo mes del año pasado (`r rutas_numero_total_previo`). De dicho total, `r rutas_numero_federales` eran federales y `r rutas_numero_portenias` eran porteñas.
+
+# graf_4 <- 
+#   rutas_aereas_numero %>% 
+#   ggplot(aes(x = fecha,
+#              y = total_rutas,
+#              text = paste("Fecha:",
+#                           format(fecha,"%b-%y"),
+#                           "<br> Total:",
+#                           format(total_rutas,
+#                                  big.mark=".",
+#                                  decimal.mark = ",",
+#                                  digits=0)))) +
+#   geom_segment(aes(xend = fecha,
+#                    y = 0,
+#                    yend = total_rutas),
+#                color = dnmye_colores("cian"))+
+#   geom_point(color = dnmye_colores("cian"),
+#              size = 1.25,
+#              fill = alpha(dnmye_colores("cian"), 0.3),
+#              alpha = 0.7,
+#              shape = 21,
+#              stroke = 2) + 
+#   geom_point(data = rutas_aereas_numero %>% 
+#                 filter(month(fecha) == month(max(fecha))),
+#              color = dnmye_colores("rosa"),
+#              size = 1,
+#              fill = alpha(dnmye_colores("rosa"), 0.3),
+#              alpha = 0.7,
+#              shape = 21,
+#              stroke = 1.75) + 
+#   scale_y_continuous(limits = c(0, 1000),
+#                      breaks = seq(0, 1000, 250))+
+#   scale_x_date(date_breaks = "4 month", 
+#                date_labels = "%b-%y")+
+#   scale_fill_dnmye(palette = "cualitativa", reverse = -1)+
+#   labs(title = "Cantidad de rutas",
+#        subtitle = "Con al menos 4 frecuencias mensuales",
+#        y = "",
+#        x = "",
+#        color = "",
+#        caption = glue::glue("Fuente: DNMyE en base a información de CNRT\n Nota: En rojo, los meses de {datos_mes_anio}.")) +
+#   theme_minimal() +
+#   theme(legend.position = "bottom",
+#         axis.text.x = element_text(angle = 45,
+#                                    hjust = 1,
+#                                    vjust = 1)) +
+#   facet_grid(ruta_clasificacion ~ .)
+# 
+# ggplotly(graf_4, tooltip = "text") %>% 
+#   layout(title = list(text = paste0("Cantidad de rutas",
+#                                     '<br>',
+#                                     '<sup>',
+#                                     "Con 4 o más frecuencias mensuales",'</sup>')))
 ```
 
 ```{r}
