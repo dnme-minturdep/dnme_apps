@@ -38,10 +38,10 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ```{r carga base}
 
 # Base Actual
-base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-12-31.parquet") # Actualizar
+base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2025-01-01_a_2025-01-31.parquet") # Actualizar
 
 # Base Año Previo
-base_vieja <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2023-01-01_a_2023-12-31.parquet")
+base_vieja <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-12-31.parquet")
 
 # Filtramos mismo periodo
 base_vieja <- base_vieja %>% 
@@ -1113,7 +1113,7 @@ ggplot(aes(x = fct_reorder(par_origen_destino, total), y = total, fill = tramo_c
 ```
 
 
-```{r RUTAS}
+```{r RUTAS, include=FALSE, eval=FALSE}
 
 # Rutas más frecuentes (con 4 o más frecuencias mensuales)
 rutas_aereas_numero <- read_file_srv("/srv/DataDNMYE/cnrt/recursos/rutas_por_mes_clasificadas.csv")
@@ -1146,9 +1146,10 @@ rutas_numero_cabotaje_diferencia <- if_else((rutas_aereas_numero_tot[2,3] %>% pu
                                             paste0((rutas_aereas_numero_tot[2,3] %>% pull)*(-1),
                                                    "% menos"))
 
+# Hasta **`r datos_mes_anio`**, existían en el país **`r rutas_numero_total` rutas con 4 o más frecuencias mensuales**. De dicho total, `r rutas_numero_federales` eran federales y `r rutas_numero_portenias` eran porteñas. 
 ```
 
-Hasta **`r datos_mes_anio`**, existían en el país **`r rutas_numero_total` rutas con 4 o más frecuencias mensuales**. De dicho total, `r rutas_numero_federales` eran federales y `r rutas_numero_portenias` eran porteñas.
+
 
 ```{r}
 
