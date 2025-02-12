@@ -1039,8 +1039,8 @@ rutas_base %>%
              size = 3.5,
         show.legend = F) +
   scale_fill_dnmye() +
-  scale_y_continuous(limits = c(0, 4000),
-                     breaks = seq(0, 4000, 500),
+  scale_y_continuous(limits = c(0, max(rutas_base$total)*1.1),
+                     #breaks = seq(0, 4000, 500),
                      labels = function(x) format(x, 
                                                  big.mark = "."))+
   labs(title = "Top 20: Rutas más transitadas",
@@ -1097,8 +1097,8 @@ ggplot(aes(x = fct_reorder(par_origen_destino, total), y = total, fill = tramo_c
              size = 3.5,
         show.legend = F) +
   scale_fill_dnmye() +
-  scale_y_continuous(limits = c(0, 80000),
-                     breaks = seq(0, 80000, 10000),
+  scale_y_continuous(limits = c(0, max(base_total_pasajeros$total)*1.1),
+                     #breaks = seq(0, 80000, 10000),
                      labels = function(x) format(x, 
                                                  big.mark = "."))+
   labs(title = "Top 20: Rutas más transitadas",
