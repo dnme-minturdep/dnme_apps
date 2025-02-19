@@ -37,8 +37,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2024-11-01")
-mes <- "Noviembre"
+fecha <- as.Date("2024-12-01")
+mes <- "Diciembre"
 #trimestre <- "2do"
 anio <- "2024"
 
@@ -804,9 +804,9 @@ pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/
 
 #Localidades que no corresponde mostrar datos (AD HOC,INDEC)
 
-localidades_sin_datos <- c("Calafate", "Corrientes")#Localidades años anterior
+localidades_sin_datos <- c("Calafate")#Localidades años anterior
 
-localidades_insuficiencia <- c("x")#Para localidades de este año
+localidades_insuficiencia <- c("Las Grutas")#Para localidades de este año
 
 #Tabla localidades
 tabla4 <- pernoctaciones_localidad %>% 
