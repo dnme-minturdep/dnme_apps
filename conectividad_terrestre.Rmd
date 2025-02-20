@@ -345,7 +345,7 @@ region_3 <- (base_total_agrupada_region_texto %>% slice_max(n = 3, total) %>% sl
 region_3_total <- (base_total_agrupada_region_texto %>% slice_max(n = 3, total)%>% slice_tail())[1,2] %>% pull %>% format(., big.mark = ".")
 ```
 
-En lo respectivo a las regiones turísticas[^3], **el `r region_1` fue la que más pasajeros recibió** durante el mes de `r datos_mes_anio` (**`r region_1_total`** en total). A la misma, le siguieron las regiones `r region_2` y `r region_3`, con `r region_2_total` y `r region_3_total` pasajeros, respectivamente.
+En lo respectivo a las regiones turísticas[^3], **`r region_1` fue la que más pasajeros recibió** durante el mes de `r datos_mes_anio` (**`r region_1_total`** en total). A la misma, le siguieron las regiones `r region_2` y `r region_3`, con `r region_2_total` y `r region_3_total` pasajeros, respectivamente.
 
 [^3]: Las regiones turísticas son Buenos Aires (Buenos Aires), Ciudad Autónoma de Buenos Aires (Ciudad Autónoma de Buenos Aires), Córdoba (Córdoba), Cuyo (Mendoza, San Juan y San Luis), Litoral (Chaco, Corrientes, Entre Ríos, Formosa, Misiones y Santa Fe), Norte (Catamarca, Jujuy, La Rioja, Salta, Santiago del Estero y Tucumán) y Patagonia (Chubut, La Pampa, Neuquén, Río Negro, Santa Cruz y Tierra del Fuego, Antártida e Islas del Atlántico Sur).
 
