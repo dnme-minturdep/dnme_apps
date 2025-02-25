@@ -481,7 +481,9 @@ El reporte de seguimiento mensual que acá presentamos se desprende del *[Docume
 
 ## **CABOTAJE**
 
-En el mes de **`r datos_mes_anio`**, se estimaron **`r vuelos_mes_total` vuelos de cabotaje** en todo el país, lo que representa **`r variacion_interanual` frente a un año atrás**[^2]. En total, en el acumulado anual, se realizaron `r vuelos_acumulados_total` vuelos, un `r variacion_interanual_acum` si se compara con el mismo período del año previo.
+En el mes de **`r datos_mes_anio`**, se estimaron **`r vuelos_mes_total` vuelos de cabotaje** en todo el país, lo que representa **`r variacion_interanual` frente a un año atrás**[^2].
+<!-- SACAR EN ENERO, PONER EN EL RESTO DE LOS MESES -->
+<!-- En total, en el acumulado anual, se realizaron `r vuelos_acumulados_total` vuelos, un `r variacion_interanual_acum` si se compara con el mismo período del año previo. --> 
 
 [^2]: Para ver la serie temporal completa de vuelos, asientos y pasajeros totales, acceder al [tablero de conectividad aérea](https://tableros.yvera.tur.ar/conectividad/).
 
@@ -534,9 +536,13 @@ En el mes de **`r datos_mes_anio`**, se estimaron **`r vuelos_mes_total` vuelos 
 # ggplotly(graf_1)
 ```
 
-En el mismo mes, fueron transportados **`r pasajeros_mes_total` pasajeros**, un `r variacion_interanual_pasajeros` con respecto a `r datos_mes_anio` del año previo. En el acumulado anual, ello significa que viajaron hasta el momento `r pasajeros_acumulados_total` personas, un `r variacion_interanual_acum_pasajeros` en comparación al mismo intervalo del año anterior.
+En el mismo mes, fueron transportados **`r pasajeros_mes_total` pasajeros**, un `r variacion_interanual_pasajeros` con respecto a `r datos_mes_anio` del año previo.
+<!-- SACAR EN ENERO, PONER EN EL RESTO DE LOS MESES -->
+<!-- En el acumulado anual, ello significa que viajaron hasta el momento `r pasajeros_acumulados_total` personas, un `r variacion_interanual_acum_pasajeros` en comparación al mismo intervalo del año anterior. -->
 
-Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r datos_mes_anio`, fueron ofrecidos **`r asientos_mes_total` asientos**, lo que supone un `r variacion_interanual_asientos` contra un año atrás, y, en lo que va del año, `r asientos_acumulados_total` asientos, `r variacion_interanual_acum_asientos` frente al mismo período previo.
+Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r datos_mes_anio`, fueron ofrecidos **`r asientos_mes_total` asientos**, lo que supone un `r variacion_interanual_asientos` contra un año atrás.
+<!-- SUMAR SI NO ES ENERO: -->
+<!-- , y, en lo que va del año, `r asientos_acumulados_total` asientos, `r variacion_interanual_acum_asientos` frente al mismo período previo. -->
 
 ```{r}
 # graf_2 <- cabotaje %>% 
@@ -1692,109 +1698,109 @@ tercer_rank_loc <- rank_locs[3,1] %>% pull
 Por su parte, a nivel de localidad, **`r primer_rank_loc`, `r segun_rank_loc` y `r tercer_rank_loc`** son aquellas ciudades del país que más vuelos de cabotaje recibieron en el período.
 
 ```{r}
-freq_ciudad_dest_24 <- cabotaje %>% 
+freq_ciudad_dest <- cabotaje %>% 
   filter(anio_local == year(max(cabotaje$Fecha)) & mes_local == month(max(cabotaje$Fecha))) %>% 
   filter(empresa_agrup_def %in% c("JetSMART Airlines",
                                   "Aerolíneas Argentinas",
                                   "Flybondi",
                                   "LADE - Líneas Aéreas Del Estado")) %>%
   group_by(destino_localidad_etiqueta) %>% 
-  summarise(frecuencias_24 = sum(vuelos, na.rm = T)) %>% 
+  summarise(frecuencias = sum(vuelos, na.rm = T)) %>% 
   ungroup() %>% 
-  arrange(desc(frecuencias_24)) %>% 
-  mutate(posicion_24 = 1:n(),
-         participacion_24 = frecuencias_24/sum(frecuencias_24, na.rm = T))
+  arrange(desc(frecuencias)) %>% 
+  mutate(posicion = 1:n(),
+         participacion = frecuencias/sum(frecuencias, na.rm = T))
 
-freq_ciudad_dest_23 <- cabotaje %>% 
+freq_ciudad_dest_ant <- cabotaje %>% 
   filter(anio_local == year(max(cabotaje$Fecha)) - 1 & mes_local == month(max(cabotaje$Fecha))) %>% 
   filter(empresa_agrup_def %in% c("JetSMART Airlines",
                                   "Aerolíneas Argentinas",
                                   "Flybondi",
                                   "LADE - Líneas Aéreas Del Estado")) %>%
   group_by(destino_localidad_etiqueta) %>% 
-  summarise(frecuencias_23 = sum(vuelos, na.rm = T)) %>% 
+  summarise(frecuencias_ant = sum(vuelos, na.rm = T)) %>% 
   ungroup() %>% 
-  arrange(desc(frecuencias_23)) %>% 
-  mutate(posicion_23 = 1:n(),
-         participacion_23 = frecuencias_23/sum(frecuencias_23, na.rm = T))
+  arrange(desc(frecuencias_ant)) %>% 
+  mutate(posicion_ant = 1:n(),
+         participacion_ant = frecuencias_ant/sum(frecuencias_ant, na.rm = T))
 
-freq_ciudad_dest_24 <- freq_ciudad_dest_24 %>% 
-  full_join(freq_ciudad_dest_23, by = "destino_localidad_etiqueta") %>%
-  mutate(variacion = (frecuencias_24-frecuencias_23)/frecuencias_23,
-         destino_localidad_etiqueta = case_when(posicion_24 >= 20 ~ "Resto",
+freq_ciudad_dest <- freq_ciudad_dest %>% 
+  full_join(freq_ciudad_dest_ant, by = "destino_localidad_etiqueta") %>%
+  mutate(variacion = (frecuencias-frecuencias_ant)/frecuencias_ant,
+         destino_localidad_etiqueta = case_when(posicion >= 20 ~ "Resto",
                                                 T ~ destino_localidad_etiqueta)) %>%
   group_by(destino_localidad_etiqueta) %>% 
-  summarise(frecuencias_24 = sum(frecuencias_24, na.rm = T),
-            frecuencias_23 = sum(frecuencias_23, na.rm = T),
-            posicion_24 = first(posicion_24),
-            posicion_23 = first(posicion_23)) %>% 
-  mutate(variacion = (frecuencias_24-frecuencias_23)/frecuencias_23,
-         participacion_24 = frecuencias_24/sum(frecuencias_24, na.rm = T),
-         posicion_24 = case_when(destino_localidad_etiqueta == "Resto" ~ "-",
-                                 T ~ as.character(posicion_24)),
-         posicion_23 = case_when(destino_localidad_etiqueta == "Resto" ~ "-",
-                                 T ~ as.character(posicion_23))) %>%
-  arrange(-frecuencias_24)
+  summarise(frecuencias = sum(frecuencias, na.rm = T),
+            frecuencias_ant = sum(frecuencias_ant, na.rm = T),
+            posicion = first(posicion),
+            posicion_ant = first(posicion_ant)) %>% 
+  mutate(variacion = (frecuencias-frecuencias_ant)/frecuencias_ant,
+         participacion= frecuencias/sum(frecuencias_ant, na.rm = T),
+         posicion = case_when(destino_localidad_etiqueta == "Resto" ~ "-",
+                                 T ~ as.character(posicion)),
+         posicion_ant = case_when(destino_localidad_etiqueta == "Resto" ~ "-",
+                                 T ~ as.character(posicion_ant))) %>%
+  arrange(-frecuencias)
 
-resto <- freq_ciudad_dest_24 %>% 
+resto <- freq_ciudad_dest %>% 
   filter(destino_localidad_etiqueta == "Resto") %>% 
   mutate(situacion = "-")
 
-freq_ciudad_dest_24 <- freq_ciudad_dest_24 %>% 
+freq_ciudad_dest <- freq_ciudad_dest %>% 
   filter(destino_localidad_etiqueta != "Resto") %>% 
-  mutate(situacion = case_when(as.numeric(posicion_24) < as.numeric(posicion_23) ~ "▲",
-                               as.numeric(posicion_24) > as.numeric(posicion_23) ~ "▼",
+  mutate(situacion = case_when(as.numeric(posicion) < as.numeric(posicion_ant) ~ "▲",
+                               as.numeric(posicion) > as.numeric(posicion_ant) ~ "▼",
                                T ~ "=")) %>% 
   rbind(resto) %>% 
-  drop_na(posicion_24) %>% 
+  drop_na(posicion) %>% 
   mutate(across(.cols = contains("frecuencias"), ~ round(., 0)),
-         posicion_23 = if_else(is.na(posicion_23),
+         posicion_ant = if_else(is.na(posicion_ant),
                                "-",
-                               posicion_23))
+                               posicion_ant))
 
 
 col_order <- c("destino_localidad_etiqueta",
-               "posicion_24",
+               "posicion",
                "situacion",
-               "posicion_23",
-               "frecuencias_24",
-               "frecuencias_23",
+               "posicion_ant",
+               "frecuencias",
+               "frecuencias_ant",
                "variacion",
-               "participacion_24")
+               "participacion")
 
-freq_ciudad_dest_24 <- freq_ciudad_dest_24[, col_order]
+freq_ciudad_dest <- freq_ciudad_dest[, col_order]
 
-freq_ciudad_dest_24[sapply(freq_ciudad_dest_24, is.infinite)] <- NA
+freq_ciudad_dest[sapply(freq_ciudad_dest, is.infinite)] <- NA
 
-freq_ciudad_dest_24 %>%
+freq_ciudad_dest %>%
   gt() %>% 
   tab_header(
     title = md("__DESTINOS POR VUELOS DE CABOTAJE__"),
     subtitle = md(glue::glue("{str_to_title(strftime(max(base_total$Fecha), '%B'))}"))) %>%  
   tab_source_note(
-    source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+    source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
   cols_label(
     destino_localidad_etiqueta = md("**Ciudad**"),
-    posicion_23 = md("**2023**"),
+    posicion_ant = md(glue::glue("**{max(base_total$anio_local)-1}**")),
     situacion = md(""),
-    posicion_24 = md("**2024**"),
-    frecuencias_23 = md("**2023**"),
-    frecuencias_24 = md("**2024**"),
+    posicion = md(glue::glue("**{max(base_total$anio_local)}**")),
+    frecuencias_ant =  md(glue::glue("**{max(base_total$anio_local)-1}**")),
+    frecuencias = md(glue::glue("**{max(base_total$anio_local)}**")),
     variacion = md("**v.a. %**"),
-    participacion_24 = md("**Participación 2024 (%)**")) %>% 
+    participacion = md(glue::glue("**Participación {max(base_total$anio_local)} (%)**"))) %>% 
   cols_align(
     align = "center",
     columns = everything()) %>% 
   opt_table_font(
     font = list(
       google_font(name = "Encode Sans"))) %>% 
-  fmt_percent(columns = c("variacion","participacion_24"), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  fmt_percent(columns = c("variacion","participacion"), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
   tab_spanner(
     label = "Posición",
-    columns = c("posicion_23", "situacion", "posicion_24")) %>% 
+    columns = c("posicion_ant", "situacion", "posicion")) %>% 
   tab_spanner(
     label = "Frecuencias",
-    columns = c("frecuencias_23", "frecuencias_24")
+    columns = c("frecuencias_ant", "frecuencias")
   ) %>% 
   tab_style(
     style = list(
@@ -1825,7 +1831,7 @@ freq_ciudad_dest_24 %>%
     ),
     locations = cells_body(
       columns = situacion,
-      rows = as.numeric(posicion_24) > as.numeric(posicion_23))
+      rows = as.numeric(posicion) > as.numeric(posicion_ant))
   ) %>% 
   tab_style(
     style = list(
@@ -1834,7 +1840,7 @@ freq_ciudad_dest_24 %>%
     ),
     locations = cells_body(
       columns = situacion,
-      rows = as.numeric(posicion_24) < as.numeric(posicion_23))) %>% 
+      rows = as.numeric(posicion) < as.numeric(posicion_ant))) %>% 
   sub_missing(
     columns = everything(),
     rows = everything(),
@@ -2165,9 +2171,11 @@ ggplotly(graf_4, tooltip = "text") %>%
 
 # **INTERNACIONAL**
 
-En lo que respecta al mercado internacional, en **`r datos_mes_anio`**, se realizaron **`r int_vuelos_mes_total` vuelos internacionales** en todo el país, lo que representa un `r int_variacion_interanual`. Con dicho valor, el acumulado anual escala a `r int_vuelos_acumulados_total` vuelos, un `r int_variacion_interanual_acum` frente al mismo período del año previo[^3].
+En lo que respecta al mercado internacional, en **`r datos_mes_anio`**, se realizaron **`r int_vuelos_mes_total` vuelos internacionales** en todo el país, lo que representa un `r int_variacion_interanual`. 
+<!-- SUMAR SI NO ES ENERO -->
+<!-- Con dicho valor, el acumulado anual escala a `r int_vuelos_acumulados_total` vuelos, un `r int_variacion_interanual_acum` frente al mismo período del año previo[^3]. -->
 
-[^3]: Íbidem.
+<!-- [^3]: Íbidem. -->
 
 ```{r}
 # graf_9 <- internacional %>% 
@@ -2206,9 +2214,14 @@ En lo que respecta al mercado internacional, en **`r datos_mes_anio`**, se reali
 # ggplotly(graf_9)
 ```
 
-En el mes en cuestión, viajaron **`r int_pasajeros_mes_total` pasajeros**, (`r int_pasajeros_acumulados_total` en el acumulado anual), lo que supone un `r int_variacion_interanual_pasajeros` frente al mismo mes del año pasado (y un `r int_variacion_interanual_acum_pasajeros` en lo referente al total acumulado anual).
+En el mes en cuestión, viajaron **`r int_pasajeros_mes_total` pasajeros**, lo que supone un `r int_variacion_interanual_pasajeros` frente al mismo mes del año pasado.
+<!-- SUMAR SI NO ES ENERO -->
+<!--  (`r int_pasajeros_acumulados_total` en el acumulado anual) -->
+<!--  (y un `r int_variacion_interanual_acum_pasajeros` en lo referente al total acumulado anual) -->
 
-Para con al número de **asientos** disponibles en vuelos internacionales, **`r int_asientos_mes_total` plazas** fueron contadas, lo que equivale a un `r int_variacion_interanual_asientos` frente al `r datos_mes_anio` del año anterior. En el acumulado anual, `r int_asientos_acumulados_total` asientos fueron sumados, lo que supone una variación de `r int_variacion_interanual_acum_asientos`.
+Con respecto al número de **asientos** disponibles en vuelos internacionales, **`r int_asientos_mes_total` plazas** fueron contadas, lo que equivale a un `r int_variacion_interanual_asientos` frente a `r datos_mes_anio` del año anterior. 
+<!-- SUMAR SI NO ES ENERO -->
+<!-- En el acumulado anual, `r int_asientos_acumulados_total` asientos fueron sumados, lo que supone una variación de `r int_variacion_interanual_acum_asientos`. -->
 
 ```{r}
 # graf_10 <- internacional %>% 
@@ -2314,11 +2327,13 @@ comp_aereas_numero <- internacional %>%
 
 comp_numero_cabotaje <- comp_aereas_numero[1,2] %>% pull
 
-comp_numero_cabotaje_diferencia <- if_else((comp_aereas_numero[1,3] %>% pull)>0,
-                                           paste0((comp_aereas_numero[1,3] %>% pull),
+comp_numero_cabotaje_diferencia <- case_when((comp_aereas_numero[1,3] %>% pull)>0 ~ paste0((comp_aereas_numero[1,3] %>% pull),
                                                   " más"),
+                                             (comp_aereas_numero[1,3] %>% pull)< 0 ~ 
+                                           
                                            paste0((comp_aereas_numero[1,3] %>% pull)*(-1),
-                                                  " menos"))
+                                                  " menos"),
+ (comp_aereas_numero[1,3] %>% pull) ==  0 ~ 'sin cambios')
 
 comp_numero_cabotaje_anio_prev <-(comp_aereas_numero[1,2] %>% pull) - (comp_aereas_numero[1,3] %>% pull)
 ```
@@ -3509,7 +3524,7 @@ vuelos_int %>%
     title = md("__RANKING DE DESTINOS POR VUELOS INTERNACIONALES__"),
     subtitle = glue::glue("{str_to_title(strftime(max(base_total$Fecha), '%B'))}")) %>% 
   tab_source_note(
-    source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>%   cols_label(
+    source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>%   cols_label(
       destino_localidad_etiqueta = md("**Ciudad**"),
       posicion_24 = md("**2024**"),
       situacion = "",
@@ -3878,7 +3893,7 @@ aerolineas_int %>%
     title = md("__RANKING DE COMPAÑÍAS AÉREAS POR VUELOS\nINTERNACIONALES AL PAÍS__"),
     subtitle = glue::glue("{str_to_title(strftime(max(base_total$Fecha), '%B %Y'))}")) %>% 
   tab_source_note(
-    source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+    source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
   cols_label(
     empresa_agrup_def = md("**Compañía Aérea**"),
     posicion_24 = md("**2024**"),
@@ -4194,7 +4209,7 @@ socoso_aero_total %>%
     title = md("__CUOTA DE MERCADO DE CABOTAJE POR AEROLÍNEA__"),
     subtitle = glue::glue("Sobre el total de pasajeros - {str_to_title(strftime(max(base_total$Fecha), '%B'))}")) %>% 
   tab_source_note(
-    source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+    source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
   tab_source_note(
     source_note = md("**Nota:** El índice de Herfindahl se obtiene sumando las cuotas de mercado de cada actor elevadas al cuadrado.")) %>% 
   cols_label(
@@ -4207,14 +4222,15 @@ socoso_aero_total %>%
     cuota_2022 = md("**2022**"),
     cuota_2023 = md("**2023**"),
     cuota_2024 = md("**2024**"),
+    cuota_2025 = md("**2025**")
   ) %>% 
   cols_align(
     align = "center",
-    columns = c(2:9))  %>% 
+    columns = c(2:10))  %>% 
   opt_table_font(
     font = list(
       google_font(name = "Encode Sans"))) %>% 
-  fmt_percent(columns = c(2:9), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  fmt_percent(columns = c(2:10), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
   tab_style(
     style = list(
       cell_fill(color = dnmye_colores("gris claro"))),
@@ -4506,8 +4522,8 @@ pasajeros_totales_cabotaje_mes <- pasajeros_totales_cabotaje %>%
 
 pasajeros_totales_cabotaje_mes_previo <- pasajeros_totales_cabotaje %>% 
   ungroup() %>% 
-  filter(anio_local == max(anio_local)) %>% 
-  filter(mes_local == max(mes_local) - 1) %>% 
+  filter(anio_local == ifelse(last(mes_local == 1),max(anio_local)-1,max(anio_local))) %>% 
+  filter(mes_local == ifelse(max(mes_local) == 12,max(mes_local),max(mes_local) - 1)) %>% 
   rename(pasajeros_mes_previo = pasajeros) %>% 
   ungroup() %>% 
   select(oaci,
@@ -4568,7 +4584,7 @@ aeropuertos <- read_file_srv("aerocomercial/libros_de_codigos/ANAC/aeropuertos_n
 tabla <- pasajeros_totales_cabotaje_acumulado %>% 
   left_join(pasajeros_totales_cabotaje_mes, by = "oaci") %>% 
   left_join(aeropuertos, by = c("oaci" = "codigo_oaci")) %>% 
-  arrange(-anio_2024) %>% 
+  arrange(-anio_2025) %>% 
   mutate(ranking = row_number(),
          localidad = case_when(ranking >= 40 ~ "Resto",
                                T ~ localidad)) %>% 
@@ -4581,13 +4597,14 @@ tabla <- pasajeros_totales_cabotaje_acumulado %>%
             anio_2022 = sum(anio_2022, na.rm = T),
             anio_2023 = sum(anio_2023, na.rm = T),
             anio_2024 = sum(anio_2024, na.rm = T),
+            anio_2025 = sum(anio_2025,na.rm = T),
             pasajeros_mes_actual = sum(pasajeros_mes_actual, na.rm = T),
             pasajeros_mes_2019 = sum(pasajeros_mes_2019, na.rm = T),
             pasajeros_mes_previo = sum(pasajeros_mes_previo, na.rm = T),
             pasajeros_mes_anio_previo = sum(pasajeros_mes_anio_previo, na.rm = T)) %>%
   janitor::adorn_totals(where = "row",
                         na.rm = T) %>% 
-  mutate(across(.cols = 2:13,
+  mutate(across(.cols = 2:14,
                 ~ replace_na(., 0)),
          variacion_mes = (pasajeros_mes_actual/pasajeros_mes_previo) - 1,
          variacion_mes = if_else(!is.finite(variacion_mes),
@@ -4597,7 +4614,7 @@ tabla <- pasajeros_totales_cabotaje_acumulado %>%
          variacion_anual = if_else(!is.finite(variacion_anual),
                                    0,
                                    variacion_anual)) %>%
-  arrange(-anio_2024)  
+  arrange(-anio_2025)  
 
 tabla_grande <- tabla %>% 
   select(-ends_with("_previo")) %>% 
@@ -4667,13 +4684,14 @@ tabla %>%
   tab_header(
     title = md("__PASAJEROS TOTALES EN VUELOS DE CABOTAJE POR AEROPUERTO__")) %>%  
   tab_source_note(
-    source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+    source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
   cols_label(
     localidad = md("**Aeropuerto**"),
     anio_2024 = md("2024"),
     anio_2023 = md("2023"),
     anio_2019 = md("2019"),
-    pasajeros_mes_actual = md("2024"),
+    anio_2025 = md("2025"),
+    pasajeros_mes_actual = md("2025"),
     pasajeros_mes_2019 = md("2019"),
     variacion_mes = md("Mensual"),
     variacion_anual = md("Anual")) %>% 
