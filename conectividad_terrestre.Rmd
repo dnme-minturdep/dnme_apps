@@ -38,7 +38,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ```{r carga base}
 
 # Base Actual
-base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2025-01-01_a_2025-01-31.parquet") # Actualizar
+base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2025-01-01_a_2025-02-28.parquet") # Actualizar
 
 # Base Año Previo
 base_vieja <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-12-31.parquet")
@@ -54,6 +54,18 @@ publicacion_mes_anio <- strftime(Sys.Date(), '%B %Y')
 datos_mes_anio <- strftime(base_total %>% pull(fecha) %>% max(), '%B')
 
 datos_mes_anio_bis <- strftime(base_total %>% pull(fecha) %>% max(), '%d-%m-%Y')
+
+base_tur <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/dut/cnrt_dut_tot_final.parquet") %>% 
+  mutate(fecha_inicio = as.character(fecha_inicio))
+
+inicio_1 <- as.character(floor_date(dmy(datos_mes_anio_bis), "year"))
+inicio_2 <- as.character(floor_date(dmy(datos_mes_anio_bis), "year") - years(1))
+fin_1 <- as.character(ceiling_date(dmy(datos_mes_anio_bis), "month") - years(1))
+
+base_tur <- base_tur %>% 
+  filter(fecha_inicio >= inicio_1 |
+           (fecha_inicio >= inicio_2 & 
+           fecha_inicio < fin_1))
 
 ```
 
@@ -299,13 +311,81 @@ variacion_interanual_acum_asientos <- if_else((asientos_mes %>% select(asientos_
                                   "% mas"))
 ```
 
+```{r}
+base_tur_resumen <- base_tur %>%
+  collect() %>% 
+  mutate(anio = year(fecha_inicio),
+         mes = month(fecha_inicio)) %>% 
+  summarise(viajes = n(),
+            pasajeros_mes = sum(pasajeros),
+            asientos_mes = sum(cantidad_asientos),
+            .by = c(anio, mes))
+
+base_tur_resumen <- base_tur_resumen %>% 
+  group_by(anio) %>% 
+  mutate(viajes_anio = sum(viajes),
+         pasajeros_anio = sum(pasajeros_mes),
+         asientos_anio = sum(asientos_mes)) %>% 
+  ungroup() %>% 
+  filter(mes == month(datos_mes_anio_bis))
+
+base_sr_resumen <- rbind(viajes_mes,viajes_mes_anio_pasado) %>% 
+  left_join(rbind(pasajeros_mes_anio_pasado,pasajeros_mes)) %>% 
+  left_join(rbind(asientos_mes,asientos_mes_anio_pasado))
+
+base_resumen <- bind_rows(
+  base_sr_resumen %>% mutate(categoria = "Servicios regulares"),
+  base_tur_resumen %>% mutate(categoria = "Servicios de turismo"),
+)
+
+base_resumen <- base_resumen %>% 
+  arrange(anio) %>% 
+  group_by(categoria) %>% 
+  mutate(across(3:8, tasa_variacion, .names = "var_{col}")) %>% 
+  filter(anio == year(inicio_1)) %>% 
+  select(-c(mes,anio))
+
+base_gt <- bind_rows(
+  base_resumen %>% select(viajes, var_viajes, contains("mes"), categoria) %>% mutate(periodo = "Mes") %>% 
+    rename_with(~str_remove_all(., "_mes")),
+  base_resumen %>% select(contains("anio"), categoria) %>% mutate(periodo = "Acumulado") %>% 
+        rename_with(~str_remove_all(., "_anio"))
+  ) %>% 
+  select(categoria, periodo, viajes, var_viajes, pasajeros, var_pasajeros, asientos, var_asientos)
+
+```
+
 **(Publicado en `r publicacion_mes_anio` con datos actualizados al `r datos_mes_anio_bis`)**
 
-El reporte mensual que aquí presentamos se basa en el *[Documento de Trabajo N°14: "Conectividad Terrestre. Diagnóstico turístico del mercado interurbano de pasajeros."](https://tableros.yvera.tur.ar/recursos/biblioteca/conectividad_terrestre.pdf)* que analiza el flujo de pasajeros en servicios regulares de buses de media y larga distancia al interior del país entre enero de 2019 y octubre de 2023. En este marco, el actual trabajo busca continuar con la publicación periódica de estadísticas que muestren la evolución de los indicadores luego de la crisis pandémica y la posterior recuperación del sector.
+El reporte mensual que aquí presentamos se basa en el *[Documento de Trabajo N°14: "Conectividad Terrestre. Diagnóstico turístico del mercado interurbano de pasajeros."](https://tableros.yvera.tur.ar/recursos/biblioteca/conectividad_terrestre.pdf)* que analiza el flujo de pasajeros en servicios regulares de buses de media y larga distancia al interior del país entre enero de 2019 y octubre de 2023. En este marco, el actual trabajo busca continuar con la publicación periódica de estadísticas vinculadas a la conectividad terrestre en el país. Para más información visite el [tablero de conectividad terrestre](https://tableros.yvera.tur.ar/conectividad_terrestre/).
 
-En el mes de **`r datos_mes_anio`**, fueron contabilizados **`r viajes_mes_total` viajes** de buses de media y larga distancia en todo el país, lo que representa un **`r variacion_interanual` frente a un año atrás**[^2]. En total, en el acumulado anual, se realizaron `r viajes_acumulados_total` servicios regulares, un `r variacion_interanual_acum` si se compara con el mismo período del año previo.
+En la siguiente tabla resumen se incorpora, además, información sobre servicios de turismo[^1].
+ 
+[^1]: Según la Resolución SGT Nº73/17 del Ministerio de Transporte de la Nación, un servicio de turismo es aquel que se efectúa a fin de atender un servicio de transporte integrado en una programación turística, como complemento a una actividad de tal naturaleza, trasladando a un contingente y expresamente identificando las personas que lo componen, conforme a un contrato celebrado a tal efecto.
 
-[^2]: Para ver la serie temporal completa de viajes, asientos y pasajeros totales, acceder al [tablero de conectividad terrestre](https://tableros.yvera.tur.ar/conectividad_terrestre/).
+```{r}
+base_gt %>% 
+  mutate(across(c(viajes,asientos,pasajeros), as.integer)) %>% 
+  gt() %>% 
+  cols_label(periodo = "",
+             viajes = "Cantidad",
+             var_viajes = "Var i.a.",
+             pasajeros = "Cantidad",
+             var_pasajeros = "Var i.a.",
+             asientos = "Cantidad",
+             var_asientos = "Var i.a.") %>%
+  tab_spanner(label = "Viajes", columns = c(viajes, var_viajes)) %>% 
+  tab_spanner(label = "Pasajeros", columns = c(pasajeros, var_pasajeros)) %>% 
+  tab_spanner(label = "Asientos", columns = c(asientos, var_asientos)) %>% 
+  tab_header("Resumen de conectividad terrestre",
+             glue::glue("{datos_mes_anio} {year(inicio_1)}")) %>% 
+  tab_source_note("Fuente: DMyE en base a datos de CNRT") %>% 
+  gt_theme_dnmye()
+```
+
+## Servicios regulares
+
+En el mes de **`r datos_mes_anio`**, fueron contabilizados **`r viajes_mes_total` viajes** de buses de media y larga distancia en todo el país, lo que representa un **`r variacion_interanual` frente a un año atrás**. En total, en el acumulado anual, se realizaron `r viajes_acumulados_total` servicios regulares, un `r variacion_interanual_acum` si se compara con el mismo período del año previo.
 
 En el mismo mes, fueron transportados **`r pasajeros_mes_total` pasajeros**, un **`r var_ia_pasajeros`** con respecto a `r datos_mes_anio` del año previo. En el acumulado anual, ello significa que viajaron hasta el momento `r pasajeros_acumulados_total` personas por el país, un `r variacion_interanual_acum_pasajeros` en comparación al mismo intervalo del año anterior.
 
@@ -345,9 +425,9 @@ region_3 <- (base_total_agrupada_region_texto %>% slice_max(n = 3, total) %>% sl
 region_3_total <- (base_total_agrupada_region_texto %>% slice_max(n = 3, total)%>% slice_tail())[1,2] %>% pull %>% format(., big.mark = ".")
 ```
 
-En lo respectivo a las regiones turísticas[^3], **`r region_1` fue la que más pasajeros recibió** durante el mes de `r datos_mes_anio` (**`r region_1_total`** en total). A la misma, le siguieron las regiones `r region_2` y `r region_3`, con `r region_2_total` y `r region_3_total` pasajeros, respectivamente.
+En lo respectivo a las regiones turísticas[^2], **`r region_1` fue la que más pasajeros recibió** durante el mes de `r datos_mes_anio` (**`r region_1_total`** en total). A la misma, le siguieron las regiones `r region_2` y `r region_3`, con `r region_2_total` y `r region_3_total` pasajeros, respectivamente.
 
-[^3]: Las regiones turísticas son Buenos Aires (Buenos Aires), Ciudad Autónoma de Buenos Aires (Ciudad Autónoma de Buenos Aires), Córdoba (Córdoba), Cuyo (Mendoza, San Juan y San Luis), Litoral (Chaco, Corrientes, Entre Ríos, Formosa, Misiones y Santa Fe), Norte (Catamarca, Jujuy, La Rioja, Salta, Santiago del Estero y Tucumán) y Patagonia (Chubut, La Pampa, Neuquén, Río Negro, Santa Cruz y Tierra del Fuego, Antártida e Islas del Atlántico Sur).
+[^2]: Las regiones turísticas son Buenos Aires (Buenos Aires), Ciudad Autónoma de Buenos Aires (Ciudad Autónoma de Buenos Aires), Córdoba (Córdoba), Cuyo (Mendoza, San Juan y San Luis), Litoral (Chaco, Corrientes, Entre Ríos, Formosa, Misiones y Santa Fe), Norte (Catamarca, Jujuy, La Rioja, Salta, Santiago del Estero y Tucumán) y Patagonia (Chubut, La Pampa, Neuquén, Río Negro, Santa Cruz y Tierra del Fuego, Antártida e Islas del Atlántico Sur).
 
 ```{r Sankey x región}
 # VER
