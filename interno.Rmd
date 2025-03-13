@@ -43,11 +43,11 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 #mes <- "Marzo"
 
 ##### SIN ACUMULADO PARA PRIMER TRIMESTRE
-trimestre <- "1er"
+trimestre <- "2do"
 anio <- "2024"
 Anio <- 2024
-trim_actual <- 1
-trim_anterior <- 4
+trim_actual <- 2
+trim_anterior <- 1
 anio_anterior <- 2023
 
 # ACTUALIZAR VARIABLE DE GASTO chunks 4 y 5 SEGÚN CORRESPONDA, ÚLTIMO: gasto_viajetot_pc_pesos_2023_11
@@ -74,7 +74,7 @@ theme_imet <- function() {
 #gs4_deauth() # Importar sheet de google sin interactividad de autorizacion 
 
 ```
-### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados al `r paste(trim_actual,"° trimestre de ",anio)`)
+### Datos actualizados al `r paste(trim_actual,"° trimestre de ",anio)`)
 
 <br>
 
@@ -103,7 +103,7 @@ turismo_interno2 <- evyth %>%
             pernoctaciones = sum(pondera * px07, na.rm = T),
             estadia = pernoctaciones/turistas,
             gasto.promedio.nom = gasto_total/turistas,
-            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2024_10, na.rm = T),
+            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2024_11, na.rm = T),
             gasto.promedio.real = gasto_total_real/turistas) %>%
   ungroup() %>% 
   group_by(trimestre) %>% 
@@ -130,7 +130,7 @@ turismo_interno_acum <- evyth %>%
             pernoctaciones = sum(pondera * px07, na.rm = T),
             estadia = pernoctaciones/turistas,
             gasto.promedio.nom = gasto_total/turistas,
-            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2024_10, na.rm = T),
+            gasto_total_real = sum(pondera * gasto_viajetot_pc_pesos_2024_11, na.rm = T),
             gasto.promedio.real = gasto_total_real/turistas) %>%
   ungroup() %>% 
   mutate(var.turistas = turistas/lag(turistas,1)-1,
@@ -151,7 +151,7 @@ En este periodo los viajes tuvieron una estadía promedio de `r format(pull(roun
 turismo_interno_tabla <- turismo_interno2 %>%
   filter(trimestre <= trim_actual, anio == Anio) %>% 
   mutate(periodo = paste0(trimestre,"° trimestre. ",anio)) %>% 
- #bind_rows(turismo_interno_acum) %>% 
+ bind_rows(turismo_interno_acum) %>% 
   mutate(across(-periodo, .fns = as.numeric),
          turistas_millones = turistas/1000000,
          gasto_total_millones = gasto_total/1000000,
@@ -489,7 +489,7 @@ caracteristicas_viaje <- viaje_interno %>%
   ) %>%
   tab_source_note(
     source_note = md(
-      "**Fuente**: DNMyE en base a EVYTH")
+      "**Fuente**: DMyE en base a EVYTH")
   )  %>%
   tab_style(
     style = list(
@@ -627,7 +627,7 @@ visitante_interno %>%
   ) %>%
   tab_source_note(
     source_note = md(
-      "**Fuente**: DNMyE en base a EVYTH")
+      "**Fuente**: DMyE en base a EVYTH")
   )  %>%
   tab_style(
     style = list(
@@ -667,6 +667,6 @@ visitante_interno %>%
 
 ::: {.infobox}
 
-Para recibir las novedades del SINTA escribíle al bot de Telegram de la DNMyE [**SintIA**](https://bitacora.yvera.tur.ar/posts/2022-09-08-sintia/): @RDatinaBot 🤖
+Para recibir las novedades del SINTA escribíle al bot de Telegram de la DMyE [**SintIA**](https://bitacora.yvera.tur.ar/posts/2022-09-08-sintia/): @RDatinaBot 🤖
 
 :::
