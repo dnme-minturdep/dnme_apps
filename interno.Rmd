@@ -74,7 +74,7 @@ theme_imet <- function() {
 #gs4_deauth() # Importar sheet de google sin interactividad de autorizacion 
 
 ```
-### Datos actualizados al `r paste(trim_actual,"° trimestre de ",anio)`)
+### Datos actualizados al `r paste(trim_actual,"° trimestre de ",anio)`
 
 <br>
 
