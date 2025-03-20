@@ -1,6 +1,6 @@
 ---
 title: "Sector hotelero"
-description: "Resumen de los últimos datos de la Encuesta de Ocupación Hotelera (EOH), operativo conjunto entre el Instituto Nacional de Estadística y Censos (INDEC) y la Subsecretaría de Turismo, que releva información de los establecimientos hoteleros y parahoteleros de 49 localidades del país."
+description: "Resumen de los últimos datos de la Encuesta de Ocupación Hotelera (EOH), operativo conjunto entre el Instituto Nacional de Estadística y Censos (INDEC) y la Subsecretaría de Turismo, que releva información de los establecimientos hoteleros y parahoteleros de 52 localidades/regiones del país."
 output: distill::distill_article
 ---
 
@@ -37,10 +37,10 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2024-12-01")
-mes <- "Diciembre"
+fecha <- as.Date("2025-01-01")
+mes <- "Enero"
 #trimestre <- "2do"
-anio <- "2024"
+anio <- "2025"
 
 # PALETAS Y FUENTES
 # Paleta colores Presidencia
@@ -250,7 +250,7 @@ name_cat2 <- tabla2[tabla2$pernoctes_total == sort(tabla2$pernoctes_total)[lengt
 ### (Publicado en `r format(Sys.time(), '%B %Y')` con datos actualizados a `r paste(tolower(mes)," de ",anio)`)
 
 
-+ En `r tolower(mes)` de `r anio`, se hospedaron `r format(round(as.numeric(tablafinal_ficha[3,5]),1), decimal.mark = ",", big.mark = ".")` millones de viajeros (cayendo `r format(round(as.numeric(tablafinal_ficha[3,6]*100),1), decimal.mark = ",", big.mark = ".")`% en comparación con el mismo mes de 2023) con una estadía de `r format(round(as.numeric(tablafinal_ficha[3,7]),1), decimal.mark = ",", big.mark = ".")` noches en promedio (`r format(round(as.numeric(tablafinal_ficha[3,8]*100),1), decimal.mark = ",", big.mark = ".")`% var. i.a). **El total de pernoctes registrados ascendió a `r format(round(as.numeric(tablafinal_ficha[3,3]),1), decimal.mark = ",", big.mark = ".")` millones de noches (`r format(round(as.numeric(tablafinal_ficha[3,4]*100),1), decimal.mark = ",", big.mark = ".")`% var .i.a)**. 
++ En `r tolower(mes)` de `r anio`, se hospedaron `r format(round(as.numeric(tablafinal_ficha[3,5]),1), decimal.mark = ",", big.mark = ".")` millones de viajeros (cayendo `r format(round(as.numeric(tablafinal_ficha[3,6]*100),1), decimal.mark = ",", big.mark = ".")`% en comparación con el mismo mes de 2024) con una estadía de `r format(round(as.numeric(tablafinal_ficha[3,7]),1), decimal.mark = ",", big.mark = ".")` noches en promedio (`r format(round(as.numeric(tablafinal_ficha[3,8]*100),1), decimal.mark = ",", big.mark = ".")`% var. i.a). **El total de pernoctes registrados ascendió a `r format(round(as.numeric(tablafinal_ficha[3,3]),1), decimal.mark = ",", big.mark = ".")` millones de noches (`r format(round(as.numeric(tablafinal_ficha[3,4]*100),1), decimal.mark = ",", big.mark = ".")`% var .i.a)**. 
 
 + El `r format(round(as.numeric(tablafinal_ficha[1,5]/tablafinal_ficha[3,5]*100),0), decimal.mark = ",", big.mark = ".")`% de los viajeros hospedados fueron residentes, los cuales registraron el `r format(round(as.numeric(tablafinal_ficha[1,3]/tablafinal_ficha[3,3]*100),0), decimal.mark = ",", big.mark = ".")`% de las pernoctaciones.
 
@@ -292,7 +292,7 @@ tabla1_ficha <- tablafinal_ficha %>%
     var_ia_estadia    = md("Var % i.a.")
   ) %>% 
   fmt_number(columns = c(3,5,7), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
-  fmt_percent(columns = c(4,6,8), decimals = 0, sep_mark = ".", dec_mark = ",") %>% 
+  fmt_percent(columns = c(4,6,8), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
   cols_align(
     align = "center",
     columns = vars(pernoctes, var_ia_pernoctes,
@@ -428,7 +428,7 @@ tabla2_ficha <- tabla2 %>%
     var_ia_pernoctes_nores  = md("Var % i.a.")
   ) %>% 
   fmt_number(columns = c(2,3,5,7), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
-  fmt_percent(columns = c(4,6,8), decimals = 0, sep_mark = ".", dec_mark = ",") %>% 
+  fmt_percent(columns = c(4,6,8), decimals = 1, sep_mark = ".", dec_mark = ",") %>% 
   cols_align(
     align = "center",
     columns = vars(plazas_disponibles,
