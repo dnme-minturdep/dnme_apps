@@ -483,7 +483,7 @@ El reporte de seguimiento mensual que acá presentamos se desprende del *[Docume
 
 En el mes de **`r datos_mes_anio`**, se estimaron **`r vuelos_mes_total` vuelos de cabotaje** en todo el país, lo que representa **`r variacion_interanual` frente a un año atrás**[^2].
 <!-- SACAR EN ENERO, PONER EN EL RESTO DE LOS MESES -->
-<!-- En total, en el acumulado anual, se realizaron `r vuelos_acumulados_total` vuelos, un `r variacion_interanual_acum` si se compara con el mismo período del año previo. --> 
+En total, en el acumulado anual, se realizaron `r vuelos_acumulados_total` vuelos, un `r variacion_interanual_acum` si se compara con el mismo período del año previo.
 
 [^2]: Para ver la serie temporal completa de vuelos, asientos y pasajeros totales, acceder al [tablero de conectividad aérea](https://tableros.yvera.tur.ar/conectividad/).
 
@@ -538,9 +538,9 @@ En el mes de **`r datos_mes_anio`**, se estimaron **`r vuelos_mes_total` vuelos 
 
 En el mismo mes, fueron transportados **`r pasajeros_mes_total` pasajeros**, un `r variacion_interanual_pasajeros` con respecto a `r datos_mes_anio` del año previo.
 <!-- SACAR EN ENERO, PONER EN EL RESTO DE LOS MESES -->
-<!-- En el acumulado anual, ello significa que viajaron hasta el momento `r pasajeros_acumulados_total` personas, un `r variacion_interanual_acum_pasajeros` en comparación al mismo intervalo del año anterior. -->
+En el acumulado anual, ello significa que viajaron hasta el momento `r pasajeros_acumulados_total` personas, un `r variacion_interanual_acum_pasajeros` en comparación al mismo intervalo del año anterior.
 
-Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r datos_mes_anio`, fueron ofrecidos **`r asientos_mes_total` asientos**, lo que supone un `r variacion_interanual_asientos` contra un año atrás.
+Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r datos_mes_anio`, fueron ofrecidos **`r asientos_mes_total` asientos**, lo que supone un `r variacion_interanual_asientos` contra un año atrás, y, en lo que va del año, `r asientos_acumulados_total` asientos, `r variacion_interanual_acum_asientos` frente al mismo período previo..
 <!-- SUMAR SI NO ES ENERO: -->
 <!-- , y, en lo que va del año, `r asientos_acumulados_total` asientos, `r variacion_interanual_acum_asientos` frente al mismo período previo. -->
 
@@ -2171,11 +2171,11 @@ ggplotly(graf_4, tooltip = "text") %>%
 
 # **INTERNACIONAL**
 
-En lo que respecta al mercado internacional, en **`r datos_mes_anio`**, se realizaron **`r int_vuelos_mes_total` vuelos internacionales** en todo el país, lo que representa un `r int_variacion_interanual`. 
+En lo que respecta al mercado internacional, en **`r datos_mes_anio`**, se realizaron **`r int_vuelos_mes_total` vuelos internacionales** en todo el país, lo que representa un `r int_variacion_interanual`. Con dicho valor, el acumulado anual escala a `r int_vuelos_acumulados_total` vuelos, un `r int_variacion_interanual_acum` frente al mismo período del año previo[^3].
 <!-- SUMAR SI NO ES ENERO -->
 <!-- Con dicho valor, el acumulado anual escala a `r int_vuelos_acumulados_total` vuelos, un `r int_variacion_interanual_acum` frente al mismo período del año previo[^3]. -->
 
-<!-- [^3]: Íbidem. -->
+[^3]: Íbidem.
 
 ```{r}
 # graf_9 <- internacional %>% 
@@ -2214,12 +2214,12 @@ En lo que respecta al mercado internacional, en **`r datos_mes_anio`**, se reali
 # ggplotly(graf_9)
 ```
 
-En el mes en cuestión, viajaron **`r int_pasajeros_mes_total` pasajeros**, lo que supone un `r int_variacion_interanual_pasajeros` frente al mismo mes del año pasado.
+En el mes en cuestión, viajaron **`r int_pasajeros_mes_total` pasajeros** (`r int_pasajeros_acumulados_total` en el acumulado anual), lo que supone un `r int_variacion_interanual_pasajeros` frente al mismo mes del año pasado (y un `r int_variacion_interanual_acum_pasajeros` en lo referente al total acumulado anual).
 <!-- SUMAR SI NO ES ENERO -->
 <!--  (`r int_pasajeros_acumulados_total` en el acumulado anual) -->
 <!--  (y un `r int_variacion_interanual_acum_pasajeros` en lo referente al total acumulado anual) -->
 
-Con respecto al número de **asientos** disponibles en vuelos internacionales, **`r int_asientos_mes_total` plazas** fueron contadas, lo que equivale a un `r int_variacion_interanual_asientos` frente a `r datos_mes_anio` del año anterior. 
+Con respecto al número de **asientos** disponibles en vuelos internacionales, **`r int_asientos_mes_total` plazas** fueron contadas, lo que equivale a un `r int_variacion_interanual_asientos` frente a `r datos_mes_anio` del año anterior. En el acumulado anual, `r int_asientos_acumulados_total` asientos fueron sumados, lo que supone una variación de `r int_variacion_interanual_acum_asientos`
 <!-- SUMAR SI NO ES ENERO -->
 <!-- En el acumulado anual, `r int_asientos_acumulados_total` asientos fueron sumados, lo que supone una variación de `r int_variacion_interanual_acum_asientos`. -->
 
