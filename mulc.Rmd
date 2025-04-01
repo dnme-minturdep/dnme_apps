@@ -255,12 +255,13 @@ bza_acum <- ing_acum-eg_acum
 
 ```{r}
 # SACO EL ACUMULADO EN ENEROOOOO
-# + En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones.
+# 
 
 
 
 ```
  
++ En el acumulado enero - `r mes` de `r as.character(anio_datos)`, los egresos de divisas por turismo, por el mercado oficial de cambios, fueron de US\$`r eg_acum %>% round(1)` millones (`r var_eg_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)`). Por su parte, los ingresos de divisas fueron de US\$`r ing_acum %>% round(1)` millones (`r var_ing_acum_ia %>% round(1)`% vs mismo período de `r as.character(anio_datos-1)`). Esto significó una balanza deficitaria en US\$`r ((-1)*bza_acum) %>% round(1)` millones.
 
 <br>
 
@@ -354,7 +355,7 @@ eg_acum_total <- filter(tabla2, year(fecha) == anio_datos, transac == "pagos") %
 # + Por su lado, en el acumulado del año, los egresos por turismo representaron un `r ((eg_acum/eg_acum_total)*100) %>% round(1)`% y los ingresos por turismo un `r ((ing_acum/ing_acum_total)*100) %>% round(1)`%.
 
 ```
-
++ Por su lado, en el acumulado del año, los egresos por turismo representaron un `r ((eg_acum/eg_acum_total)*100) %>% round(1)`% y los ingresos por turismo un `r ((ing_acum/ing_acum_total)*100) %>% round(1)`%.
 
 ### Contribución del turismo en el mercado oficial de divisas 
 #### Proporción de <span style='color:#9283BE'>Ingresos</span> y <span style='color:#37BBED'>egresos </span> por Turismo sobre el total en %.
@@ -666,12 +667,12 @@ ggplotly(g6,tooltip = "text") %>% layout(legend = list(
 
 ```
 
-<!-- ### Acumulado 2025 -->
+### Acumulado 2025
 
-<!--  + Mientras tanto, en el acumulado enero - `r mes` de `r as.character(anio_datos)`, el turismo ocupó el `r tabla5_acum$orden[tabla5_acum$rubro == "Turismo"]`º lugar en cuanto a ingresos, pero el `r tabla6_acum$orden[tabla6_acum$rubro == "Turismo"]`º en cuanto a egresos. -->
+ + Mientras tanto, en el acumulado enero - `r mes` de `r as.character(anio_datos)`, el turismo ocupó el `r tabla5_acum$orden[tabla5_acum$rubro == "Turismo"]`º lugar en cuanto a ingresos, pero el `r tabla6_acum$orden[tabla6_acum$rubro == "Turismo"]`º en cuanto a egresos.
 
-<!-- #### Ingresos de divisas vía Mercado de Cambios. Apertura por sectores de servicios -->
-<!-- ##### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares -->
+#### Ingresos de divisas vía Mercado de Cambios. Apertura por sectores de servicios
+##### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares
 
 ```{r}
 g5_acum <- tabla5_acum %>%
@@ -703,9 +704,9 @@ g5_acum <- tabla5_acum %>%
     legend.position = "none",
     strip.placement = "outside")
 
-# ggplotly(g5_acum,tooltip = "text") %>% layout(legend = list(
-#        orientation = "v",x=0.8
-#      ))
+ggplotly(g5_acum,tooltip = "text") %>% layout(legend = list(
+       orientation = "v",x=0.8
+     ))
 ```
 
 ```{r}
@@ -713,8 +714,8 @@ g5_acum <- tabla5_acum %>%
 
 ```
 
-<!-- ### Egresos de divisas vía Mercado de Cambios. Apertura por sectores de servicios -->
-<!-- #### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares -->
+### Egresos de divisas vía Mercado de Cambios. Apertura por sectores de servicios
+#### Acumulado enero - `r paste(mes,"de",anio_datos)`. en millones de dólares
 
 ```{r}
 g6_acum <- tabla6_acum %>%
@@ -746,9 +747,9 @@ g6_acum <- tabla6_acum %>%
     legend.position = "none",
     strip.placement = "outside")
 
-# ggplotly(g6_acum,tooltip = "text") %>% layout(legend = list(
-#        orientation = "v",x=0.8
-#      ))
+ggplotly(g6_acum,tooltip = "text") %>% layout(legend = list(
+       orientation = "v",x=0.8
+     ))
 
 ```
 ### Apertura del rubro "Viajes y otros pagos con tarjeta"
@@ -896,7 +897,7 @@ g7 <- tabla7 %>% ggplot(aes(fecha, value, color=turismo_cobros, group=turismo_co
   labs(#title="Ingresos por turismo: BP vs MULC",
        #subtitle = "En millones de dólares",
        x="",y="",
-       caption="DNMyE en base a BCRA y Dirección Nacional de Cuentas Internacionales")+
+       caption="DMyE en base a BCRA y Dirección Nacional de Cuentas Internacionales")+
   theme_minimal()+
   theme(
     text = element_text(family = familia_fuente), 
@@ -925,7 +926,7 @@ g8 <- tabla8 %>% ggplot(aes(fecha, prop_mulc_bp,
   labs(#title="Proporción de ingresos por turismo en el MULC sobre el total de la BP",
        #subtitle = "En %",
        x="",y="",
-       caption="DNMyE en base a BCRA y Dirección Nacional de Cuentas Internacionales")+
+       caption="DMyE en base a BCRA y Dirección Nacional de Cuentas Internacionales")+
   theme_minimal()+
   theme(
     text = element_text(family = familia_fuente), 
@@ -941,7 +942,7 @@ g8 <- tabla8 %>% ggplot(aes(fecha, prop_mulc_bp,
 ```
 
 
-+ En el tercer trimestre de 2024, se registraron US\$`r (tabla7$value[tabla7$turismo_cobros=="BP"]) %>% last() %>% round(1)` millones de ingresos totales asociados al turismo, según la Balanza de Pagos ("BP"). Por su lado, un `r last(tabla8$prop_mulc_bp) %>% round(1)`% de esos ingresos se canalizaron por el mercado oficial de cambios, es decir, US\$`r tabla7$value[tabla7$turismo_cobros=="MULC"] %>% last() %>% round(1)` millones.
++ En el cuarto trimestre de 2024, se registraron US\$`r (tabla7$value[tabla7$turismo_cobros=="BP"]) %>% last() %>% round(1)` millones de ingresos totales asociados al turismo, según la Balanza de Pagos ("BP"). Por su lado, un `r last(tabla8$prop_mulc_bp) %>% round(1)`% de esos ingresos se canalizaron por el mercado oficial de cambios, es decir, US\$`r tabla7$value[tabla7$turismo_cobros=="MULC"] %>% last() %>% round(1)` millones.
 
 *NOTA: Es importante notar que, los ingresos por turismo a través del mercado oficial de cambios (MULC) siempre deberían ser menores, o al menos iguales, al total de ingresos por turismo que percibe la Argentina según la Balanza de Pagos. Sin embargo, en los trimestres 2, 3 y 4 del año 2020 y 3 de 2021, la proporción MULC/BP es mayor al 100%. Esto es debido a las diferencias en cuanto a la metodología de registración de ambas fuentes de información y los desfasajes en la vuelta de los turistas no residentes a sus lugares de origen, producto de las restricciones al tránsito internacional por la pandemia por el virus COVID-19.*
 
@@ -1038,7 +1039,7 @@ g10 <- tabla10 %>% ggplot(aes(fecha, prop_mulc_bp,
     strip.placement = "outside")
 ```
 
-+ En cuanto a los egresos, en el tercer trimestre de 2024, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1)` millones de egresos totales asociados al turismo, según la BP. Por su lado, el Mercado de Cambios registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1)` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1)`% de los egresos registrados por la BP.
++ En cuanto a los egresos, en el cuarto trimestre de 2024, se registraron US\$`r tabla9$value[tabla9$turismo_pagos=="BP"] %>% last() %>% round(1)` millones de egresos totales asociados al turismo, según la BP. Por su lado, el Mercado de Cambios registró una salida de divisas en los rubros turísticos de US\$`r tabla9$value[tabla9$turismo_pagos=="MULC"] %>% last() %>% round(1)` millones, es decir, un `r last(tabla10$prop_mulc_bp) %>% round(1)`% de los egresos registrados por la BP.
 
 *NOTA: En el caso de los egresos, también se debe cumplir la misma condición (egresos por turismo a través del mercado oficial de cambios-MULC-siempre deberían ser menores, o al menos iguales, al total de egresos por turismo de la Argentina según la Balanza de Pagos), sin embargo, nuevamente existen trimestres, a partir del año 2020, en donde esto no se cumple . Se debe a que, además de las diferencias metodológicas de ambas fuentes -registro de transacciones vs. estimación a partir de encuestas de demanda-, sucede que el componente turístico del MULC incluye pagos con tarjeta realizados por residentes en Argentina a residentes en el exterior y que pueden no ser gastos turísticos. Ejemplos de esto podrían ser los pagos de servicios de streaming. Por lo tanto, en los casos en que el ratio MULC/BP es mayor al 100% se evidencia que los gastos con tarjeta por motivos no turísticos aumentaron la componente "viajes y otros gastos con tarjeta" del MULC por encima de los gastos del turismo emisivo registrado por la BP. En los trimestres comprendidos en la pandemia por COVID-19, esta situación se refleja aún más debido a la reducción cercana al 100% i.a. del turismo emisivo.*
 
