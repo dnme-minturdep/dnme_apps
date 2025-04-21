@@ -1010,11 +1010,11 @@ freq_ciudad_dest_24 %>%
     source_note = md("**Fuente:** DNMyE en base a información de CNRT.")) %>% 
   cols_label(
     localidad_destino = md("**Ciudad**"),
-    posicion_23 = md("**2023**"),
+    posicion_23 = md("**2024**"),
     situacion = md(""),
-    posicion_24 = md("**2024**"),
-    pasajeros_23 = md("**2023**"),
-    pasajeros_24 = md("**2024**"),
+    posicion_24 = md("**2025**"),
+    pasajeros_23 = md("**2024**"),
+    pasajeros_24 = md("**2025**"),
     variacion = md("**v.a. %**"),
     participacion_24 = md("**Participación 2024 (%)**")) %>% 
   cols_align(
