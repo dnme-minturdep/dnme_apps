@@ -38,7 +38,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ```{r carga base}
 
 # Base Actual
-base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2025-01-01_a_2025-02-28.parquet") # Actualizar
+base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2025-01-01_a_2025-03-31.parquet") # Actualizar
 
 # Base Año Previo
 base_vieja <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-12-31.parquet")
@@ -1010,11 +1010,11 @@ freq_ciudad_dest_24 %>%
     source_note = md("**Fuente:** DNMyE en base a información de CNRT.")) %>% 
   cols_label(
     localidad_destino = md("**Ciudad**"),
-    posicion_23 = md("**2023**"),
+    posicion_23 = md("**2024**"),
     situacion = md(""),
-    posicion_24 = md("**2024**"),
-    pasajeros_23 = md("**2023**"),
-    pasajeros_24 = md("**2024**"),
+    posicion_24 = md("**2025**"),
+    pasajeros_23 = md("**2024**"),
+    pasajeros_24 = md("**2025**"),
     variacion = md("**v.a. %**"),
     participacion_24 = md("**Participación 2024 (%)**")) %>% 
   cols_align(
