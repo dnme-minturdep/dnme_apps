@@ -37,8 +37,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2025-03-01")
-mes <- "Marzo"
+fecha <- as.Date("2025-04-01")
+mes <- "Abril"
 #trimestre <- "2do"
 anio <- "2025"
 
@@ -806,7 +806,7 @@ pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/
 
 localidades_sin_datos <- c("x")#Localidades años anterior
 
-localidades_insuficiencia <- c("La Angostura")#Para localidades de este año
+localidades_insuficiencia <- c("x")#Para localidades de este año
 
 #Tabla localidades
 tabla4 <- pernoctaciones_localidad %>% 
