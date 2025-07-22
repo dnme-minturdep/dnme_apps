@@ -38,7 +38,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ```{r carga base}
 
 # Base Actual
-base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2025-01-01_a_2025-05-31.parquet") # Actualizar
+base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2025-01-01_a_2025-06-30.parquet") # Actualizar
 
 # Base Año Previo
 base_vieja <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-12-31.parquet")
