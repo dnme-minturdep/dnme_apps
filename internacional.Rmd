@@ -34,7 +34,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 ```{r}
 # Definir mes para títulos ####
-mes <- "Junio"
+mes <- "Julio"
 # PALETAS Y FUENTES ---------------------------------------------------------
 # Paleta colores Presidencia
 cols_arg <- "#37BBED" # Celeste Institucional
@@ -67,8 +67,10 @@ fecha <- str_c(anio, mes_nro, "01" , sep = "-")
 
 # indec_vis <- herramientas::read_file_srv(glue("turismo_internacional/informe_mensual/tabla_indec_{anio}_{mes}.xlsx"), sheet = "visitantes")
 
-indec_vis <- herramientas::read_file_srv(glue("turismo_internacional/informe_mensual/tabla_indec_{anio}_{mes}.xlsx"))
+# indec_vis <- herramientas::read_file_srv(glue("turismo_internacional/informe_mensual/tabla_indec_{anio}_{mes}.xlsx"))
 
+
+indec_vis <- herramientas::read_file_srv("/srv/DataDNMYE/turismo_internacional/informe_mensual/insumos/tabla_indec.xlsx")
 
 
 ```
