@@ -17,7 +17,7 @@ Codigo fuente del site **_Tableros y Reportes_** de la DNMyE  https://tableros.y
 **TABLEROS** (vínculo a _Shiny apps_ generadas en otros repositorios)
 
 - Turismo Internacional
-- Padrón Hotelero - PUNA 
+- Base de datos de alojamientos colectivos
 
 **REPORTES**
 
