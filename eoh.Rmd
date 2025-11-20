@@ -1,6 +1,6 @@
 ---
 title: "Sector hotelero"
-description: "Resumen de los últimos datos de la Encuesta de Ocupación Hotelera (EOH), operativo conjunto entre el Instituto Nacional de Estadística y Censos (INDEC) y la Subsecretaría de Turismo, que releva información de los establecimientos hoteleros y parahoteleros de 52 destinos turísticos del país."
+description: "Resumen de los últimos datos de la Encuesta de Ocupación Hotelera (EOH), operativo conjunto entre el Instituto Nacional de Estadística y Censos (INDEC) y la Subsecretaría de Turismo, que releva información de los establecimientos hoteleros y parahoteleros de 51 destinos turísticos del país."
 output: distill::distill_article
 ---
 
@@ -37,8 +37,8 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 
 
 # Definir mes / trimestre / año de referencia para títulos ----
-fecha <- as.Date("2025-08-01")
-mes <- "Agosto"
+fecha <- as.Date("2025-09-01")
+mes <- "Septiembre"
 #trimestre <- "2do"
 anio <- "2025"
 
@@ -806,7 +806,7 @@ pernoctaciones_localidad <-read.csv("/srv/DataDNMYE/eoh/recursos/recursos_ficha/
 
 localidades_sin_datos <- c("x")#Localidades años anterior
 
-localidades_insuficiencia <- c("Las Grutas")#Para localidades de este año
+localidades_insuficiencia <- c("Valle de Uco","San Rafael")#Para localidades de este año
 
 #Tabla localidades
 tabla4 <- pernoctaciones_localidad %>% 
