@@ -19,7 +19,7 @@ data.frame(
           "https://tableros.yvera.tur.ar/tablero_areas_protegidas",
           "https://tableros.yvera.tur.ar/interno.html",
           "https://tableros.yvera.tur.ar/turismo_internacional/",
-          "https://tableros.yvera.tur.ar/puna/",
+          "https://tableros.yvera.tur.ar/alojamientos_colectivos/",
           "https://tableros.yvera.tur.ar/mulc.html",
           "https://tableros.yvera.tur.ar/empleo.html",
           "https://tableros.yvera.tur.ar/mapeAr",
