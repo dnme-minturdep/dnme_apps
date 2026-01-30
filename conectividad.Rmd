@@ -525,7 +525,7 @@ En total, en el acumulado anual, se realizaron `r vuelos_acumulados_total` vuelo
 #        y = "Cantidad",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC\n Nota: En rojo, los meses de abril.") +
+#        caption = "Fuente: DMyE en base a información de ANAC\n Nota: En rojo, los meses de abril.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -587,7 +587,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Cantidad",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -637,7 +637,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Promedio mensual",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
 #   theme_minimal() +
 #   theme(legend.position = "none",
 #         axis.text.x = element_text(angle = 45,
@@ -672,7 +672,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Frecuencias aéreas totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -710,7 +710,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Pasajeros totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -756,7 +756,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Frecuencias aéreas totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -801,7 +801,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Pasajeros totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -847,7 +847,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "Total",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -894,7 +894,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #        y = "",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -939,7 +939,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #     title = md("__VUELOS DE CABOTAJE POR PROVINCIA DE DESTINO__"),
 #     subtitle = md("__Marzo__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     destino_provincia_etiqueta = md("**Provincia**"),
 #     cuota_2017 = md("**2017**"),
@@ -996,7 +996,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #     title = md("__PASAJEROS POR PROVINCIA DE DESTINO__"),
 #     subtitle = md("__Marzo__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     destino_provincia_etiqueta = md("**Provincia**"),
 #     cuota_2017 = md("**2017**"),
@@ -1062,7 +1062,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #     subtitle = md("__Marzo__"),
 #   ) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     empresa_agrup_def = md("**Ciudad**"),
 #     cuota_2017 = md("**2017**"),
@@ -1132,7 +1132,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #     subtitle = "Sobre el total de pasajeros en el mes",
 #   ) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     empresa_agrup_def = md("**Aerolínea**"),
 #     cuota_2017 = md("**2017**"),
@@ -1202,7 +1202,7 @@ Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r
 #     subtitle = md("__Marzo__"),
 #   ) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     empresa_agrup_def = md("**Ciudad**"),
 #     cuota_2017 = md("**2017**"),
@@ -1308,7 +1308,7 @@ graf_7 <- cabotaje %>%
        y = "",
        x = "",
        color = "",
-       caption = "Fuente: DNMyE en base a información de ANAC.") +
+       caption = "Fuente: DMyE en base a información de ANAC.") +
   theme_minimal() +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45,
@@ -1653,7 +1653,7 @@ herfintal_prov_empre %>%
 #     title = md("__VUELOS DE CABOTAJE POR REGIÓN, PROVINCIA Y CIUDAD__"),
 #     subtitle = "2023") %>%
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     provincia = md("**Provincia**"),
 #     localidad = md("**Localidad**"),
@@ -1871,7 +1871,7 @@ freq_ciudad_dest %>%
 #     title = md("__RANKING DE VUELOS DE CABOTAJE POR CIUDAD DE DESTINO__"),
 #     subtitle = md("__Marzo 2023__") ) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     destino_localidad_etiqueta = md("**Ciudad**"),
 #     `Aerolíneas Argentinas` = md("**Aerolíneas Argentinas**"),
@@ -2037,7 +2037,7 @@ graf_4 <- cabotaje %>%
        y = "",
        x = "",
        color = "",
-       caption = "Fuente: DNMyE en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
+       caption = "Fuente: DMyE en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
   theme_minimal() +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45,
@@ -2133,7 +2133,7 @@ ggplotly(graf_4, tooltip = "text") %>%
 #     title = md("__RUTAS AÉREAS DEL INTERIOR__"),
 #     subtitle = "Marzo 2023") %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   tab_source_note(
 #     source_note = md("Comprende rutas aéreas que no conenctan con el AMBA")) %>% 
 #   cols_label(
@@ -2204,7 +2204,7 @@ En lo que respecta al mercado internacional, en **`r datos_mes_anio`**, se reali
 #        y = "Frecuencias totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2265,7 +2265,7 @@ Con respecto al número de **asientos** disponibles en vuelos internacionales, *
 #        y = "Total",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2300,7 +2300,7 @@ Con respecto al número de **asientos** disponibles en vuelos internacionales, *
 #        y = "Promedio mensual",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2391,7 +2391,7 @@ graf_12 <- internacional %>%
        y = "",
        x = "",
        color = "",
-       caption = "Fuente: DNMyE en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
+       caption = "Fuente: DMyE en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
   theme_minimal() +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45,
@@ -2476,7 +2476,7 @@ graf_13 <-  internacional %>%
        y = "",
        x = "",
        color = "",
-       caption = "Fuente: DNMyE en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
+       caption = "Fuente: DMyE en base a información de ANAC.\n Nota: En rojo, los meses de abril.") +
   theme_minimal() +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45,
@@ -2549,7 +2549,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #        x = "",
 #        color = "",
 #        fill = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2593,7 +2593,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #        x = "",
 #        color = "",
 #        fill = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2632,7 +2632,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #        y =  "Pasajeros totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2671,7 +2671,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #        y =  "Asientos totales",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2714,7 +2714,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #        y =  "Factor de ocupación",
 #        x = "",
 #        color = "",
-#        caption = "Fuente: DNMyE en base a información de ANAC.") +
+#        caption = "Fuente: DMyE en base a información de ANAC.") +
 #   theme_minimal() +
 #   theme(legend.position = "bottom",
 #         axis.text.x = element_text(angle = 45,
@@ -2789,7 +2789,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #     title = md("__FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES A ARGENTINA POR CONTINENTE DE ORIGEN__"),
 #     subtitle = "Marzo 2023") %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     mes_local = md("**Mes**"),
 #     africa_23 = md("**África**"),
@@ -2896,7 +2896,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #     title = md("__FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES DESDE ARGENTINA POR CONTINENTE DE DESTINO__"),
 #     subtitle = "Marzo 2023") %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     mes_local = md("**Mes**"),
 #     africa_23 = md("**África**"),
@@ -3043,7 +3043,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #     title = md("__FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES POR CONTINENTE Y PAÍS DE ORIGEN__"),
 #     subtitle = md("__MARZO__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     origen_pais_etiqueta = md("**País**"),
 #     empresa_agrup_def = md("**Companía Aérea**"),
@@ -3114,7 +3114,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #     title = md("__FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES POR CONTINENTE Y PAÍS DE DESTINO__"),
 #     subtitle = md("__MARZO__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     destino_pais_etiqueta = md("**País**"),
 #     empresa_agrup_def = md("**Companía Aérea**"),
@@ -3372,7 +3372,7 @@ ggplotly(graf_13, tooltip = "text") %>%
 #     title = md("__RANKING DE FRECUENCIAS AÉREAS DE VUELOS INTERNACIONALES POR CIUDAD DE ORIGEN__"),
 #     subtitle = "ABRIL") %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     origen_localidad_etiqueta = md("**Ciudad**"),
 #     posicion_23 = md("**2023**"),
@@ -4017,7 +4017,7 @@ aerolineas_int %>%
 #     title = md("__ÍNDICE DE HERFINDAHL Y PORCENTAJE DE LOS VUELOS INTERNACIONALES POR PAÍS DE ORIGEN__"),
 #     subtitle = md("__MARZO__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     origen_pais_etiqueta = md("**País**"),
 #     cuota_2017 = md("**2017**"),
@@ -4080,7 +4080,7 @@ aerolineas_int %>%
 #     title = md("__ÍNDICE DE HERFINDAHL Y PARTICIPACIÓN PORCENTUAL DE PASAJEROS TRANSPORTADOS SEGÚN PAÍS DE ORIGEN__"),
 #     subtitle = md("__MARZO__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     origen_pais_etiqueta = md("**País**"),
 #     cuota_2017 = md("**2017**"),
@@ -4141,7 +4141,7 @@ aerolineas_int %>%
 #   tab_header(
 #     title = md("__ÍNDICE DE HERFINDAHL Y PARTICIPACIÓN PORCENTUAL DE VUELOS SEGÚN AEROLÍNEAS__")) %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     empresa_agrup_def = md("**Ciudad**"),
 #     cuota_2022 = md("**2022**"),
@@ -4395,7 +4395,7 @@ cowplot::plot_grid(titulo, cuadro, ncol = 1, rel_heights = c(0.1, 0.75))
 #     title = md("__RUTAS AÉREAS DEL INTERIOR__"),
 #     subtitle = "Marzo 2023") %>% 
 #   tab_source_note(
-#     source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   tab_source_note(
 #     source_note = md("Comprende rutas aéreas que no conenctan con el AMBA")) %>% 
 #   cols_label(
@@ -4489,7 +4489,7 @@ rutas_federales <- cabotaje %>%
        y = "",
        x = "",
        color = "",
-       caption = "Fuente: DNMyE en base a información de ANAC.\n Comprende rutas aéreas que no conenctan con el AMBA.\n Nota: En rojo, los meses de abril,") +
+       caption = "Fuente: DMyE en base a información de ANAC.\n Comprende rutas aéreas que no conenctan con el AMBA.\n Nota: En rojo, los meses de abril,") +
   theme_minimal() +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45,
@@ -4512,65 +4512,65 @@ pasajeros_totales_cabotaje <- cabotaje %>%
   summarise(pasajeros = sum(pax_ad, na.rm = T)) %>% 
   mutate(pasajeros = round(pasajeros))
 
-pasajeros_totales_cabotaje_mes <- pasajeros_totales_cabotaje %>% 
-  ungroup() %>% 
-  filter(anio_local == max(anio_local)) %>% 
-  filter(mes_local == max(mes_local)) %>% 
-  rename(pasajeros_mes_actual = pasajeros) %>% 
-  ungroup() %>% 
-  select(oaci,
-         pasajeros_mes_actual)
-
-pasajeros_totales_cabotaje_mes_previo <- pasajeros_totales_cabotaje %>% 
-  ungroup() %>% 
-  filter(anio_local == ifelse(last(mes_local == 1),max(anio_local)-1,max(anio_local))) %>% 
-  filter(mes_local == ifelse(max(mes_local) == 12,max(mes_local),max(mes_local) - 1)) %>% 
-  rename(pasajeros_mes_previo = pasajeros) %>% 
-  ungroup() %>% 
-  select(oaci,
-         pasajeros_mes_previo)
-
-pasajeros_totales_cabotaje_mes_anio_previo <- pasajeros_totales_cabotaje %>% 
-  ungroup() %>% 
-  filter(anio_local == max(anio_local) - 1) %>% 
-  filter(mes_local == month(max(base_total$Fecha))) %>%
-  rename(pasajeros_mes_anio_previo = pasajeros) %>% 
-  ungroup() %>% 
-  select(oaci,
-         pasajeros_mes_anio_previo)
-
-pasajeros_totales_cabotaje_mes_2019 <- pasajeros_totales_cabotaje %>% 
-  ungroup() %>% 
-  filter(anio_local == 2019) %>% 
-  filter(mes_local == month(max(base_total$Fecha))) %>%
-  rename(pasajeros_mes_2019 = pasajeros) %>% 
-  ungroup() %>% 
-  select(oaci,
-         pasajeros_mes_2019)
-
-pasajeros_totales_cabotaje_mes <- pasajeros_totales_cabotaje_mes %>% 
-  full_join(pasajeros_totales_cabotaje_mes_2019, by = "oaci") %>% 
-  full_join(pasajeros_totales_cabotaje_mes_previo, by = "oaci") %>% 
-  full_join(pasajeros_totales_cabotaje_mes_anio_previo, by = "oaci") %>% 
-  mutate(across(.cols = everything(.),
-                ~ replace_na(., 0)),
-         variacion_mes = (pasajeros_mes_actual/pasajeros_mes_previo) - 1,
-         variacion_mes = if_else(!is.finite(variacion_mes),
-                                 0,
-                                 variacion_mes),
-         variacion_anual = (pasajeros_mes_actual/pasajeros_mes_anio_previo) - 1,
-         variacion_anual = if_else(!is.finite(variacion_anual),
-                                   0,
-                                   variacion_anual))
-
-pasajeros_totales_cabotaje_acumulado <- pasajeros_totales_cabotaje %>% 
-  ungroup() %>% 
-  filter(mes_local <= month(max(base_total$Fecha))) %>% 
-  group_by(anio_local, oaci) %>% 
-  summarise(pasajeros_acumulados = sum(pasajeros, na.rm = T)) %>% 
-  mutate(anio_local = paste0("anio_", anio_local)) %>% 
-  pivot_wider(names_from = anio_local,
-              values_from = pasajeros_acumulados)
+# pasajeros_totales_cabotaje_mes <- pasajeros_totales_cabotaje %>% 
+#   ungroup() %>% 
+#   filter(anio_local == max(anio_local)) %>% 
+#   filter(mes_local == max(mes_local)) %>% 
+#   rename(pasajeros_mes_actual = pasajeros) %>% 
+#   ungroup() %>% 
+#   select(oaci,
+#          pasajeros_mes_actual)
+# 
+# pasajeros_totales_cabotaje_mes_previo <- pasajeros_totales_cabotaje %>% 
+#   ungroup() %>% 
+#   filter(anio_local == ifelse(last(mes_local == 1),max(anio_local)-1,max(anio_local))) %>% 
+#   filter(mes_local == ifelse(max(mes_local) == 12,max(mes_local),max(mes_local) - 1)) %>% 
+#   rename(pasajeros_mes_previo = pasajeros) %>% 
+#   ungroup() %>% 
+#   select(oaci,
+#          pasajeros_mes_previo)
+# 
+# pasajeros_totales_cabotaje_mes_anio_previo <- pasajeros_totales_cabotaje %>% 
+#   ungroup() %>% 
+#   filter(anio_local == max(anio_local) - 1) %>% 
+#   filter(mes_local == month(max(base_total$Fecha))) %>%
+#   rename(pasajeros_mes_anio_previo = pasajeros) %>% 
+#   ungroup() %>% 
+#   select(oaci,
+#          pasajeros_mes_anio_previo)
+# 
+# pasajeros_totales_cabotaje_mes_2019 <- pasajeros_totales_cabotaje %>% 
+#   ungroup() %>% 
+#   filter(anio_local == 2019) %>% 
+#   filter(mes_local == month(max(base_total$Fecha))) %>%
+#   rename(pasajeros_mes_2019 = pasajeros) %>% 
+#   ungroup() %>% 
+#   select(oaci,
+#          pasajeros_mes_2019)
+# 
+# pasajeros_totales_cabotaje_mes <- pasajeros_totales_cabotaje_mes %>% 
+#   full_join(pasajeros_totales_cabotaje_mes_2019, by = "oaci") %>% 
+#   full_join(pasajeros_totales_cabotaje_mes_previo, by = "oaci") %>% 
+#   full_join(pasajeros_totales_cabotaje_mes_anio_previo, by = "oaci") %>% 
+#   mutate(across(.cols = everything(.),
+#                 ~ replace_na(., 0)),
+#          variacion_mes = (pasajeros_mes_actual/pasajeros_mes_previo) - 1,
+#          variacion_mes = if_else(!is.finite(variacion_mes),
+#                                  0,
+#                                  variacion_mes),
+#          variacion_anual = (pasajeros_mes_actual/pasajeros_mes_anio_previo) - 1,
+#          variacion_anual = if_else(!is.finite(variacion_anual),
+#                                    0,
+#                                    variacion_anual))
+# 
+# pasajeros_totales_cabotaje_acumulado <- pasajeros_totales_cabotaje %>% 
+#   ungroup() %>% 
+#   filter(mes_local <= month(max(base_total$Fecha))) %>% 
+#   group_by(anio_local, oaci) %>% 
+#   summarise(pasajeros_acumulados = sum(pasajeros, na.rm = T)) %>% 
+#   mutate(anio_local = paste0("anio_", anio_local)) %>% 
+#   pivot_wider(names_from = anio_local,
+#               values_from = pasajeros_acumulados)
 
 aeropuertos <- read_file_srv("aerocomercial/libros_de_codigos/ANAC/aeropuertos_nuevos.xlsx", col_types = "text") %>% 
   mutate(aeropuerto_etiqueta_anac = case_when(is.na(aeropuerto_etiqueta_anac) ~ nombre_ingles,
@@ -4582,156 +4582,98 @@ aeropuertos <- read_file_srv("aerocomercial/libros_de_codigos/ANAC/aeropuertos_n
          localidad = localidad_etiqueta_indec,
          provincia)
 
-tabla <- pasajeros_totales_cabotaje_acumulado %>% 
-  left_join(pasajeros_totales_cabotaje_mes, by = "oaci") %>% 
+tabla <- pasajeros_totales_cabotaje %>% 
+  ungroup() %>% 
+  filter(anio_local >= max(pasajeros_totales_cabotaje$anio_local)-1,
+         mes_local <= month(datos_mes_anio_bis)) %>% 
   left_join(aeropuertos, by = c("oaci" = "codigo_oaci")) %>% 
-  arrange(-anio_2025) %>% 
-  mutate(ranking = row_number(),
-         localidad = case_when(ranking >= 40 ~ "Resto",
-                               T ~ localidad)) %>% 
-  group_by(localidad) %>% 
-  summarise(anio_2017 = sum(anio_2017, na.rm = T),
-            anio_2018 = sum(anio_2018, na.rm = T),
-            anio_2019 = sum(anio_2019, na.rm = T),
-            anio_2020 = sum(anio_2020, na.rm = T),
-            anio_2021 = sum(anio_2021, na.rm = T),
-            anio_2022 = sum(anio_2022, na.rm = T),
-            anio_2023 = sum(anio_2023, na.rm = T),
-            anio_2024 = sum(anio_2024, na.rm = T),
-            anio_2025 = sum(anio_2025,na.rm = T),
-            pasajeros_mes_actual = sum(pasajeros_mes_actual, na.rm = T),
-            pasajeros_mes_2019 = sum(pasajeros_mes_2019, na.rm = T),
-            pasajeros_mes_previo = sum(pasajeros_mes_previo, na.rm = T),
-            pasajeros_mes_anio_previo = sum(pasajeros_mes_anio_previo, na.rm = T)) %>%
+  filter(localidad != "El Palomar") %>% 
+  summarise(pasajeros = as.integer(sum(pasajeros, na.rm = T)), .by = c(anio_local, localidad)) %>% 
+  pivot_wider(names_from = anio_local, values_from = pasajeros, names_prefix = "anio_") %>% 
   janitor::adorn_totals(where = "row",
                         na.rm = T) %>% 
-  mutate(across(.cols = 2:14,
-                ~ replace_na(., 0)),
-         variacion_mes = (pasajeros_mes_actual/pasajeros_mes_previo) - 1,
-         variacion_mes = if_else(!is.finite(variacion_mes),
-                                 0,
-                                 variacion_mes),
-         variacion_anual = (pasajeros_mes_actual/pasajeros_mes_anio_previo) - 1,
-         variacion_anual = if_else(!is.finite(variacion_anual),
-                                   0,
-                                   variacion_anual)) %>%
-  arrange(-anio_2025)  
+  mutate(var_acum = (anio_2025/anio_2024)-1) 
 
-tabla_grande <- tabla %>% 
-  select(-ends_with("_previo")) %>% 
+tabla %>% 
+  arrange(desc(anio_2025)) %>% 
   gt() %>% 
   tab_header(
-    title = md("__PASAJEROS TOTALES EN VUELOS DE CABOTAJE POR AEROPUERTO__")) %>%  
+    title = md("__PASAJEROS TOTALES EN VUELOS DE CABOTAJE POR LOCALIDAD__"),
+    subtitle = glue::glue("Acumulado Período {str_to_title(month(1, , label = T, abbr = T))}","-","{str_to_title(month(max(base_total$Fecha), label = T, abbr = T))}")) %>%  
   tab_source_note(
-    source_note = md("**Fuente:** DNMyE en base a información de ANAC.")) %>% 
+    source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
   cols_label(
-    localidad = md("**Aeropuerto**"),
-    anio_2017 = md("2017"),
-    anio_2018 = md("2018"),
-    anio_2019 = md("2019"),
-    anio_2020 = md("2020"),
-    anio_2021 = md("2021"),
-    anio_2022 = md("2022"),
-    anio_2023 = md("2023"),
+    localidad = md("**Localidad**"),
     anio_2024 = md("2024"),
-    pasajeros_mes_2019 = md("2019"),
-    pasajeros_mes_actual = md("2024"),
-    variacion_mes = md("Mensual"),
-    variacion_anual = md("Anual")) %>% 
-  cols_align(
-    align = "center",
-    columns = c(2:13))  %>% 
-  opt_table_font(
-    font = list(
-      google_font(name = "Encode Sans"))) %>% 
-  fmt_percent(columns = c(9:13), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
-  fmt_missing(
-    columns = everything(),
-    rows = everything(),
-    missing_text = "-") %>%
+    anio_2025 = md("2025"),
+    var_acum = md("Var i.a. acumulado")) %>% 
   data_color(
-    columns = contains("variacion"),
+    columns = contains("var"),
     apply_to = "text",
     colors = scales::col_bin(
       bins = c(-Inf, 0, Inf),
       palette = c(dnmye_colores("rosa"), dnmye_colores("azul verde")),
     )
   ) %>% 
-  tab_spanner(
-    label = "Variación",
-    columns = c(variacion_mes, variacion_anual)) %>% 
-  tab_spanner(
-    label = glue::glue("Pasajeros {str_to_title(strftime(max(base_total$Fecha), '%B'))}"),
-    columns = c(pasajeros_mes_actual,
-                pasajeros_mes_2019)) %>% 
-  tab_spanner(
-    label = glue::glue("Acumulado Período {str_to_title(month(1, , label = T, abbr = T))}","-","{str_to_title(month(max(base_total$Fecha), label = T, abbr = T))}"),
-    columns = starts_with("anio")) %>% 
-  tab_style(style = cell_text(weight = "bold"),
-            locations = cells_column_spanners()) %>%
-  comunicacion::gt_theme_dnmye(var_total = localidad) %>% 
-  fmt_number(columns = c(starts_with("anio"),
-                         starts_with("pasajeros")), 
-             sep_mark = ".", 
-             decimals = 0)
+  gt_theme_dnmye(var_total = localidad) 
 
 # gtsave(tabla,
 #        "tabla_aeropuertos.png", vwidth = 2000)
 
-tabla %>% 
-  select(-ends_with("_previo")) %>% 
-  select(-c(anio_2017, anio_2018, anio_2020, anio_2021, anio_2022)) %>% 
-  gt() %>% 
-  tab_header(
-    title = md("__PASAJEROS TOTALES EN VUELOS DE CABOTAJE POR AEROPUERTO__")) %>%  
-  tab_source_note(
-    source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
-  cols_label(
-    localidad = md("**Aeropuerto**"),
-    anio_2024 = md("2024"),
-    anio_2023 = md("2023"),
-    anio_2019 = md("2019"),
-    anio_2025 = md("2025"),
-    pasajeros_mes_actual = md("2025"),
-    pasajeros_mes_2019 = md("2019"),
-    variacion_mes = md("Mensual"),
-    variacion_anual = md("Anual")) %>% 
-  cols_align(
-    align = "center",
-    columns = c(2:8))  %>% 
-  opt_table_font(
-    font = list(
-      google_font(name = "Encode Sans"))) %>% 
-  fmt_percent(columns = c(7:8), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
-  fmt_missing(
-    columns = everything(),
-    rows = everything(),
-    missing_text = "-") %>%
-  data_color(
-    columns = contains("variacion"),
-    apply_to = "text",
-    colors = scales::col_bin(
-      bins = c(-Inf, 0, Inf),
-      palette = c(dnmye_colores("rosa"), dnmye_colores("azul verde")),
-    )
-  ) %>% 
-  tab_spanner(
-    label = "Variación",
-    columns = c(variacion_mes, variacion_anual)) %>% 
-  tab_spanner(
-    label = glue::glue("Pasajeros {str_to_title(strftime(max(base_total$Fecha), '%B'))}"),
-    columns = c(pasajeros_mes_actual,
-                pasajeros_mes_2019)) %>% 
-  tab_spanner(
-    label = glue::glue("Acumulado Período {str_to_title(month(1, , label = T, abbr = T))}","-","{str_to_title(month(max(base_total$Fecha), label = T, abbr = T))}"),
-    columns = starts_with("anio")) %>% 
-  tab_style(style = cell_text(weight = "bold"),
-            locations = cells_column_spanners()) %>%
-  comunicacion::gt_theme_dnmye(var_total = localidad) %>% 
-  fmt_number(columns = c(starts_with("anio"),
-                         starts_with("pasajeros")), 
-             sep_mark = ".", 
-             decimals = 0)
+# tabla %>% 
+#   select(-ends_with("_previo")) %>% 
+#   select(-c(anio_2017, anio_2018, anio_2020, anio_2021, anio_2022)) %>% 
+#   gt() %>% 
+#   tab_header(
+#     title = md("__PASAJEROS TOTALES EN VUELOS DE CABOTAJE POR AEROPUERTO__")) %>%  
+#   tab_source_note(
+#     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
+#   cols_label(
+#     localidad = md("**Aeropuerto**"),
+#     anio_2024 = md("2024"),
+#     anio_2023 = md("2023"),
+#     anio_2019 = md("2019"),
+#     anio_2025 = md("2025"),
+#     pasajeros_mes_actual = md("2025"),
+#     pasajeros_mes_2019 = md("2019"),
+#     variacion_mes = md("Mensual"),
+#     variacion_anual = md("Anual")) %>% 
+#   cols_align(
+#     align = "center",
+#     columns = c(2:8))  %>% 
+#   opt_table_font(
+#     font = list(
+#       google_font(name = "Encode Sans"))) %>% 
+#   fmt_percent(columns = c(7:8), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+#   fmt_missing(
+#     columns = everything(),
+#     rows = everything(),
+#     missing_text = "-") %>%
+#   data_color(
+#     columns = contains("variacion"),
+#     apply_to = "text",
+#     colors = scales::col_bin(
+#       bins = c(-Inf, 0, Inf),
+#       palette = c(dnmye_colores("rosa"), dnmye_colores("azul verde")),
+#     )
+#   ) %>% 
+#   tab_spanner(
+#     label = "Variación",
+#     columns = c(variacion_mes, variacion_anual)) %>% 
+#   tab_spanner(
+#     label = glue::glue("Pasajeros {str_to_title(strftime(max(base_total$Fecha), '%B'))}"),
+#     columns = c(pasajeros_mes_actual,
+#                 pasajeros_mes_2019)) %>% 
+#   tab_spanner(
+#     label = glue::glue("Acumulado Período {str_to_title(month(1, , label = T, abbr = T))}","-","{str_to_title(month(max(base_total$Fecha), label = T, abbr = T))}"),
+#     columns = starts_with("anio")) %>% 
+#   tab_style(style = cell_text(weight = "bold"),
+#             locations = cells_column_spanners()) %>%
+#   comunicacion::gt_theme_dnmye(var_total = localidad) %>% 
+#   fmt_number(columns = c(starts_with("anio"),
+#                          starts_with("pasajeros")), 
+#              sep_mark = ".", 
+#              decimals = 0)
 
 ```
 
