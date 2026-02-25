@@ -38,7 +38,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ```{r carga base}
 
 # Base Actual
-base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2025-01-01_a_2025-10-31.parquet") # Actualizar
+base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2025-01-01_a_2025-12-31.parquet") # Actualizar
 
 # Base Año Previo
 base_vieja <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2024-01-01_a_2024-12-31.parquet")
@@ -355,16 +355,17 @@ base_gt <- bind_rows(
 
 ```
 
-**(Publicado en `r publicacion_mes_anio` con datos actualizados al `r datos_mes_anio_bis`)**
+**Datos actualizados al `r datos_mes_anio_bis`**
 
 El reporte mensual que aquí presentamos se basa en el *[Documento de Trabajo N°14: "Conectividad Terrestre. Diagnóstico turístico del mercado interurbano de pasajeros."](https://tableros.yvera.tur.ar/recursos/biblioteca/conectividad_terrestre.pdf)* que analiza el flujo de pasajeros en servicios regulares de buses de media y larga distancia al interior del país entre enero de 2019 y octubre de 2023. En este marco, el actual trabajo busca continuar con la publicación periódica de estadísticas vinculadas a la conectividad terrestre en el país. Para más información visite el [tablero de conectividad terrestre](https://tableros.yvera.tur.ar/conectividad_terrestre/).
 
 En la siguiente tabla resumen se incorpora, además, información sobre servicios de turismo[^1].
  
-[^1]: Según la Resolución SGT Nº73/17 del Ministerio de Transporte de la Nación, un servicio de turismo es aquel que se efectúa a fin de atender un servicio de transporte integrado en una programación turística, como complemento a una actividad de tal naturaleza, trasladando a un contingente y expresamente identificando las personas que lo componen, conforme a un contrato celebrado a tal efecto.
+[^1]: Un servicio de turismo es aquel que se efectúa a fin de atender un servicio de transporte integrado en una programación turística, como complemento a una actividad de tal naturaleza, trasladando a un contingente y expresamente identificando las personas que lo componen, conforme a un contrato celebrado a tal efecto.
 
 ```{r}
 base_gt %>% 
+  #filter(periodo != "Acumulado") %>%  #poner en enero
   mutate(across(c(viajes,asientos,pasajeros), as.integer)) %>% 
   gt() %>% 
   cols_label(periodo = "",
