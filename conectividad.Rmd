@@ -105,19 +105,19 @@ vuelos_mes <- cabotaje %>%
   mutate(var_anual_acum = (acum_anual/lag(acum_anual, nrow(.)/2)-1)*100) %>%
   filter(fecha == max(fecha))
 
-vuelos_mes_2019 <- cabotaje %>% 
-  filter(mes_local == month(max(fecha_month))) %>% 
-  filter(anio_local == 2019) %>% 
-  group_by(mes_local) %>% 
-  summarise(vuelos = round(sum(vuelos, na.rm = T),0)) %>% 
-  select(vuelos) %>% 
-  pull
+# vuelos_mes_2019 <- cabotaje %>% 
+#   filter(mes_local == month(max(fecha_month))) %>% 
+#   filter(anio_local == 2019) %>% 
+#   group_by(mes_local) %>% 
+#   summarise(vuelos = round(sum(vuelos, na.rm = T),0)) %>% 
+#   select(vuelos) %>% 
+#   pull
 
-var_2019_vuelos <- if_else((((vuelos_mes %>% select(frecuencias) %>% pull)/vuelos_mes_2019)-1)*100 < 0,
-                           paste0(round((((vuelos_mes %>% select(frecuencias) %>% pull)/vuelos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
-                                  "% menos"),
-                           paste0(round((((vuelos_mes %>% select(frecuencias) %>% pull)/vuelos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
-                                  "% más"))
+# var_2019_vuelos <- if_else((((vuelos_mes %>% select(frecuencias) %>% pull)/vuelos_mes_2019)-1)*100 < 0,
+#                            paste0(round((((vuelos_mes %>% select(frecuencias) %>% pull)/vuelos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+#                                   "% menos"),
+#                            paste0(round((((vuelos_mes %>% select(frecuencias) %>% pull)/vuelos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
+#                                   "% más"))
 
 vuelos_mes_total <- vuelos_mes %>% 
   select(frecuencias) %>% 
@@ -169,19 +169,19 @@ pasajeros_mes <- cabotaje %>%
   mutate(var_anual_acum = (acum_anual/lag(acum_anual, nrow(.)/2)-1)*100) %>%
   filter(fecha == max(fecha)) 
 
-pasajeros_mes_2019 <- cabotaje %>% 
-  filter(mes_local == month(max(fecha_month))) %>% 
-  filter(anio_local == 2019) %>% 
-  group_by(mes_local) %>% 
-  summarise(pasajeros = round(sum(pax_ad, na.rm = T),0)) %>% 
-  select(pasajeros) %>% 
-  pull
+# pasajeros_mes_2019 <- cabotaje %>% 
+#   filter(mes_local == month(max(fecha_month))) %>% 
+#   filter(anio_local == 2019) %>% 
+#   group_by(mes_local) %>% 
+#   summarise(pasajeros = round(sum(pax_ad, na.rm = T),0)) %>% 
+#   select(pasajeros) %>% 
+#   pull
 
-var_2019_pasajeros <- if_else((((pasajeros_mes %>% select(pasajeros) %>% pull)/pasajeros_mes_2019)-1)*100 < 0,
-                              paste0(round((((pasajeros_mes %>% select(pasajeros) %>% pull)/pasajeros_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
-                                     "% menos"),
-                              paste0(round((((pasajeros_mes %>% select(pasajeros) %>% pull)/pasajeros_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
-                                     "% más"))
+# var_2019_pasajeros <- if_else((((pasajeros_mes %>% select(pasajeros) %>% pull)/pasajeros_mes_2019)-1)*100 < 0,
+#                               paste0(round((((pasajeros_mes %>% select(pasajeros) %>% pull)/pasajeros_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+#                                      "% menos"),
+#                               paste0(round((((pasajeros_mes %>% select(pasajeros) %>% pull)/pasajeros_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
+#                                      "% más"))
 
 pasajeros_mes_total <- pasajeros_mes %>% 
   select(pasajeros) %>% 
@@ -233,19 +233,19 @@ asientos_mes <- cabotaje %>%
   mutate(var_anual_acum = (acum_anual/lag(acum_anual, nrow(.)/2)-1)*100) %>%
   filter(fecha == max(fecha)) 
 
-asientos_mes_2019 <- cabotaje %>% 
-  filter(mes_local == month(max(fecha_month))) %>% 
-  filter(anio_local == 2019) %>% 
-  group_by(mes_local) %>% 
-  summarise(asientos = round(sum(asientos_pax, na.rm = T),0)) %>% 
-  select(asientos) %>% 
-  pull
-
-var_2019_asientos <- if_else((((asientos_mes %>% select(asientos) %>% pull)/asientos_mes_2019)-1)*100 < 0,
-                             paste0(round((((asientos_mes %>% select(asientos) %>% pull)/asientos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
-                                    "% menos"),
-                             paste0(round((((asientos_mes %>% select(asientos) %>% pull)/asientos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
-                                    "% más"))
+# asientos_mes_2019 <- cabotaje %>% 
+#   filter(mes_local == month(max(fecha_month))) %>% 
+#   filter(anio_local == 2019) %>% 
+#   group_by(mes_local) %>% 
+#   summarise(asientos = round(sum(asientos_pax, na.rm = T),0)) %>% 
+#   select(asientos) %>% 
+#   pull
+# 
+# var_2019_asientos <- if_else((((asientos_mes %>% select(asientos) %>% pull)/asientos_mes_2019)-1)*100 < 0,
+#                              paste0(round((((asientos_mes %>% select(asientos) %>% pull)/asientos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+#                                     "% menos"),
+#                              paste0(round((((asientos_mes %>% select(asientos) %>% pull)/asientos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
+#                                     "% más"))
 
 asientos_mes_total <- asientos_mes %>% 
   select(asientos) %>% 
@@ -310,11 +310,11 @@ int_vuelos_mes_2019 <- internacional %>%
   select(vuelos) %>% 
   pull
 
-int_var_2019_vuelos <- if_else((((int_vuelos_mes %>% select(frecuencias) %>% pull)/int_vuelos_mes_2019)-1)*100 < 0,
-                               paste0(round((((int_vuelos_mes %>% select(frecuencias) %>% pull)/int_vuelos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
-                                      "% menos"),
-                               paste0(round((((int_vuelos_mes %>% select(frecuencias) %>% pull)/int_vuelos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
-                                      "% más"))
+# int_var_2019_vuelos <- if_else((((int_vuelos_mes %>% select(frecuencias) %>% pull)/int_vuelos_mes_2019)-1)*100 < 0,
+#                                paste0(round((((int_vuelos_mes %>% select(frecuencias) %>% pull)/int_vuelos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+#                                       "% menos"),
+#                                paste0(round((((int_vuelos_mes %>% select(frecuencias) %>% pull)/int_vuelos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
+#                                       "% más"))
 
 int_vuelos_mes_total <- int_vuelos_mes %>% 
   select(frecuencias) %>% 
@@ -366,19 +366,19 @@ int_asientos_mes <- internacional %>%
   mutate(var_anual_acum = (acum_anual/lag(acum_anual, nrow(.)/2)-1)*100) %>%
   filter(fecha == max(fecha)) 
 
-int_asientos_mes_2019 <- internacional %>% 
-  filter(mes_local == month(max(fecha_month))) %>% 
-  filter(anio_local == 2019) %>% 
-  group_by(mes_local) %>% 
-  summarise(asientos = round(sum(asientos_pax, na.rm = T),0)) %>% 
-  select(asientos) %>% 
-  pull
+# int_asientos_mes_2019 <- internacional %>% 
+#   filter(mes_local == month(max(fecha_month))) %>% 
+#   filter(anio_local == 2019) %>% 
+#   group_by(mes_local) %>% 
+#   summarise(asientos = round(sum(asientos_pax, na.rm = T),0)) %>% 
+#   select(asientos) %>% 
+#   pull
 
-int_var_2019_asientos <- if_else((((int_asientos_mes %>% select(asientos) %>% pull)/int_asientos_mes_2019)-1)*100 < 0,
-                                 paste0(round((((int_asientos_mes %>% select(asientos) %>% pull)/int_asientos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
-                                        "% menos"),
-                                 paste0(round((((int_asientos_mes %>% select(asientos) %>% pull)/int_asientos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
-                                        "% más"))
+# int_var_2019_asientos <- if_else((((int_asientos_mes %>% select(asientos) %>% pull)/int_asientos_mes_2019)-1)*100 < 0,
+#                                  paste0(round((((int_asientos_mes %>% select(asientos) %>% pull)/int_asientos_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+#                                         "% menos"),
+#                                  paste0(round((((int_asientos_mes %>% select(asientos) %>% pull)/int_asientos_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
+#                                         "% más"))
 
 int_asientos_mes_total <- int_asientos_mes %>% 
   select(asientos) %>% 
@@ -427,19 +427,19 @@ int_pasajeros_mes <- internacional %>%
   mutate(var_anual_acum = (acum_anual/lag(acum_anual, nrow(.)/2)-1)*100) %>%
   filter(fecha == max(fecha)) 
 
-int_pasajeros_mes_2019 <- internacional %>% 
-  filter(mes_local == month(max(fecha_month))) %>% 
-  filter(anio_local == 2019) %>% 
-  group_by(mes_local) %>% 
-  summarise(pasajeros = round(sum(pax_ad, na.rm = T),0)) %>% 
-  select(pasajeros) %>% 
-  pull
+# int_pasajeros_mes_2019 <- internacional %>% 
+#   filter(mes_local == month(max(fecha_month))) %>% 
+#   filter(anio_local == 2019) %>% 
+#   group_by(mes_local) %>% 
+#   summarise(pasajeros = round(sum(pax_ad, na.rm = T),0)) %>% 
+#   select(pasajeros) %>% 
+#   pull
 
-int_var_2019_pasajeros <- if_else((((int_pasajeros_mes %>% select(pasajeros) %>% pull)/int_pasajeros_mes_2019)-1)*100 < 0,
-                                  paste0(round((((int_pasajeros_mes %>% select(pasajeros) %>% pull)/int_pasajeros_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
-                                         "% menos"),
-                                  paste0(round((((int_pasajeros_mes %>% select(pasajeros) %>% pull)/int_pasajeros_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
-                                         "% más"))
+# int_var_2019_pasajeros <- if_else((((int_pasajeros_mes %>% select(pasajeros) %>% pull)/int_pasajeros_mes_2019)-1)*100 < 0,
+#                                   paste0(round((((int_pasajeros_mes %>% select(pasajeros) %>% pull)/int_pasajeros_mes_2019)-1)*100*-1, 2) %>% format(., decimal.mark = ","),
+#                                          "% menos"),
+#                                   paste0(round((((int_pasajeros_mes %>% select(pasajeros) %>% pull)/int_pasajeros_mes_2019)-1)*100, 2) %>% format(., decimal.mark = ","),
+#                                          "% más"))
 
 int_pasajeros_mes_total <- int_pasajeros_mes %>% 
   select(pasajeros) %>% 
@@ -473,18 +473,15 @@ int_variacion_interanual_acum_pasajeros <- if_else(int_pasajeros_mes$acum_anual 
                                                           "menos"))
 ```
 
-**(Publicado en `r publicacion_mes_anio` con datos actualizados al `r datos_mes_anio_bis`)**
+**Datos actualizados al `r datos_mes_anio_bis`**
 
 El reporte de seguimiento mensual que acá presentamos se desprende del *[Documento de Trabajo N°11: "Conectividad Aérea. Diagnóstico turístico del mercado aerocomercial de Argentina."](https://tableros.yvera.tur.ar/recursos/biblioteca/conectividad_aerea.pdf)* que analiza el mercado aerocomercial del país en base a una lectura turística de la información. El período de análisis se extiende desde comienzos del 2017 hasta el primer trimestre de 2023. En este marco, el actual trabajo busca continuar con la publicación períodica de estadísticas que muestren la evolución de los indicadores luego de la crisis pandémica y la posterior recuperación del sector. 
-<!-- En este sentido, por ejemplo, en el mes de **`r datos_mes_anio`**, **el mercado de cabotaje** nacional mostró **`r var_2019_vuelos` vuelos, un `r var_2019_pasajeros` de pasajeros y un `r var_2019_asientos` de asientos en comparación al mismo mes de 2019**[^1]. -->
-
-<!-- [^1]: Por su parte, el **mercado internacional** resgistró un **`r int_var_2019_vuelos` de vuelos, un `r int_var_2019_pasajeros` de pasajeros y un `r int_var_2019_asientos` de asientos en respecto al mismo período**. -->
 
 ## **CABOTAJE**
 
 En el mes de **`r datos_mes_anio`**, se estimaron **`r vuelos_mes_total` vuelos de cabotaje** en todo el país, lo que representa **`r variacion_interanual` frente a un año atrás**[^2].
 <!-- SACAR EN ENERO, PONER EN EL RESTO DE LOS MESES -->
-En total, en el acumulado anual, se realizaron `r vuelos_acumulados_total` vuelos, un `r variacion_interanual_acum` si se compara con el mismo período del año previo.
+
 
 [^2]: Para ver la serie temporal completa de vuelos, asientos y pasajeros totales, acceder al [tablero de conectividad aérea](https://tableros.yvera.tur.ar/conectividad/).
 
@@ -539,9 +536,9 @@ En total, en el acumulado anual, se realizaron `r vuelos_acumulados_total` vuelo
 
 En el mismo mes, fueron transportados **`r pasajeros_mes_total` pasajeros**, un `r variacion_interanual_pasajeros` con respecto a `r datos_mes_anio` del año previo.
 <!-- SACAR EN ENERO, PONER EN EL RESTO DE LOS MESES -->
-En el acumulado anual, ello significa que viajaron hasta el momento `r pasajeros_acumulados_total` personas, un `r variacion_interanual_acum_pasajeros` en comparación al mismo intervalo del año anterior.
 
-Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r datos_mes_anio`, fueron ofrecidos **`r asientos_mes_total` asientos**, lo que supone un `r variacion_interanual_asientos` contra un año atrás, y, en lo que va del año, `r asientos_acumulados_total` asientos, `r variacion_interanual_acum_asientos` frente al mismo período previo..
+
+Con respecto al número de **asientos** disponibles en vuelos comerciales, en `r datos_mes_anio`, fueron ofrecidos **`r asientos_mes_total` asientos**, lo que supone un `r variacion_interanual_asientos` contra un año atrás.
 <!-- SUMAR SI NO ES ENERO: -->
 <!-- , y, en lo que va del año, `r asientos_acumulados_total` asientos, `r variacion_interanual_acum_asientos` frente al mismo período previo. -->
 
@@ -2172,7 +2169,7 @@ ggplotly(graf_4, tooltip = "text") %>%
 
 # **INTERNACIONAL**
 
-En lo que respecta al mercado internacional, en **`r datos_mes_anio`**, se realizaron **`r int_vuelos_mes_total` vuelos internacionales** en todo el país, lo que representa un `r int_variacion_interanual`. Con dicho valor, el acumulado anual escala a `r int_vuelos_acumulados_total` vuelos, un `r int_variacion_interanual_acum` frente al mismo período del año previo[^3].
+En lo que respecta al mercado internacional, en **`r datos_mes_anio`**, se realizaron **`r int_vuelos_mes_total` vuelos internacionales** en todo el país, lo que representa un `r int_variacion_interanual`.
 <!-- SUMAR SI NO ES ENERO -->
 <!-- Con dicho valor, el acumulado anual escala a `r int_vuelos_acumulados_total` vuelos, un `r int_variacion_interanual_acum` frente al mismo período del año previo[^3]. -->
 
@@ -2215,12 +2212,12 @@ En lo que respecta al mercado internacional, en **`r datos_mes_anio`**, se reali
 # ggplotly(graf_9)
 ```
 
-En el mes en cuestión, viajaron **`r int_pasajeros_mes_total` pasajeros** (`r int_pasajeros_acumulados_total` en el acumulado anual), lo que supone un `r int_variacion_interanual_pasajeros` frente al mismo mes del año pasado (y un `r int_variacion_interanual_acum_pasajeros` en lo referente al total acumulado anual).
+En el mes en cuestión, viajaron **`r int_pasajeros_mes_total` pasajeros**, lo que supone un `r int_variacion_interanual_pasajeros` frente al mismo mes del año pasado.
 <!-- SUMAR SI NO ES ENERO -->
 <!--  (`r int_pasajeros_acumulados_total` en el acumulado anual) -->
 <!--  (y un `r int_variacion_interanual_acum_pasajeros` en lo referente al total acumulado anual) -->
 
-Con respecto al número de **asientos** disponibles en vuelos internacionales, **`r int_asientos_mes_total` plazas** fueron contadas, lo que equivale a un `r int_variacion_interanual_asientos` frente a `r datos_mes_anio` del año anterior. En el acumulado anual, `r int_asientos_acumulados_total` asientos fueron sumados, lo que supone una variación de `r int_variacion_interanual_acum_asientos`
+Con respecto al número de **asientos** disponibles en vuelos internacionales, **`r int_asientos_mes_total` plazas** fueron contadas, lo que equivale a un `r int_variacion_interanual_asientos` frente a `r datos_mes_anio` del año anterior. 
 <!-- SUMAR SI NO ES ENERO -->
 <!-- En el acumulado anual, `r int_asientos_acumulados_total` asientos fueron sumados, lo que supone una variación de `r int_variacion_interanual_acum_asientos`. -->
 
@@ -4223,7 +4220,8 @@ socoso_aero_total %>%
     cuota_2022 = md("**2022**"),
     cuota_2023 = md("**2023**"),
     cuota_2024 = md("**2024**"),
-    cuota_2025 = md("**2025**")
+    cuota_2025 = md("**2025**"),
+    cuota_2026 = md("**2026**")
   ) %>% 
   cols_align(
     align = "center",
@@ -4231,7 +4229,7 @@ socoso_aero_total %>%
   opt_table_font(
     font = list(
       google_font(name = "Encode Sans"))) %>% 
-  fmt_percent(columns = c(2:10), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
+  fmt_percent(columns = c(2:11), decimals = 1, dec_mark = ",", sep_mark = ".") %>% 
   tab_style(
     style = list(
       cell_fill(color = dnmye_colores("gris claro"))),
@@ -4592,20 +4590,22 @@ tabla <- pasajeros_totales_cabotaje %>%
   pivot_wider(names_from = anio_local, values_from = pasajeros, names_prefix = "anio_") %>% 
   janitor::adorn_totals(where = "row",
                         na.rm = T) %>% 
-  mutate(var_acum = (anio_2025/anio_2024)-1) 
+  mutate(var_acum = (anio_2026/anio_2025)-1) 
 
 tabla %>% 
-  arrange(desc(anio_2025)) %>% 
+  arrange(desc(anio_2026)) %>% 
   gt() %>% 
   tab_header(
-    title = md("__PASAJEROS TOTALES EN VUELOS DE CABOTAJE POR LOCALIDAD__"),
+    title = md("__MOVIMIENTO DE PASAJEROS DE CABOTAJE POR LOCALIDAD__"),
     subtitle = glue::glue("Acumulado Período {str_to_title(month(1, , label = T, abbr = T))}","-","{str_to_title(month(max(base_total$Fecha), label = T, abbr = T))}")) %>%  
   tab_source_note(
     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
+  tab_source_note(
+    source_note = md("**Nota:** se contabiliza el flujo de pasajeros tanto en arribos, como salidas.")) %>% 
   cols_label(
     localidad = md("**Localidad**"),
-    anio_2024 = md("2024"),
     anio_2025 = md("2025"),
+    anio_2026 = md("2026"),
     var_acum = md("Var i.a. acumulado")) %>% 
   data_color(
     columns = contains("var"),
@@ -4630,10 +4630,10 @@ tabla %>%
 #     source_note = md("**Fuente:** DMyE en base a información de ANAC.")) %>% 
 #   cols_label(
 #     localidad = md("**Aeropuerto**"),
-#     anio_2024 = md("2024"),
+#     anio_2025 = md("2025"),
 #     anio_2023 = md("2023"),
 #     anio_2019 = md("2019"),
-#     anio_2025 = md("2025"),
+#     anio_2026 = md("2025"),
 #     pasajeros_mes_actual = md("2025"),
 #     pasajeros_mes_2019 = md("2019"),
 #     variacion_mes = md("Mensual"),
