@@ -418,8 +418,6 @@ int_variacion_interanual_acum_pasajeros <- if_else(int_pasajeros_mes$acum_anual 
 
 **Datos actualizados al `r datos_mes_anio_bis`**
 
-El reporte de seguimiento mensual que acá presentamos se desprende del *[Documento de Trabajo N°11: "Conectividad Aérea. Diagnóstico turístico del mercado aerocomercial de Argentina."](https://tableros.yvera.tur.ar/recursos/biblioteca/conectividad_aerea.pdf)* que analiza el mercado aerocomercial del país en base a una lectura turística de la información. El período de análisis se extiende desde comienzos del 2017 hasta el primer trimestre de 2023. En este marco, el actual trabajo busca continuar con la publicación períodica de estadísticas que muestren la evolución de los indicadores luego de la crisis pandémica y la posterior recuperación del sector. 
-
 ## **CABOTAJE**
 
 En el mes de **`r datos_mes_anio`**, se estimaron **`r vuelos_mes_total` vuelos de cabotaje** en todo el país, lo que representa **`r variacion_interanual` frente a un año atrás**[^2].
