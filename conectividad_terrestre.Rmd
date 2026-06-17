@@ -1,6 +1,6 @@
 ---
 title: "Conectividad Terrestre"
-description: "Resumen de datos de flujo terrestre, en base a los registros de servicios regulares interurbanos de buses de media y larga distancia de la Comisión Nacional Reguladora del Transporte (CNRT)."
+description: "Resumen de datos de flujo terrestre, en base a los registros de servicios regulares interurbanos de buses de media y larga distancia de la Comisión Nacional de Regulación del Transporte (CNRT)."
 output:
   distill::distill_article:
     self_contained: TRUE
@@ -38,7 +38,7 @@ Sys.setlocale(locale = "es_AR.UTF-8")
 ```{r carga base}
 
 # Base Actual
-base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2026-01-01_a_2026-04-30.parquet") # Actualizar
+base_total <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2026-01-01_a_2026-05-31.parquet") # Actualizar
 
 # Base Año Previo
 base_vieja <- open_dataset("/srv/DataDNMYE/cnrt/base_de_trabajo/base_final/cnrt_total_historica_2025-01-01_a_2025-12-31.parquet")
@@ -588,6 +588,7 @@ graf_7 <- cnrt %>%
     # tramos = n_distinct(id_servicio)
   ) %>% 
     collect() %>% 
+  filter(fecha >= "2024-01-01") %>% 
   ggplot(aes(x = fecha,
                 y = pasajeros,
                 color = region_destino),
